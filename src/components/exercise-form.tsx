@@ -55,6 +55,7 @@ export function ExerciseForm({ initial, onSaved }: ExerciseFormProps) {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
     const raw: any = Object.fromEntries(fd.entries());
+    Object.keys(raw).forEach((k) => { if (raw[k] === "__empty") raw[k] = ""; });
     const parsed = schema.safeParse(raw);
     if (!parsed.success) {
       return toast.error(parsed.error.issues[0]?.message ?? "Datos inválidos");
