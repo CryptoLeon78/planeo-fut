@@ -18,6 +18,8 @@ import { Route as AuthenticatedMicrocyclesRouteImport } from './routes/_authenti
 import { Route as AuthenticatedExercisesRouteImport } from './routes/_authenticated/exercises'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedCalendarRouteImport } from './routes/_authenticated/calendar'
+import { Route as AuthenticatedSessionsIndexRouteImport } from './routes/_authenticated/sessions.index'
+import { Route as AuthenticatedExercisesIndexRouteImport } from './routes/_authenticated/exercises.index'
 import { Route as AuthenticatedSessionsNewRouteImport } from './routes/_authenticated/sessions.new'
 import { Route as AuthenticatedSessionsIdRouteImport } from './routes/_authenticated/sessions.$id'
 import { Route as AuthenticatedExercisesIdRouteImport } from './routes/_authenticated/exercises.$id'
@@ -67,6 +69,18 @@ const AuthenticatedCalendarRoute = AuthenticatedCalendarRouteImport.update({
   path: '/calendar',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedSessionsIndexRoute =
+  AuthenticatedSessionsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedSessionsRoute,
+  } as any)
+const AuthenticatedExercisesIndexRoute =
+  AuthenticatedExercisesIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedExercisesRoute,
+  } as any)
 const AuthenticatedSessionsNewRoute =
   AuthenticatedSessionsNewRouteImport.update({
     id: '/new',
@@ -97,19 +111,21 @@ export interface FileRoutesByFullPath {
   '/exercises/$id': typeof AuthenticatedExercisesIdRoute
   '/sessions/$id': typeof AuthenticatedSessionsIdRoute
   '/sessions/new': typeof AuthenticatedSessionsNewRoute
+  '/exercises/': typeof AuthenticatedExercisesIndexRoute
+  '/sessions/': typeof AuthenticatedSessionsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/calendar': typeof AuthenticatedCalendarRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
-  '/exercises': typeof AuthenticatedExercisesRouteWithChildren
   '/microcycles': typeof AuthenticatedMicrocyclesRoute
-  '/sessions': typeof AuthenticatedSessionsRouteWithChildren
   '/team': typeof AuthenticatedTeamRoute
   '/exercises/$id': typeof AuthenticatedExercisesIdRoute
   '/sessions/$id': typeof AuthenticatedSessionsIdRoute
   '/sessions/new': typeof AuthenticatedSessionsNewRoute
+  '/exercises': typeof AuthenticatedExercisesIndexRoute
+  '/sessions': typeof AuthenticatedSessionsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -125,6 +141,8 @@ export interface FileRoutesById {
   '/_authenticated/exercises/$id': typeof AuthenticatedExercisesIdRoute
   '/_authenticated/sessions/$id': typeof AuthenticatedSessionsIdRoute
   '/_authenticated/sessions/new': typeof AuthenticatedSessionsNewRoute
+  '/_authenticated/exercises/': typeof AuthenticatedExercisesIndexRoute
+  '/_authenticated/sessions/': typeof AuthenticatedSessionsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -140,19 +158,21 @@ export interface FileRouteTypes {
     | '/exercises/$id'
     | '/sessions/$id'
     | '/sessions/new'
+    | '/exercises/'
+    | '/sessions/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
     | '/calendar'
     | '/dashboard'
-    | '/exercises'
     | '/microcycles'
-    | '/sessions'
     | '/team'
     | '/exercises/$id'
     | '/sessions/$id'
     | '/sessions/new'
+    | '/exercises'
+    | '/sessions'
   id:
     | '__root__'
     | '/'
@@ -167,6 +187,8 @@ export interface FileRouteTypes {
     | '/_authenticated/exercises/$id'
     | '/_authenticated/sessions/$id'
     | '/_authenticated/sessions/new'
+    | '/_authenticated/exercises/'
+    | '/_authenticated/sessions/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -240,6 +262,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCalendarRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/sessions/': {
+      id: '/_authenticated/sessions/'
+      path: '/'
+      fullPath: '/sessions/'
+      preLoaderRoute: typeof AuthenticatedSessionsIndexRouteImport
+      parentRoute: typeof AuthenticatedSessionsRoute
+    }
+    '/_authenticated/exercises/': {
+      id: '/_authenticated/exercises/'
+      path: '/'
+      fullPath: '/exercises/'
+      preLoaderRoute: typeof AuthenticatedExercisesIndexRouteImport
+      parentRoute: typeof AuthenticatedExercisesRoute
+    }
     '/_authenticated/sessions/new': {
       id: '/_authenticated/sessions/new'
       path: '/new'
@@ -266,11 +302,13 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedExercisesRouteChildren {
   AuthenticatedExercisesIdRoute: typeof AuthenticatedExercisesIdRoute
+  AuthenticatedExercisesIndexRoute: typeof AuthenticatedExercisesIndexRoute
 }
 
 const AuthenticatedExercisesRouteChildren: AuthenticatedExercisesRouteChildren =
   {
     AuthenticatedExercisesIdRoute: AuthenticatedExercisesIdRoute,
+    AuthenticatedExercisesIndexRoute: AuthenticatedExercisesIndexRoute,
   }
 
 const AuthenticatedExercisesRouteWithChildren =
@@ -281,11 +319,13 @@ const AuthenticatedExercisesRouteWithChildren =
 interface AuthenticatedSessionsRouteChildren {
   AuthenticatedSessionsIdRoute: typeof AuthenticatedSessionsIdRoute
   AuthenticatedSessionsNewRoute: typeof AuthenticatedSessionsNewRoute
+  AuthenticatedSessionsIndexRoute: typeof AuthenticatedSessionsIndexRoute
 }
 
 const AuthenticatedSessionsRouteChildren: AuthenticatedSessionsRouteChildren = {
   AuthenticatedSessionsIdRoute: AuthenticatedSessionsIdRoute,
   AuthenticatedSessionsNewRoute: AuthenticatedSessionsNewRoute,
+  AuthenticatedSessionsIndexRoute: AuthenticatedSessionsIndexRoute,
 }
 
 const AuthenticatedSessionsRouteWithChildren =
