@@ -50,7 +50,7 @@ function ExercisesPage() {
   }, [exercises, q, phase, intensity, onlyFav]);
 
   async function toggleFav(id: string, current: boolean) {
-    const { error } = await supabase.from("exercises").update({ is_favorite: !current }).eq("id", id);
+    const { error } = await (supabase.from("exercises") as any).update({ is_favorite: !current }).eq("id", id);
     if (error) return toast.error(error.message);
     qc.invalidateQueries({ queryKey: ["exercises"] });
   }

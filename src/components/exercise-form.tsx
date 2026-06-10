@@ -84,13 +84,13 @@ export function ExerciseForm({ initial, onSaved }: ExerciseFormProps) {
     setBusy(true);
     try {
       if (initial?.id) {
-        const { error } = await supabase.from("exercises").update(payload).eq("id", initial.id);
+        const { error } = await (supabase.from("exercises") as any).update(payload).eq("id", initial.id);
         if (error) throw error;
         toast.success("Ejercicio actualizado");
         qc.invalidateQueries({ queryKey: ["exercises"] });
         onSaved?.(initial.id);
       } else {
-        const { data, error } = await supabase.from("exercises").insert(payload).select("id").single();
+        const { data, error } = await (supabase.from("exercises") as any).insert(payload).select("id").single();
         if (error) throw error;
         toast.success("Ejercicio creado");
         qc.invalidateQueries({ queryKey: ["exercises"] });

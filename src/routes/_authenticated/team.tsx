@@ -49,7 +49,7 @@ function TeamPage() {
     const parsed = schema.safeParse(raw);
     if (!parsed.success) return toast.error(parsed.error.issues[0]?.message);
     if (!user) return;
-    const { error } = await supabase.from("teams").insert({
+    const { error } = await (supabase.from("teams") as any).insert({
       owner_id: user.id, ...parsed.data,
       age_group: parsed.data.age_group || null, season: parsed.data.season || null,
     });

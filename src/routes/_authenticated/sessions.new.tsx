@@ -87,7 +87,7 @@ function NewSessionPage() {
 
     setBusy(true);
     try {
-      const { data: created, error } = await supabase.from("sessions").insert({
+      const { data: created, error } = await (supabase.from("sessions") as any).insert({
         owner_id: user.id,
         name: parsed.data.name,
         objective: parsed.data.objective || null,
@@ -97,7 +97,7 @@ function NewSessionPage() {
       }).select("id").single();
       if (error) throw error;
 
-      const inserted = await supabase.from("session_blocks").insert(
+      const inserted = await (supabase.from("session_blocks") as any).insert(
         blocks.map((b, i) => ({
           session_id: created!.id, block_type: b.block_type, name: b.name || null,
           position: i, duration_min: b.duration_min === "" ? null : b.duration_min, notes: b.notes || null,
@@ -112,7 +112,7 @@ function NewSessionPage() {
         b.exercise_ids.forEach((exId, pos) => rows.push({ block_id: bId, exercise_id: exId, position: pos }));
       });
       if (rows.length) {
-        const r = await supabase.from("session_block_exercises").insert(rows);
+        const r = await (supabase.from("session_block_exercises") as any).insert(rows);
         if (r.error) throw r.error;
       }
       toast.success("Sesión creada");

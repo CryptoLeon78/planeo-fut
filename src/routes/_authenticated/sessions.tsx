@@ -33,7 +33,7 @@ function SessionsPage() {
     const { data: src } = await supabase.from("sessions").select("*").eq("id", id).single();
     if (!src) return;
     const { data: blocks } = await supabase.from("session_blocks").select("*").eq("session_id", id);
-    const { data: created, error } = await supabase.from("sessions").insert({
+    const { data: created, error } = await (supabase.from("sessions") as any).insert({
       owner_id: src.owner_id, team_id: src.team_id, name: `${src.name} (copia)`,
       session_date: null, objective: src.objective, weekly_focus: src.weekly_focus,
       intensity: src.intensity, duration_min: src.duration_min, notes: src.notes, is_template: src.is_template,
@@ -45,7 +45,7 @@ function SessionsPage() {
         session_id: created.id, block_type: b.block_type, name: b.name,
         position: b.position, duration_min: b.duration_min, notes: b.notes,
       }));
-      const { data: insertedBlocks } = await supabase.from("session_blocks").insert(newBlocks).select("id,position,block_type");
+      const { data: insertedBlocks } = await (supabase.from("session_blocks") as any).insert(newBlocks).select("id,position,block_type");
       // Copy exercises per block (matching by position+type)
       if (insertedBlocks) {
         for (const ob of blocks) {
@@ -53,7 +53,7 @@ function SessionsPage() {
           if (!nb) continue;
           const { data: exs } = await supabase.from("session_block_exercises").select("*").eq("block_id", ob.id);
           if (exs?.length) {
-            await supabase.from("session_block_exercises").insert(
+            await (supabase.from("session_block_exercises") as any).insert(
               exs.map((e: any) => ({ block_id: nb.id, exercise_id: e.exercise_id, position: e.position, duration_override: e.duration_override, notes: e.notes }))
             );
           }
