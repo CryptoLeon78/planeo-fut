@@ -14,14 +14,23 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedTeamRouteImport } from './routes/_authenticated/team'
 import { Route as AuthenticatedSessionsRouteImport } from './routes/_authenticated/sessions'
+import { Route as AuthenticatedSeasonRouteImport } from './routes/_authenticated/season'
+import { Route as AuthenticatedPreseasonRouteImport } from './routes/_authenticated/preseason'
 import { Route as AuthenticatedMicrocyclesRouteImport } from './routes/_authenticated/microcycles'
 import { Route as AuthenticatedExercisesRouteImport } from './routes/_authenticated/exercises'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedCalendarRouteImport } from './routes/_authenticated/calendar'
 import { Route as AuthenticatedSessionsIndexRouteImport } from './routes/_authenticated/sessions.index'
+import { Route as AuthenticatedSeasonIndexRouteImport } from './routes/_authenticated/season.index'
+import { Route as AuthenticatedPreseasonIndexRouteImport } from './routes/_authenticated/preseason.index'
+import { Route as AuthenticatedMicrocyclesIndexRouteImport } from './routes/_authenticated/microcycles.index'
 import { Route as AuthenticatedExercisesIndexRouteImport } from './routes/_authenticated/exercises.index'
 import { Route as AuthenticatedSessionsNewRouteImport } from './routes/_authenticated/sessions.new'
 import { Route as AuthenticatedSessionsIdRouteImport } from './routes/_authenticated/sessions.$id'
+import { Route as AuthenticatedSeasonIdRouteImport } from './routes/_authenticated/season.$id'
+import { Route as AuthenticatedPreseasonIdRouteImport } from './routes/_authenticated/preseason.$id'
+import { Route as AuthenticatedMicrocyclesNewRouteImport } from './routes/_authenticated/microcycles.new'
+import { Route as AuthenticatedMicrocyclesIdRouteImport } from './routes/_authenticated/microcycles.$id'
 import { Route as AuthenticatedExercisesIdRouteImport } from './routes/_authenticated/exercises.$id'
 
 const AuthRoute = AuthRouteImport.update({
@@ -46,6 +55,16 @@ const AuthenticatedTeamRoute = AuthenticatedTeamRouteImport.update({
 const AuthenticatedSessionsRoute = AuthenticatedSessionsRouteImport.update({
   id: '/sessions',
   path: '/sessions',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedSeasonRoute = AuthenticatedSeasonRouteImport.update({
+  id: '/season',
+  path: '/season',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedPreseasonRoute = AuthenticatedPreseasonRouteImport.update({
+  id: '/preseason',
+  path: '/preseason',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedMicrocyclesRoute =
@@ -75,6 +94,24 @@ const AuthenticatedSessionsIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedSessionsRoute,
   } as any)
+const AuthenticatedSeasonIndexRoute =
+  AuthenticatedSeasonIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedSeasonRoute,
+  } as any)
+const AuthenticatedPreseasonIndexRoute =
+  AuthenticatedPreseasonIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedPreseasonRoute,
+  } as any)
+const AuthenticatedMicrocyclesIndexRoute =
+  AuthenticatedMicrocyclesIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedMicrocyclesRoute,
+  } as any)
 const AuthenticatedExercisesIndexRoute =
   AuthenticatedExercisesIndexRouteImport.update({
     id: '/',
@@ -92,6 +129,29 @@ const AuthenticatedSessionsIdRoute = AuthenticatedSessionsIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => AuthenticatedSessionsRoute,
 } as any)
+const AuthenticatedSeasonIdRoute = AuthenticatedSeasonIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AuthenticatedSeasonRoute,
+} as any)
+const AuthenticatedPreseasonIdRoute =
+  AuthenticatedPreseasonIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedPreseasonRoute,
+  } as any)
+const AuthenticatedMicrocyclesNewRoute =
+  AuthenticatedMicrocyclesNewRouteImport.update({
+    id: '/new',
+    path: '/new',
+    getParentRoute: () => AuthenticatedMicrocyclesRoute,
+  } as any)
+const AuthenticatedMicrocyclesIdRoute =
+  AuthenticatedMicrocyclesIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedMicrocyclesRoute,
+  } as any)
 const AuthenticatedExercisesIdRoute =
   AuthenticatedExercisesIdRouteImport.update({
     id: '/$id',
@@ -105,13 +165,22 @@ export interface FileRoutesByFullPath {
   '/calendar': typeof AuthenticatedCalendarRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/exercises': typeof AuthenticatedExercisesRouteWithChildren
-  '/microcycles': typeof AuthenticatedMicrocyclesRoute
+  '/microcycles': typeof AuthenticatedMicrocyclesRouteWithChildren
+  '/preseason': typeof AuthenticatedPreseasonRouteWithChildren
+  '/season': typeof AuthenticatedSeasonRouteWithChildren
   '/sessions': typeof AuthenticatedSessionsRouteWithChildren
   '/team': typeof AuthenticatedTeamRoute
   '/exercises/$id': typeof AuthenticatedExercisesIdRoute
+  '/microcycles/$id': typeof AuthenticatedMicrocyclesIdRoute
+  '/microcycles/new': typeof AuthenticatedMicrocyclesNewRoute
+  '/preseason/$id': typeof AuthenticatedPreseasonIdRoute
+  '/season/$id': typeof AuthenticatedSeasonIdRoute
   '/sessions/$id': typeof AuthenticatedSessionsIdRoute
   '/sessions/new': typeof AuthenticatedSessionsNewRoute
   '/exercises/': typeof AuthenticatedExercisesIndexRoute
+  '/microcycles/': typeof AuthenticatedMicrocyclesIndexRoute
+  '/preseason/': typeof AuthenticatedPreseasonIndexRoute
+  '/season/': typeof AuthenticatedSeasonIndexRoute
   '/sessions/': typeof AuthenticatedSessionsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -119,12 +188,18 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/calendar': typeof AuthenticatedCalendarRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
-  '/microcycles': typeof AuthenticatedMicrocyclesRoute
   '/team': typeof AuthenticatedTeamRoute
   '/exercises/$id': typeof AuthenticatedExercisesIdRoute
+  '/microcycles/$id': typeof AuthenticatedMicrocyclesIdRoute
+  '/microcycles/new': typeof AuthenticatedMicrocyclesNewRoute
+  '/preseason/$id': typeof AuthenticatedPreseasonIdRoute
+  '/season/$id': typeof AuthenticatedSeasonIdRoute
   '/sessions/$id': typeof AuthenticatedSessionsIdRoute
   '/sessions/new': typeof AuthenticatedSessionsNewRoute
   '/exercises': typeof AuthenticatedExercisesIndexRoute
+  '/microcycles': typeof AuthenticatedMicrocyclesIndexRoute
+  '/preseason': typeof AuthenticatedPreseasonIndexRoute
+  '/season': typeof AuthenticatedSeasonIndexRoute
   '/sessions': typeof AuthenticatedSessionsIndexRoute
 }
 export interface FileRoutesById {
@@ -135,13 +210,22 @@ export interface FileRoutesById {
   '/_authenticated/calendar': typeof AuthenticatedCalendarRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/exercises': typeof AuthenticatedExercisesRouteWithChildren
-  '/_authenticated/microcycles': typeof AuthenticatedMicrocyclesRoute
+  '/_authenticated/microcycles': typeof AuthenticatedMicrocyclesRouteWithChildren
+  '/_authenticated/preseason': typeof AuthenticatedPreseasonRouteWithChildren
+  '/_authenticated/season': typeof AuthenticatedSeasonRouteWithChildren
   '/_authenticated/sessions': typeof AuthenticatedSessionsRouteWithChildren
   '/_authenticated/team': typeof AuthenticatedTeamRoute
   '/_authenticated/exercises/$id': typeof AuthenticatedExercisesIdRoute
+  '/_authenticated/microcycles/$id': typeof AuthenticatedMicrocyclesIdRoute
+  '/_authenticated/microcycles/new': typeof AuthenticatedMicrocyclesNewRoute
+  '/_authenticated/preseason/$id': typeof AuthenticatedPreseasonIdRoute
+  '/_authenticated/season/$id': typeof AuthenticatedSeasonIdRoute
   '/_authenticated/sessions/$id': typeof AuthenticatedSessionsIdRoute
   '/_authenticated/sessions/new': typeof AuthenticatedSessionsNewRoute
   '/_authenticated/exercises/': typeof AuthenticatedExercisesIndexRoute
+  '/_authenticated/microcycles/': typeof AuthenticatedMicrocyclesIndexRoute
+  '/_authenticated/preseason/': typeof AuthenticatedPreseasonIndexRoute
+  '/_authenticated/season/': typeof AuthenticatedSeasonIndexRoute
   '/_authenticated/sessions/': typeof AuthenticatedSessionsIndexRoute
 }
 export interface FileRouteTypes {
@@ -153,12 +237,21 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/exercises'
     | '/microcycles'
+    | '/preseason'
+    | '/season'
     | '/sessions'
     | '/team'
     | '/exercises/$id'
+    | '/microcycles/$id'
+    | '/microcycles/new'
+    | '/preseason/$id'
+    | '/season/$id'
     | '/sessions/$id'
     | '/sessions/new'
     | '/exercises/'
+    | '/microcycles/'
+    | '/preseason/'
+    | '/season/'
     | '/sessions/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -166,12 +259,18 @@ export interface FileRouteTypes {
     | '/auth'
     | '/calendar'
     | '/dashboard'
-    | '/microcycles'
     | '/team'
     | '/exercises/$id'
+    | '/microcycles/$id'
+    | '/microcycles/new'
+    | '/preseason/$id'
+    | '/season/$id'
     | '/sessions/$id'
     | '/sessions/new'
     | '/exercises'
+    | '/microcycles'
+    | '/preseason'
+    | '/season'
     | '/sessions'
   id:
     | '__root__'
@@ -182,12 +281,21 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/exercises'
     | '/_authenticated/microcycles'
+    | '/_authenticated/preseason'
+    | '/_authenticated/season'
     | '/_authenticated/sessions'
     | '/_authenticated/team'
     | '/_authenticated/exercises/$id'
+    | '/_authenticated/microcycles/$id'
+    | '/_authenticated/microcycles/new'
+    | '/_authenticated/preseason/$id'
+    | '/_authenticated/season/$id'
     | '/_authenticated/sessions/$id'
     | '/_authenticated/sessions/new'
     | '/_authenticated/exercises/'
+    | '/_authenticated/microcycles/'
+    | '/_authenticated/preseason/'
+    | '/_authenticated/season/'
     | '/_authenticated/sessions/'
   fileRoutesById: FileRoutesById
 }
@@ -234,6 +342,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSessionsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/season': {
+      id: '/_authenticated/season'
+      path: '/season'
+      fullPath: '/season'
+      preLoaderRoute: typeof AuthenticatedSeasonRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/preseason': {
+      id: '/_authenticated/preseason'
+      path: '/preseason'
+      fullPath: '/preseason'
+      preLoaderRoute: typeof AuthenticatedPreseasonRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/microcycles': {
       id: '/_authenticated/microcycles'
       path: '/microcycles'
@@ -269,6 +391,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSessionsIndexRouteImport
       parentRoute: typeof AuthenticatedSessionsRoute
     }
+    '/_authenticated/season/': {
+      id: '/_authenticated/season/'
+      path: '/'
+      fullPath: '/season/'
+      preLoaderRoute: typeof AuthenticatedSeasonIndexRouteImport
+      parentRoute: typeof AuthenticatedSeasonRoute
+    }
+    '/_authenticated/preseason/': {
+      id: '/_authenticated/preseason/'
+      path: '/'
+      fullPath: '/preseason/'
+      preLoaderRoute: typeof AuthenticatedPreseasonIndexRouteImport
+      parentRoute: typeof AuthenticatedPreseasonRoute
+    }
+    '/_authenticated/microcycles/': {
+      id: '/_authenticated/microcycles/'
+      path: '/'
+      fullPath: '/microcycles/'
+      preLoaderRoute: typeof AuthenticatedMicrocyclesIndexRouteImport
+      parentRoute: typeof AuthenticatedMicrocyclesRoute
+    }
     '/_authenticated/exercises/': {
       id: '/_authenticated/exercises/'
       path: '/'
@@ -289,6 +432,34 @@ declare module '@tanstack/react-router' {
       fullPath: '/sessions/$id'
       preLoaderRoute: typeof AuthenticatedSessionsIdRouteImport
       parentRoute: typeof AuthenticatedSessionsRoute
+    }
+    '/_authenticated/season/$id': {
+      id: '/_authenticated/season/$id'
+      path: '/$id'
+      fullPath: '/season/$id'
+      preLoaderRoute: typeof AuthenticatedSeasonIdRouteImport
+      parentRoute: typeof AuthenticatedSeasonRoute
+    }
+    '/_authenticated/preseason/$id': {
+      id: '/_authenticated/preseason/$id'
+      path: '/$id'
+      fullPath: '/preseason/$id'
+      preLoaderRoute: typeof AuthenticatedPreseasonIdRouteImport
+      parentRoute: typeof AuthenticatedPreseasonRoute
+    }
+    '/_authenticated/microcycles/new': {
+      id: '/_authenticated/microcycles/new'
+      path: '/new'
+      fullPath: '/microcycles/new'
+      preLoaderRoute: typeof AuthenticatedMicrocyclesNewRouteImport
+      parentRoute: typeof AuthenticatedMicrocyclesRoute
+    }
+    '/_authenticated/microcycles/$id': {
+      id: '/_authenticated/microcycles/$id'
+      path: '/$id'
+      fullPath: '/microcycles/$id'
+      preLoaderRoute: typeof AuthenticatedMicrocyclesIdRouteImport
+      parentRoute: typeof AuthenticatedMicrocyclesRoute
     }
     '/_authenticated/exercises/$id': {
       id: '/_authenticated/exercises/$id'
@@ -316,6 +487,53 @@ const AuthenticatedExercisesRouteWithChildren =
     AuthenticatedExercisesRouteChildren,
   )
 
+interface AuthenticatedMicrocyclesRouteChildren {
+  AuthenticatedMicrocyclesIdRoute: typeof AuthenticatedMicrocyclesIdRoute
+  AuthenticatedMicrocyclesNewRoute: typeof AuthenticatedMicrocyclesNewRoute
+  AuthenticatedMicrocyclesIndexRoute: typeof AuthenticatedMicrocyclesIndexRoute
+}
+
+const AuthenticatedMicrocyclesRouteChildren: AuthenticatedMicrocyclesRouteChildren =
+  {
+    AuthenticatedMicrocyclesIdRoute: AuthenticatedMicrocyclesIdRoute,
+    AuthenticatedMicrocyclesNewRoute: AuthenticatedMicrocyclesNewRoute,
+    AuthenticatedMicrocyclesIndexRoute: AuthenticatedMicrocyclesIndexRoute,
+  }
+
+const AuthenticatedMicrocyclesRouteWithChildren =
+  AuthenticatedMicrocyclesRoute._addFileChildren(
+    AuthenticatedMicrocyclesRouteChildren,
+  )
+
+interface AuthenticatedPreseasonRouteChildren {
+  AuthenticatedPreseasonIdRoute: typeof AuthenticatedPreseasonIdRoute
+  AuthenticatedPreseasonIndexRoute: typeof AuthenticatedPreseasonIndexRoute
+}
+
+const AuthenticatedPreseasonRouteChildren: AuthenticatedPreseasonRouteChildren =
+  {
+    AuthenticatedPreseasonIdRoute: AuthenticatedPreseasonIdRoute,
+    AuthenticatedPreseasonIndexRoute: AuthenticatedPreseasonIndexRoute,
+  }
+
+const AuthenticatedPreseasonRouteWithChildren =
+  AuthenticatedPreseasonRoute._addFileChildren(
+    AuthenticatedPreseasonRouteChildren,
+  )
+
+interface AuthenticatedSeasonRouteChildren {
+  AuthenticatedSeasonIdRoute: typeof AuthenticatedSeasonIdRoute
+  AuthenticatedSeasonIndexRoute: typeof AuthenticatedSeasonIndexRoute
+}
+
+const AuthenticatedSeasonRouteChildren: AuthenticatedSeasonRouteChildren = {
+  AuthenticatedSeasonIdRoute: AuthenticatedSeasonIdRoute,
+  AuthenticatedSeasonIndexRoute: AuthenticatedSeasonIndexRoute,
+}
+
+const AuthenticatedSeasonRouteWithChildren =
+  AuthenticatedSeasonRoute._addFileChildren(AuthenticatedSeasonRouteChildren)
+
 interface AuthenticatedSessionsRouteChildren {
   AuthenticatedSessionsIdRoute: typeof AuthenticatedSessionsIdRoute
   AuthenticatedSessionsNewRoute: typeof AuthenticatedSessionsNewRoute
@@ -337,7 +555,9 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCalendarRoute: typeof AuthenticatedCalendarRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedExercisesRoute: typeof AuthenticatedExercisesRouteWithChildren
-  AuthenticatedMicrocyclesRoute: typeof AuthenticatedMicrocyclesRoute
+  AuthenticatedMicrocyclesRoute: typeof AuthenticatedMicrocyclesRouteWithChildren
+  AuthenticatedPreseasonRoute: typeof AuthenticatedPreseasonRouteWithChildren
+  AuthenticatedSeasonRoute: typeof AuthenticatedSeasonRouteWithChildren
   AuthenticatedSessionsRoute: typeof AuthenticatedSessionsRouteWithChildren
   AuthenticatedTeamRoute: typeof AuthenticatedTeamRoute
 }
@@ -346,7 +566,9 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCalendarRoute: AuthenticatedCalendarRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedExercisesRoute: AuthenticatedExercisesRouteWithChildren,
-  AuthenticatedMicrocyclesRoute: AuthenticatedMicrocyclesRoute,
+  AuthenticatedMicrocyclesRoute: AuthenticatedMicrocyclesRouteWithChildren,
+  AuthenticatedPreseasonRoute: AuthenticatedPreseasonRouteWithChildren,
+  AuthenticatedSeasonRoute: AuthenticatedSeasonRouteWithChildren,
   AuthenticatedSessionsRoute: AuthenticatedSessionsRouteWithChildren,
   AuthenticatedTeamRoute: AuthenticatedTeamRoute,
 }

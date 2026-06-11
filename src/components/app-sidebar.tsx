@@ -1,5 +1,5 @@
 import { Link, useRouter, useRouterState } from "@tanstack/react-router";
-import { Calendar, ClipboardList, Dumbbell, LayoutDashboard, LogOut, Trophy, Users, CalendarRange } from "lucide-react";
+import { Calendar, ClipboardList, Dumbbell, LayoutDashboard, LogOut, Trophy, Users, CalendarRange, Sun, Medal } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
@@ -14,6 +14,8 @@ const items = [
   { title: "Ejercicios", url: "/exercises", icon: Dumbbell },
   { title: "Sesiones", url: "/sessions", icon: ClipboardList },
   { title: "Microciclos", url: "/microcycles", icon: CalendarRange },
+  { title: "Pretemporada", url: "/preseason", icon: Sun },
+  { title: "Temporada", url: "/season", icon: Medal },
   { title: "Calendario", url: "/calendar", icon: Calendar },
   { title: "Equipo", url: "/team", icon: Users },
 ] as const;

@@ -94,6 +94,59 @@ export type Database = {
           },
         ]
       }
+      mesocycles: {
+        Row: {
+          created_at: string
+          end_date: string
+          goals: string | null
+          id: string
+          name: string
+          notes: string | null
+          owner_id: string
+          phases: Json
+          start_date: string
+          team_id: string | null
+          type: Database["public"]["Enums"]["mesocycle_type"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          end_date: string
+          goals?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          owner_id: string
+          phases?: Json
+          start_date: string
+          team_id?: string | null
+          type?: Database["public"]["Enums"]["mesocycle_type"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          end_date?: string
+          goals?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          owner_id?: string
+          phases?: Json
+          start_date?: string
+          team_id?: string | null
+          type?: Database["public"]["Enums"]["mesocycle_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mesocycles_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       microcycle_slots: {
         Row: {
           id: string
@@ -141,6 +194,7 @@ export type Database = {
           created_at: string
           id: string
           match_day: string
+          mesocycle_id: string | null
           name: string
           notes: string | null
           owner_id: string
@@ -153,6 +207,7 @@ export type Database = {
           created_at?: string
           id?: string
           match_day?: string
+          mesocycle_id?: string | null
           name: string
           notes?: string | null
           owner_id: string
@@ -165,6 +220,7 @@ export type Database = {
           created_at?: string
           id?: string
           match_day?: string
+          mesocycle_id?: string | null
           name?: string
           notes?: string | null
           owner_id?: string
@@ -174,6 +230,13 @@ export type Database = {
           weekly_objective?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "microcycles_mesocycle_id_fkey"
+            columns: ["mesocycle_id"]
+            isOneToOne: false
+            referencedRelation: "mesocycles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "microcycles_team_id_fkey"
             columns: ["team_id"]
@@ -206,6 +269,62 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      season_events: {
+        Row: {
+          created_at: string
+          event_date: string
+          id: string
+          is_home: boolean | null
+          location: string | null
+          notes: string | null
+          opponent: string | null
+          owner_id: string
+          result: string | null
+          team_id: string | null
+          title: string
+          type: Database["public"]["Enums"]["season_event_type"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          event_date: string
+          id?: string
+          is_home?: boolean | null
+          location?: string | null
+          notes?: string | null
+          opponent?: string | null
+          owner_id: string
+          result?: string | null
+          team_id?: string | null
+          title: string
+          type?: Database["public"]["Enums"]["season_event_type"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          event_date?: string
+          id?: string
+          is_home?: boolean | null
+          location?: string | null
+          notes?: string | null
+          opponent?: string | null
+          owner_id?: string
+          result?: string | null
+          team_id?: string | null
+          title?: string
+          type?: Database["public"]["Enums"]["season_event_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "season_events_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       session_block_exercises: {
         Row: {
@@ -441,6 +560,14 @@ export type Database = {
         | "transicion_da"
         | "abp"
         | "general"
+      mesocycle_type: "pretemporada" | "temporada"
+      season_event_type:
+        | "partido_oficial"
+        | "amistoso"
+        | "test_fisico"
+        | "descanso"
+        | "evento"
+        | "reunion"
       task_type:
         | "analitica"
         | "global"
@@ -599,6 +726,15 @@ export const Constants = {
         "transicion_da",
         "abp",
         "general",
+      ],
+      mesocycle_type: ["pretemporada", "temporada"],
+      season_event_type: [
+        "partido_oficial",
+        "amistoso",
+        "test_fisico",
+        "descanso",
+        "evento",
+        "reunion",
       ],
       task_type: [
         "analitica",
