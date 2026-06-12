@@ -48,13 +48,25 @@ vi.mock("@/hooks/use-auth", () => ({
 
 vi.mock("@tanstack/react-router", async () => {
   const React = await import("react");
+  const makeRoute = () => (opts: any) => {
+    const route: any = {
+      ...opts,
+      useParams: () => ({ id: "test-id" }),
+      useLoaderData: () => ({}),
+      useRouteContext: () => ({}),
+      useSearch: () => ({}),
+    };
+    return route;
+  };
   return {
-    createFileRoute: () => () => ({}),
-    createRootRoute: () => () => ({}),
-    Link: ({ children, ...p }: any) => React.createElement("a", p, children),
+    createFileRoute: () => makeRoute(),
+    createRootRoute: () => makeRoute(),
+    createRootRouteWithContext: () => makeRoute(),
+    Link: ({ children, to, params, ...p }: any) => React.createElement("a", { href: to, ...p }, children),
     Outlet: () => null,
     useNavigate: () => vi.fn(),
     useParams: () => ({ id: "test-id" }),
+    useRouter: () => ({ invalidate: vi.fn(), navigate: vi.fn() }),
   };
 });
 
