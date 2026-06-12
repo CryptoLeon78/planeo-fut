@@ -209,9 +209,9 @@ function MicroDetailPage() {
             <div className="grid gap-3 md:grid-cols-5">
               {(slots ?? []).map((s: any) => (
                 <SlotCard key={s.id} slot={s} sessions={sessions ?? []}
-                  onAssign={(sid) => assignSession(s.id, sid)}
+                  onAssign={(sid: string) => assignSession(s.id, sid)}
                   onClear={() => updateSlot(s.id, { session_id: null })}
-                  onNotes={(notes) => updateSlot(s.id, { notes })} />
+                  onNotes={(notes: string | null) => updateSlot(s.id, { notes })} />
               ))}
             </div>
             <p className="mt-3 text-xs text-muted-foreground">
