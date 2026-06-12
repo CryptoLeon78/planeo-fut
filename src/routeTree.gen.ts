@@ -12,7 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ApiMicrocycleSuggestRouteImport } from './routes/api/microcycle-suggest'
 import { Route as AuthenticatedTeamRouteImport } from './routes/_authenticated/team'
 import { Route as AuthenticatedSessionsRouteImport } from './routes/_authenticated/sessions'
 import { Route as AuthenticatedSeasonRouteImport } from './routes/_authenticated/season'
@@ -46,11 +45,6 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiMicrocycleSuggestRoute = ApiMicrocycleSuggestRouteImport.update({
-  id: '/api/microcycle-suggest',
-  path: '/api/microcycle-suggest',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedTeamRoute = AuthenticatedTeamRouteImport.update({
@@ -176,7 +170,6 @@ export interface FileRoutesByFullPath {
   '/season': typeof AuthenticatedSeasonRouteWithChildren
   '/sessions': typeof AuthenticatedSessionsRouteWithChildren
   '/team': typeof AuthenticatedTeamRoute
-  '/api/microcycle-suggest': typeof ApiMicrocycleSuggestRoute
   '/exercises/$id': typeof AuthenticatedExercisesIdRoute
   '/microcycles/$id': typeof AuthenticatedMicrocyclesIdRoute
   '/microcycles/new': typeof AuthenticatedMicrocyclesNewRoute
@@ -196,7 +189,6 @@ export interface FileRoutesByTo {
   '/calendar': typeof AuthenticatedCalendarRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/team': typeof AuthenticatedTeamRoute
-  '/api/microcycle-suggest': typeof ApiMicrocycleSuggestRoute
   '/exercises/$id': typeof AuthenticatedExercisesIdRoute
   '/microcycles/$id': typeof AuthenticatedMicrocyclesIdRoute
   '/microcycles/new': typeof AuthenticatedMicrocyclesNewRoute
@@ -223,7 +215,6 @@ export interface FileRoutesById {
   '/_authenticated/season': typeof AuthenticatedSeasonRouteWithChildren
   '/_authenticated/sessions': typeof AuthenticatedSessionsRouteWithChildren
   '/_authenticated/team': typeof AuthenticatedTeamRoute
-  '/api/microcycle-suggest': typeof ApiMicrocycleSuggestRoute
   '/_authenticated/exercises/$id': typeof AuthenticatedExercisesIdRoute
   '/_authenticated/microcycles/$id': typeof AuthenticatedMicrocyclesIdRoute
   '/_authenticated/microcycles/new': typeof AuthenticatedMicrocyclesNewRoute
@@ -250,7 +241,6 @@ export interface FileRouteTypes {
     | '/season'
     | '/sessions'
     | '/team'
-    | '/api/microcycle-suggest'
     | '/exercises/$id'
     | '/microcycles/$id'
     | '/microcycles/new'
@@ -270,7 +260,6 @@ export interface FileRouteTypes {
     | '/calendar'
     | '/dashboard'
     | '/team'
-    | '/api/microcycle-suggest'
     | '/exercises/$id'
     | '/microcycles/$id'
     | '/microcycles/new'
@@ -296,7 +285,6 @@ export interface FileRouteTypes {
     | '/_authenticated/season'
     | '/_authenticated/sessions'
     | '/_authenticated/team'
-    | '/api/microcycle-suggest'
     | '/_authenticated/exercises/$id'
     | '/_authenticated/microcycles/$id'
     | '/_authenticated/microcycles/new'
@@ -315,7 +303,6 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
-  ApiMicrocycleSuggestRoute: typeof ApiMicrocycleSuggestRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -339,13 +326,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/microcycle-suggest': {
-      id: '/api/microcycle-suggest'
-      path: '/api/microcycle-suggest'
-      fullPath: '/api/microcycle-suggest'
-      preLoaderRoute: typeof ApiMicrocycleSuggestRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/team': {
@@ -600,8 +580,17 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
-  ApiMicrocycleSuggestRoute: ApiMicrocycleSuggestRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
