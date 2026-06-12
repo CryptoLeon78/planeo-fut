@@ -412,6 +412,65 @@ export type Database = {
           },
         ]
       }
+      session_evaluations: {
+        Row: {
+          created_at: string
+          evaluated_at: string
+          id: string
+          intensity_perceived:
+            | Database["public"]["Enums"]["perceived_intensity"]
+            | null
+          objectives_met: boolean | null
+          owner_id: string
+          player_notes: string | null
+          rating: number | null
+          session_id: string
+          updated_at: string
+          what_to_improve: string | null
+          what_worked: string | null
+        }
+        Insert: {
+          created_at?: string
+          evaluated_at?: string
+          id?: string
+          intensity_perceived?:
+            | Database["public"]["Enums"]["perceived_intensity"]
+            | null
+          objectives_met?: boolean | null
+          owner_id: string
+          player_notes?: string | null
+          rating?: number | null
+          session_id: string
+          updated_at?: string
+          what_to_improve?: string | null
+          what_worked?: string | null
+        }
+        Update: {
+          created_at?: string
+          evaluated_at?: string
+          id?: string
+          intensity_perceived?:
+            | Database["public"]["Enums"]["perceived_intensity"]
+            | null
+          objectives_met?: boolean | null
+          owner_id?: string
+          player_notes?: string | null
+          rating?: number | null
+          session_id?: string
+          updated_at?: string
+          what_to_improve?: string | null
+          what_worked?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "session_evaluations_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: true
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sessions: {
         Row: {
           created_at: string
@@ -561,6 +620,7 @@ export type Database = {
         | "abp"
         | "general"
       mesocycle_type: "pretemporada" | "temporada"
+      perceived_intensity: "baja" | "media" | "alta" | "muy_alta"
       season_event_type:
         | "partido_oficial"
         | "amistoso"
@@ -728,6 +788,7 @@ export const Constants = {
         "general",
       ],
       mesocycle_type: ["pretemporada", "temporada"],
+      perceived_intensity: ["baja", "media", "alta", "muy_alta"],
       season_event_type: [
         "partido_oficial",
         "amistoso",

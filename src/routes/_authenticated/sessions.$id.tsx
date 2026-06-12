@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { BLOCK_TYPES, INTENSITIES, labelOf } from "@/lib/constants";
+import { SessionEvaluationCard } from "@/components/session-evaluation-card";
 
 export const Route = createFileRoute("/_authenticated/sessions/$id")({
   component: SessionDetail,
@@ -83,9 +84,11 @@ function SessionDetail() {
         })}
       </div>
 
+      <SessionEvaluationCard sessionId={id} />
+
       {session.evaluation && (
         <Card className="p-5">
-          <h3 className="mb-2 font-semibold">Evaluación post-sesión</h3>
+          <h3 className="mb-2 font-semibold">Notas anteriores</h3>
           <p className="text-sm text-muted-foreground whitespace-pre-wrap">{session.evaluation}</p>
         </Card>
       )}
