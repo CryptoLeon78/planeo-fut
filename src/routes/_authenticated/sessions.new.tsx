@@ -18,6 +18,9 @@ import { BLOCK_TYPES, INTENSITIES, labelOf } from "@/lib/constants";
 
 export const Route = createFileRoute("/_authenticated/sessions/new")({
   component: NewSessionPage,
+  validateSearch: (search: Record<string, unknown>) => ({
+    edit: (search.edit as string) || undefined,
+  }),
 });
 
 type BlockDraft = {
@@ -46,9 +49,34 @@ const schema = z.object({
 function NewSessionPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { edit: editId } = Route.useSearch();
   const [busy, setBusy] = useState(false);
   const [blocks, setBlocks] = useState<BlockDraft[]>(DEFAULT_BLOCKS);
   const [dragIdx, setDragIdx] = useState<number | null>(null);
+
+  const { data: editData } = useQuery({
+    queryKey: ["session-edit", editId],
+    enabled: !!editId && !!user,
+    queryFn: async () => {
+      const { data: s } = await supabase.from("sessions").select("*").eq("id", editId).single();
+      const { data: blks } = await supabase.from("session_blocks").select("*").eq("session_id", editId).order("position");
+      const blockIds = (blks ?? []).map((b: any) => b.id);
+      const { data: items } = blockIds.length
+        ? await supabase.from("session_block_exercises").select("*").in("block_id", blockIds).order("position")
+        : { data: [] };
+
+      if (s && blks) {
+        setBlocks(blks.map((b: any) => ({
+          block_type: b.block_type,
+          name: b.name || "",
+          duration_min: b.duration_min || "",
+          notes: b.notes || "",
+          exercise_ids: (items ?? []).filter((it: any) => it.block_id === b.id).map((it: any) => it.exercise_id),
+        })));
+      }
+      return { session: s, blocks: blks, items };
+    },
+  });
 
   const { data: allExercises } = useQuery({
     queryKey: ["exercises", user?.id],
@@ -87,19 +115,37 @@ function NewSessionPage() {
 
     setBusy(true);
     try {
-      const { data: created, error } = await (supabase.from("sessions") as any).insert({
-        owner_id: user.id,
-        name: parsed.data.name,
-        objective: parsed.data.objective || null,
-        intensity: parsed.data.intensity || "media",
-        session_date: parsed.data.session_date || null,
-        duration_min: parsed.data.duration_min === "" ? null : parsed.data.duration_min,
-      }).select("id").single();
-      if (error) throw error;
+      let sessionId = editId;
+
+      if (editId) {
+        const { error } = await supabase.from("sessions").update({
+          name: parsed.data.name,
+          objective: parsed.data.objective || null,
+          intensity: parsed.data.intensity || "media",
+          session_date: parsed.data.session_date || null,
+          duration_min: parsed.data.duration_min === "" ? null : parsed.data.duration_min,
+        }).eq("id", editId);
+        if (error) throw error;
+
+        // Limpiar bloques antiguos y sus ejercicios (cascada manual si no está en DB)
+        // Por simplicidad en este MVP, borramos y re-insertamos bloques
+        await supabase.from("session_blocks").delete().eq("session_id", editId);
+      } else {
+        const { data: created, error } = await (supabase.from("sessions") as any).insert({
+          owner_id: user.id,
+          name: parsed.data.name,
+          objective: parsed.data.objective || null,
+          intensity: parsed.data.intensity || "media",
+          session_date: parsed.data.session_date || null,
+          duration_min: parsed.data.duration_min === "" ? null : parsed.data.duration_min,
+        }).select("id").single();
+        if (error) throw error;
+        sessionId = created!.id;
+      }
 
       const inserted = await (supabase.from("session_blocks") as any).insert(
         blocks.map((b, i) => ({
-          session_id: created!.id, block_type: b.block_type, name: b.name || null,
+          session_id: sessionId, block_type: b.block_type, name: b.name || null,
           position: i, duration_min: b.duration_min === "" ? null : b.duration_min, notes: b.notes || null,
         })),
       ).select("id,position");
@@ -115,8 +161,8 @@ function NewSessionPage() {
         const r = await (supabase.from("session_block_exercises") as any).insert(rows);
         if (r.error) throw r.error;
       }
-      toast.success("Sesión creada");
-      navigate({ to: "/sessions/$id", params: { id: created!.id } });
+      toast.success(editId ? "Sesión actualizada" : "Sesión creada");
+      navigate({ to: "/sessions/$id", params: { id: sessionId! } });
     } catch (err: any) {
       toast.error(err?.message ?? "No se pudo guardar");
     } finally {
@@ -127,19 +173,19 @@ function NewSessionPage() {
   return (
     <form onSubmit={onSubmit} className="mx-auto max-w-5xl space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Nueva sesión</h1>
+        <h1 className="text-2xl font-bold tracking-tight">{editId ? "Editar sesión" : "Nueva sesión"}</h1>
         <p className="text-sm text-muted-foreground">Define los datos básicos y arrastra los bloques para reordenarlos.</p>
       </div>
 
       <Card className="grid gap-4 p-5 sm:grid-cols-2">
-        <div className="space-y-1.5 sm:col-span-2"><Label htmlFor="name">Nombre *</Label><Input id="name" name="name" required maxLength={120} placeholder="Ej. MD-3 Posesión bajo presión" /></div>
-        <div className="space-y-1.5 sm:col-span-2"><Label htmlFor="objective">Objetivo</Label><Textarea id="objective" name="objective" rows={2} /></div>
-        <div className="space-y-1.5"><Label htmlFor="session_date">Fecha</Label><Input id="session_date" name="session_date" type="date" /></div>
-        <div className="space-y-1.5"><Label htmlFor="duration_min">Duración total (min)</Label><Input id="duration_min" name="duration_min" type="number" min={1} max={360} placeholder="75" /></div>
+        <div className="space-y-1.5 sm:col-span-2"><Label htmlFor="name">Nombre *</Label><Input id="name" name="name" defaultValue={editData?.session?.name} required maxLength={120} placeholder="Ej. MD-3 Posesión bajo presión" /></div>
+        <div className="space-y-1.5 sm:col-span-2"><Label htmlFor="objective">Objetivo</Label><Textarea id="objective" name="objective" defaultValue={editData?.session?.objective} rows={2} /></div>
+        <div className="space-y-1.5"><Label htmlFor="session_date">Fecha</Label><Input id="session_date" name="session_date" defaultValue={editData?.session?.session_date} type="date" /></div>
+        <div className="space-y-1.5"><Label htmlFor="duration_min">Duración total (min)</Label><Input id="duration_min" name="duration_min" defaultValue={editData?.session?.duration_min} type="number" min={1} max={360} placeholder="75" /></div>
         <div className="space-y-1.5 sm:col-span-2">
           <Label>Intensidad</Label>
-          <input type="hidden" name="intensity" value="media" id="hidden-intensity" />
-          <Select defaultValue="media" onValueChange={(v) => { (document.getElementById("hidden-intensity") as HTMLInputElement).value = v; }}>
+          <input type="hidden" name="intensity" defaultValue={editData?.session?.intensity || "media"} id="hidden-intensity" />
+          <Select defaultValue={editData?.session?.intensity || "media"} onValueChange={(v) => { (document.getElementById("hidden-intensity") as HTMLInputElement).value = v; }}>
             <SelectTrigger className="sm:max-w-xs"><SelectValue /></SelectTrigger>
             <SelectContent>{INTENSITIES.map((i) => <SelectItem key={i.value} value={i.value}>{i.label}</SelectItem>)}</SelectContent>
           </Select>
@@ -199,7 +245,7 @@ function NewSessionPage() {
 
       <div className="flex justify-end gap-2">
         <Button type="button" variant="ghost" onClick={() => navigate({ to: "/sessions" })}>Cancelar</Button>
-        <Button type="submit" disabled={busy}>Crear sesión</Button>
+        <Button type="submit" disabled={busy}>{editId ? "Guardar cambios" : "Crear sesión"}</Button>
       </div>
     </form>
   );

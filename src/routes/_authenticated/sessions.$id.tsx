@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, FileDown } from "lucide-react";
+import { ArrowLeft, FileDown, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -38,7 +38,14 @@ function SessionDetail() {
     <div className="mx-auto max-w-4xl space-y-6 print-area">
       <div className="flex items-center justify-between print:hidden">
         <Button variant="ghost" onClick={() => navigate({ to: "/sessions" })}><ArrowLeft className="mr-1 h-4 w-4" /> Volver</Button>
-        <Button variant="outline" onClick={exportPDF}><FileDown className="mr-1 h-4 w-4" /> Exportar PDF</Button>
+        <div className="flex gap-2">
+          <Button variant="outline" asChild>
+            <Link to="/sessions/new" search={{ edit: id }}>
+              <Pencil className="mr-1 h-4 w-4" /> Editar
+            </Link>
+          </Button>
+          <Button variant="outline" onClick={exportPDF}><FileDown className="mr-1 h-4 w-4" /> Exportar PDF</Button>
+        </div>
       </div>
 
       <header>
