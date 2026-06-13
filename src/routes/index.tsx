@@ -22,7 +22,7 @@ function Landing() {
             <div className="grid h-9 w-9 place-items-center rounded-lg bg-primary-gradient shadow-glow">
               <Trophy className="h-5 w-5 text-primary-foreground" />
             </div>
-            <span className="text-lg font-bold tracking-tight">FutbolCoach</span>
+            <span className="text-lg font-bold tracking-tight">PlaneoFUT</span>
           </div>
           <div className="flex items-center gap-2">
             <Button asChild variant="ghost" size="sm"><Link to="/auth">Entrar</Link></Button>
@@ -32,9 +32,6 @@ function Landing() {
       </header>
 
       <section className="mx-auto max-w-6xl px-6 pt-20 pb-16 text-center">
-        <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-          <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" /> Para entrenadores de fútbol
-        </span>
         <h1 className="mt-6 text-4xl font-extrabold tracking-tight md:text-6xl">
           Planifica tu <span className="bg-primary-gradient bg-clip-text text-transparent">temporada</span> como un profesional
         </h1>

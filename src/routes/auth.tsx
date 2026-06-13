@@ -86,7 +86,7 @@ function AuthPage() {
           <div className="grid h-9 w-9 place-items-center rounded-lg bg-background/20 backdrop-blur">
             <Trophy className="h-5 w-5" />
           </div>
-          <span className="font-bold tracking-tight">FutbolCoach</span>
+          <span className="font-bold tracking-tight">PlaneoFUT</span>
         </div>
         <div className="text-primary-foreground">
           <h2 className="text-3xl font-bold leading-tight">Planifica como un profesional.</h2>
