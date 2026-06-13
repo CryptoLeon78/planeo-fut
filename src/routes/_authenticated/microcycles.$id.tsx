@@ -160,8 +160,8 @@ function MicroDetailPage() {
 
   return (
     <DndContext sensors={sensors} onDragStart={onDragStart} onDragEnd={onDragEnd}>
-      <div className="mx-auto max-w-7xl space-y-6">
-        <div className="flex items-center justify-between">
+      <div className="mx-auto max-w-7xl space-y-6 print-area">
+        <div className="flex items-center justify-between print:hidden">
           <div className="flex items-center gap-3">
             <Button asChild variant="ghost" size="icon"><Link to="/microcycles"><ArrowLeft className="h-4 w-4" /></Link></Button>
             <div>
@@ -172,12 +172,20 @@ function MicroDetailPage() {
             </div>
           </div>
           <div className="flex gap-2">
+            <Button variant="outline" onClick={() => window.print()}><FileDown className="mr-1 h-4 w-4" /> PDF</Button>
             <Button variant="outline" onClick={() => setAiOpen(true)}>
               <Sparkles className="mr-1 h-4 w-4" /> Generar con IA
             </Button>
             <Button variant="ghost" size="icon" onClick={remove}><Trash2 className="h-4 w-4" /></Button>
           </div>
         </div>
+
+        <div className="hidden print:block">
+          <h1 className="text-2xl font-bold">{micro.name}</h1>
+          <p className="text-sm">Semana del {formatDate(micro.week_start, { day: "numeric", month: "long", year: "numeric" })} · partido {micro.match_day}</p>
+          {micro.weekly_objective && <p className="mt-2 text-sm">Objetivo: {micro.weekly_objective}</p>}
+        </div>
+
 
         <Card className="space-y-4 p-5">
           <div className="grid gap-3 md:grid-cols-2">
