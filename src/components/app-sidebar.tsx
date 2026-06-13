@@ -17,7 +17,9 @@ const items = [
   { title: "Pretemporada", url: "/preseason", icon: Sun },
   { title: "Temporada", url: "/season", icon: Medal },
   { title: "Calendario", url: "/calendar", icon: Calendar },
+  { title: "Analytics", url: "/analytics", icon: BarChart3 },
   { title: "Equipo", url: "/team", icon: Users },
+
 ] as const;
 
 export function AppSidebar() {
