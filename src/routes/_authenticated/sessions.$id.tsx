@@ -35,7 +35,7 @@ function SessionDetail() {
   function exportPDF() { window.print(); }
 
   return (
-    <div className="mx-auto max-w-4xl space-y-6">
+    <div className="mx-auto max-w-4xl space-y-6 print-area">
       <div className="flex items-center justify-between print:hidden">
         <Button variant="ghost" onClick={() => navigate({ to: "/sessions" })}><ArrowLeft className="mr-1 h-4 w-4" /> Volver</Button>
         <Button variant="outline" onClick={exportPDF}><FileDown className="mr-1 h-4 w-4" /> Exportar PDF</Button>

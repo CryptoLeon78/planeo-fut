@@ -1,5 +1,5 @@
 import { Link, useRouter, useRouterState } from "@tanstack/react-router";
-import { Calendar, ClipboardList, Dumbbell, LayoutDashboard, LogOut, Trophy, Users, CalendarRange, Sun, Medal } from "lucide-react";
+import { BarChart3, Calendar, ClipboardList, Dumbbell, LayoutDashboard, LogOut, Trophy, Users, CalendarRange, Sun, Medal } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
@@ -17,7 +17,9 @@ const items = [
   { title: "Pretemporada", url: "/preseason", icon: Sun },
   { title: "Temporada", url: "/season", icon: Medal },
   { title: "Calendario", url: "/calendar", icon: Calendar },
+  { title: "Analytics", url: "/analytics", icon: BarChart3 },
   { title: "Equipo", url: "/team", icon: Users },
+
 ] as const;
 
 export function AppSidebar() {
