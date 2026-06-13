@@ -118,3 +118,16 @@
   .shadow-glow { box-shadow: var(--shadow-glow); }
   .shadow-card { box-shadow: var(--shadow-card); }
 }
+
+@media print {
+  @page { margin: 14mm; size: A4; }
+  html, body { background: #fff !important; color: #000 !important; }
+  [data-sidebar], header.sticky, .print\:hidden { display: none !important; }
+  main { padding: 0 !important; }
+  .print-area, .print-area * { color: #000 !important; }
+  .print-area [class*="border"] { border-color: #d4d4d4 !important; }
+  .print-area .bg-card, .print-area .bg-secondary\/30, .print-area .bg-secondary\/40, .print-area .bg-accent { background: #f8f8f8 !important; }
+  .print-area .text-muted-foreground { color: #555 !important; }
+  .print-area .text-primary { color: #000 !important; }
+}
+
