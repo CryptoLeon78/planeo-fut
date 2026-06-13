@@ -38,6 +38,32 @@ function MicrocyclesPage() {
     qc.invalidateQueries({ queryKey: ["microcycles"] });
   }
 
+  async function duplicate(id: string) {
+    const { data: src } = await supabase.from("microcycles").select("*").eq("id", id).single();
+    if (!src) return;
+    const { data: slots } = await supabase.from("microcycle_slots").select("*").eq("microcycle_id", id);
+    const nextStart = new Date(src.week_start);
+    nextStart.setDate(nextStart.getDate() + 7);
+    const ymd = nextStart.toISOString().slice(0, 10);
+    const { data: created, error } = await (supabase.from("microcycles") as any).insert({
+      owner_id: src.owner_id, team_id: src.team_id, mesocycle_id: src.mesocycle_id,
+      name: `${src.name} (copia)`, week_start: ymd, match_day: src.match_day,
+      weekly_objective: src.weekly_objective, notes: src.notes,
+    }).select("id").single();
+    if (error || !created) return toast.error(error?.message ?? "Error");
+    if (slots?.length) {
+      const diff = 7 * 86400000;
+      await (supabase.from("microcycle_slots") as any).insert(slots.map((s: any) => ({
+        microcycle_id: created.id, slot_type: s.slot_type,
+        slot_date: new Date(new Date(s.slot_date).getTime() + diff).toISOString().slice(0, 10),
+        session_id: s.session_id, notes: s.notes,
+      })));
+    }
+    toast.success("Microciclo duplicado (+7 días)");
+    qc.invalidateQueries({ queryKey: ["microcycles"] });
+  }
+
+
   return (
     <div className="mx-auto max-w-6xl space-y-6">
       <div className="flex items-center justify-between">
