@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { ArrowLeft, Trash2, Sparkles, GripVertical, X } from "lucide-react";
+import { ArrowLeft, Trash2, Sparkles, GripVertical, X, FileDown } from "lucide-react";
 import { toast } from "sonner";
 import {
   DndContext, DragEndEvent, DragOverlay, DragStartEvent,
