@@ -121,7 +121,7 @@ function NewSessionPage() {
         const { error } = await supabase.from("sessions").update({
           name: parsed.data.name,
           objective: parsed.data.objective || null,
-          intensity: parsed.data.intensity || "media",
+          intensity: (parsed.data.intensity || "media") as "alta" | "baja" | "media" | "muy_alta",
           session_date: parsed.data.session_date || null,
           duration_min: parsed.data.duration_min === "" ? null : parsed.data.duration_min,
         }).eq("id", editId);
@@ -135,7 +135,7 @@ function NewSessionPage() {
           owner_id: user.id,
           name: parsed.data.name,
           objective: parsed.data.objective || null,
-          intensity: parsed.data.intensity || "media",
+          intensity: (parsed.data.intensity || "media") as "alta" | "baja" | "media" | "muy_alta",
           session_date: parsed.data.session_date || null,
           duration_min: parsed.data.duration_min === "" ? null : parsed.data.duration_min,
         }).select("id").single();
@@ -178,10 +178,10 @@ function NewSessionPage() {
       </div>
 
       <Card className="grid gap-4 p-5 sm:grid-cols-2">
-        <div className="space-y-1.5 sm:col-span-2"><Label htmlFor="name">Nombre *</Label><Input id="name" name="name" defaultValue={editData?.session?.name} required maxLength={120} placeholder="Ej. MD-3 Posesión bajo presión" /></div>
-        <div className="space-y-1.5 sm:col-span-2"><Label htmlFor="objective">Objetivo</Label><Textarea id="objective" name="objective" defaultValue={editData?.session?.objective} rows={2} /></div>
-        <div className="space-y-1.5"><Label htmlFor="session_date">Fecha</Label><Input id="session_date" name="session_date" defaultValue={editData?.session?.session_date} type="date" /></div>
-        <div className="space-y-1.5"><Label htmlFor="duration_min">Duración total (min)</Label><Input id="duration_min" name="duration_min" defaultValue={editData?.session?.duration_min} type="number" min={1} max={360} placeholder="75" /></div>
+        <div className="space-y-1.5 sm:col-span-2"><Label htmlFor="name">Nombre *</Label><Input id="name" name="name" defaultValue={editData?.session?.name ?? ""} required maxLength={120} placeholder="Ej. MD-3 Posesión bajo presión" /></div>
+        <div className="space-y-1.5 sm:col-span-2"><Label htmlFor="objective">Objetivo</Label><Textarea id="objective" name="objective" defaultValue={editData?.session?.objective ?? ""} rows={2} /></div>
+        <div className="space-y-1.5"><Label htmlFor="session_date">Fecha</Label><Input id="session_date" name="session_date" defaultValue={editData?.session?.session_date ?? ""} type="date" /></div>
+        <div className="space-y-1.5"><Label htmlFor="duration_min">Duración total (min)</Label><Input id="duration_min" name="duration_min" defaultValue={editData?.session?.duration_min ?? ""} type="number" min={1} max={360} placeholder="75" /></div>
         <div className="space-y-1.5 sm:col-span-2">
           <Label>Intensidad</Label>
           <input type="hidden" name="intensity" defaultValue={editData?.session?.intensity || "media"} id="hidden-intensity" />
