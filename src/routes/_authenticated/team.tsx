@@ -48,7 +48,7 @@ function TeamPage() {
     queryKey: ["players", selectedTeam?.id],
     enabled: !!selectedTeam?.id && !!user,
     queryFn: async () => {
-      const { data } = await supabase.from("players").select("*").eq("team_id", selectedTeam.id).order("number");
+      const { data } = await (supabase as any).from("players").select("*").eq("team_id", selectedTeam.id).order("number");
       return data ?? [];
     },
   });
@@ -80,7 +80,7 @@ function TeamPage() {
       if (uploadError) throw uploadError;
 
       const { data } = supabase.storage.from("team-images").getPublicUrl(fileName);
-      await supabase.from("teams").update({ shield_url: data.publicUrl }).eq("id", teamId);
+      await (supabase.from("teams") as any).update({ shield_url: data.publicUrl }).eq("id", teamId);
       qc.invalidateQueries({ queryKey: ["teams"] });
       toast.success("Escudo actualizado");
     } catch (err: any) {
@@ -96,7 +96,7 @@ function TeamPage() {
     const number = fd.get("number") as string;
     const position = fd.get("position") as string;
 
-    const { error } = await supabase.from("players").insert({
+    const { error } = await (supabase as any).from("players").insert({
       team_id: selectedTeam.id,
       owner_id: user.id,
       name,
@@ -119,7 +119,7 @@ function TeamPage() {
       if (uploadError) throw uploadError;
 
       const { data } = supabase.storage.from("team-images").getPublicUrl(fileName);
-      await supabase.from("players").update({ photo_url: data.publicUrl }).eq("id", playerId);
+      await (supabase as any).from("players").update({ photo_url: data.publicUrl }).eq("id", playerId);
       qc.invalidateQueries({ queryKey: ["players", selectedTeam?.id] });
       toast.success("Foto del jugador actualizada");
     } catch (err: any) {
@@ -129,7 +129,7 @@ function TeamPage() {
 
   async function removePlayer(playerId: string) {
     if (!confirm("¿Eliminar este jugador?")) return;
-    const { error } = await supabase.from("players").delete().eq("id", playerId);
+    const { error } = await (supabase as any).from("players").delete().eq("id", playerId);
     if (error) return toast.error(error.message);
     qc.invalidateQueries({ queryKey: ["players", selectedTeam?.id] });
   }
@@ -204,10 +204,10 @@ function TeamPage() {
                   </div>
                 </div>
                 <div className="flex gap-1">
-                  <Button size="icon" variant="ghost" onClick={() => { setSelectedTeam(t); setShowTeamDetail(true); }}>
+                  <Button size="icon" variant="ghost" aria-label={`Editar equipo ${t.name}`} onClick={() => { setSelectedTeam(t); setShowTeamDetail(true); }}>
                     <Edit2 className="h-4 w-4" />
                   </Button>
-                  <Button size="icon" variant="ghost" onClick={() => remove(t.id)}><Trash2 className="h-4 w-4" /></Button>
+                  <Button size="icon" variant="ghost" aria-label={`Eliminar equipo ${t.name}`} onClick={() => remove(t.id)}><Trash2 className="h-4 w-4" /></Button>
                 </div>
               </div>
               <div className="mt-2 flex flex-wrap gap-1.5">
@@ -290,7 +290,7 @@ function TeamPage() {
                             <p className="text-sm font-medium">{p.number ? `#${p.number}` : ""} {p.name}</p>
                             {p.position && <p className="text-xs text-muted-foreground">{p.position}</p>}
                           </div>
-                          <Button size="icon" variant="ghost" onClick={() => removePlayer(p.id)}>
+                          <Button size="icon" variant="ghost" aria-label={`Eliminar jugador ${p.name}`} onClick={() => removePlayer(p.id)}>
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
