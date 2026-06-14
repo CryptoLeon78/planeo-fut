@@ -204,10 +204,10 @@ function TeamPage() {
                   </div>
                 </div>
                 <div className="flex gap-1">
-                  <Button size="icon" variant="ghost" onClick={() => { setSelectedTeam(t); setShowTeamDetail(true); }}>
+                  <Button size="icon" variant="ghost" aria-label={`Editar equipo ${t.name}`} onClick={() => { setSelectedTeam(t); setShowTeamDetail(true); }}>
                     <Edit2 className="h-4 w-4" />
                   </Button>
-                  <Button size="icon" variant="ghost" onClick={() => remove(t.id)}><Trash2 className="h-4 w-4" /></Button>
+                  <Button size="icon" variant="ghost" aria-label={`Eliminar equipo ${t.name}`} onClick={() => remove(t.id)}><Trash2 className="h-4 w-4" /></Button>
                 </div>
               </div>
               <div className="mt-2 flex flex-wrap gap-1.5">
@@ -290,7 +290,7 @@ function TeamPage() {
                             <p className="text-sm font-medium">{p.number ? `#${p.number}` : ""} {p.name}</p>
                             {p.position && <p className="text-xs text-muted-foreground">{p.position}</p>}
                           </div>
-                          <Button size="icon" variant="ghost" onClick={() => removePlayer(p.id)}>
+                          <Button size="icon" variant="ghost" aria-label={`Eliminar jugador ${p.name}`} onClick={() => removePlayer(p.id)}>
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>

@@ -71,9 +71,9 @@ function CalendarPage() {
           </p>
         </div>
         <div className="flex items-center gap-1">
-          <Button variant="outline" size="icon" onClick={() => setOffset((o) => o - 1)}><ChevronLeft className="h-4 w-4" /></Button>
+          <Button variant="outline" size="icon" aria-label="Semana anterior" onClick={() => setOffset((o) => o - 1)}><ChevronLeft className="h-4 w-4" /></Button>
           <Button variant="outline" size="sm" onClick={() => setOffset(0)}>Hoy</Button>
-          <Button variant="outline" size="icon" onClick={() => setOffset((o) => o + 1)}><ChevronRight className="h-4 w-4" /></Button>
+          <Button variant="outline" size="icon" aria-label="Semana siguiente" onClick={() => setOffset((o) => o + 1)}><ChevronRight className="h-4 w-4" /></Button>
         </div>
       </div>
 

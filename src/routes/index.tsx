@@ -1,21 +1,63 @@
-import { createFileRoute, Link, Navigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { Calendar, ClipboardList, Dumbbell, LineChart, Trophy, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 
+const SITE_URL = "https://planeo-fut.lovable.app";
+const TITLE = "PlaneoFUT — Planificación profesional de entrenamientos de fútbol";
+const DESC = "Crea ejercicios, sesiones, microciclos y temporadas completas. La herramienta del entrenador moderno para fútbol base, cantera, amateur y alto rendimiento.";
+
 export const Route = createFileRoute("/")({
-  ssr: false,
   component: Landing,
+  head: () => ({
+    meta: [
+      { title: TITLE },
+      { name: "description", content: DESC },
+      { property: "og:title", content: TITLE },
+      { property: "og:description", content: DESC },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: `${SITE_URL}/` },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: TITLE },
+      { name: "twitter:description", content: DESC },
+    ],
+    links: [{ rel: "canonical", href: `${SITE_URL}/` }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "PlaneoFUT",
+          url: SITE_URL,
+          description: DESC,
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "PlaneoFUT",
+          url: SITE_URL,
+          email: "info@planeofut.com",
+          description: "Herramienta de planificación de entrenamientos de fútbol para entrenadores.",
+        }),
+      },
+    ],
+  }),
 });
 
 function Landing() {
-  const { session, loading } = useAuth();
-  if (loading) return null;
-  if (session) return <Navigate to="/dashboard" />;
+  const { session } = useAuth();
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (session) navigate({ to: "/dashboard" });
+  }, [session, navigate]);
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero */}
       <header className="border-b border-border/60">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
           <div className="flex items-center gap-2">
