@@ -121,7 +121,7 @@ function NewSessionPage() {
         const { error } = await supabase.from("sessions").update({
           name: parsed.data.name,
           objective: parsed.data.objective || null,
-          intensity: parsed.data.intensity || "media",
+          intensity: (parsed.data.intensity || "media") as "alta" | "baja" | "media" | "muy_alta",
           session_date: parsed.data.session_date || null,
           duration_min: parsed.data.duration_min === "" ? null : parsed.data.duration_min,
         }).eq("id", editId);
