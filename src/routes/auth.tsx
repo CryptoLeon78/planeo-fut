@@ -16,6 +16,18 @@ import { useAuth } from "@/hooks/use-auth";
 export const Route = createFileRoute("/auth")({
   ssr: false,
   component: AuthPage,
+  head: () => ({
+    meta: [
+      { title: "Accede a PlaneoFUT — Gestión de Entrenamientos" },
+      { name: "description", content: "Inicia sesión o crea tu cuenta gratuita en PlaneoFUT para planificar ejercicios, sesiones y microciclos de fútbol." },
+      { property: "og:title", content: "Accede a PlaneoFUT" },
+      { property: "og:description", content: "Inicia sesión o crea tu cuenta gratuita para empezar a planificar tu temporada." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://planeo-fut.lovable.app/auth" },
+      { name: "robots", content: "noindex" },
+    ],
+    links: [{ rel: "canonical", href: "https://planeo-fut.lovable.app/auth" }],
+  }),
 });
 
 const emailSchema = z.string().trim().email("Email inválido").max(255);

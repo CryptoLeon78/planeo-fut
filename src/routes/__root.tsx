@@ -78,11 +78,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "PlaneoFUT — Planificación profesional de entrenamientos" },
-      { name: "description", content: "Diseña ejercicios, sesiones, microciclos y temporadas completas. La herramienta del entrenador moderno." },
       { name: "author", content: "PlaneoFUT" },
-      { property: "og:title", content: "PlaneoFUT" },
-      { property: "og:description", content: "Planifica toda tu temporada de fútbol como un profesional." },
+      { property: "og:site_name", content: "PlaneoFUT" },
       { property: "og:type", content: "website" },
     ],
     links: [

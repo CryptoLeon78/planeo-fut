@@ -2,6 +2,7 @@ import { useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
+import { Upload, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,6 +44,8 @@ export function ExerciseForm({ initial, onSaved }: ExerciseFormProps) {
   const [busy, setBusy] = useState(false);
   const [tags, setTags] = useState<string[]>(initial?.tags ?? []);
   const [tagInput, setTagInput] = useState("");
+  const [imageUrl, setImageUrl] = useState<string>(initial?.image_url ?? "");
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   const addTag = (t: string) => {
     const v = t.trim().toLowerCase();
@@ -50,6 +53,32 @@ export function ExerciseForm({ initial, onSaved }: ExerciseFormProps) {
     setTags([...tags, v]);
     setTagInput("");
   };
+
+  async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    setUploadingImage(true);
+    try {
+      const fileName = `${user.id}/${Date.now()}-${file.name}`;
+      const { error: uploadError } = await supabase.storage
+        .from("exercise-images")
+        .upload(fileName, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      const { data } = supabase.storage
+        .from("exercise-images")
+        .getPublicUrl(fileName);
+
+      setImageUrl(data.publicUrl);
+      toast.success("Imagen subida correctamente");
+    } catch (err: any) {
+      toast.error(err?.message ?? "Error al subir la imagen");
+    } finally {
+      setUploadingImage(false);
+    }
+  }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -79,6 +108,7 @@ export function ExerciseForm({ initial, onSaved }: ExerciseFormProps) {
       variants: parsed.data.variants || null,
       observations: parsed.data.observations || null,
       tags,
+      image_url: imageUrl || null,
     };
 
     setBusy(true);
@@ -154,6 +184,37 @@ export function ExerciseForm({ initial, onSaved }: ExerciseFormProps) {
       <div className="space-y-1.5">
         <Label htmlFor="observations">Observaciones</Label>
         <Textarea id="observations" name="observations" defaultValue={initial?.observations ?? ""} rows={2} />
+      </div>
+
+      <div className="space-y-1.5">
+        <Label>Foto/Captura del ejercicio</Label>
+        {imageUrl ? (
+          <div className="relative inline-block">
+            <img src={imageUrl} alt="Ejercicio" className="h-32 w-32 rounded-lg border border-border object-cover" />
+            <button
+              type="button"
+              onClick={() => setImageUrl("")}
+              className="absolute -right-2 -top-2 rounded-full bg-destructive p-1 text-destructive-foreground hover:bg-destructive/90"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        ) : (
+          <label className="flex cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-border bg-muted/30 p-6 hover:bg-muted/50">
+            <div className="text-center">
+              <Upload className="mx-auto h-6 w-6 text-muted-foreground" />
+              <p className="mt-1 text-sm text-muted-foreground">Haz clic para subir una imagen</p>
+              <p className="text-xs text-muted-foreground">PNG, JPG, GIF (máx. 5MB)</p>
+            </div>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              disabled={uploadingImage}
+              className="hidden"
+            />
+          </label>
+        )}
       </div>
 
       <div className="space-y-1.5">
