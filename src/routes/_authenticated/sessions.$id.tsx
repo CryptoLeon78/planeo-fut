@@ -23,7 +23,7 @@ function SessionDetail() {
       const { data: blocks } = await supabase.from("session_blocks").select("*").eq("session_id", id).order("position");
       const blockIds = (blocks ?? []).map((b: any) => b.id);
       const { data: items } = blockIds.length
-        ? await supabase.from("session_block_exercises").select("*, exercises(name, duration_min, game_phase)").in("block_id", blockIds).order("position")
+        ? await supabase.from("session_block_exercises").select("*, exercises(name, duration_min, game_phase, image_url)").in("block_id", blockIds).order("position")
         : { data: [] };
       return { session: s, blocks: blocks ?? [], items: items ?? [] };
     },
@@ -73,12 +73,15 @@ function SessionDetail() {
               {blockItems.length > 0 ? (
                 <ol className="space-y-2">
                   {blockItems.map((it: any, idx: number) => (
-                    <li key={it.id} className="flex items-start justify-between rounded-md border border-border/60 bg-secondary/30 p-3">
-                      <div>
+                    <li key={it.id} className="flex items-start gap-3 rounded-md border border-border/60 bg-secondary/30 p-3">
+                      <div className="flex-1">
                         <p className="text-sm font-medium">{idx + 1}. {it.exercises?.name}</p>
                         {it.notes && <p className="text-xs text-muted-foreground">{it.notes}</p>}
+                        {it.exercises?.image_url && (
+                          <img src={it.exercises.image_url} alt={it.exercises.name} className="mt-2 h-24 w-24 rounded border border-border object-cover print:h-32 print:w-32" />
+                        )}
                       </div>
-                      {it.exercises?.duration_min && <Badge variant="outline">{it.exercises.duration_min}′</Badge>}
+                      {it.exercises?.duration_min && <Badge variant="outline" className="shrink-0">{it.exercises.duration_min}′</Badge>}
                     </li>
                   ))}
                 </ol>
