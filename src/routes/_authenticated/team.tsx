@@ -48,7 +48,7 @@ function TeamPage() {
     queryKey: ["players", selectedTeam?.id],
     enabled: !!selectedTeam?.id && !!user,
     queryFn: async () => {
-      const { data } = await supabase.from("players").select("*").eq("team_id", selectedTeam.id).order("number");
+      const { data } = await (supabase as any).from("players").select("*").eq("team_id", selectedTeam.id).order("number");
       return data ?? [];
     },
   });
@@ -80,7 +80,7 @@ function TeamPage() {
       if (uploadError) throw uploadError;
 
       const { data } = supabase.storage.from("team-images").getPublicUrl(fileName);
-      await supabase.from("teams").update({ shield_url: data.publicUrl }).eq("id", teamId);
+      await (supabase.from("teams") as any).update({ shield_url: data.publicUrl }).eq("id", teamId);
       qc.invalidateQueries({ queryKey: ["teams"] });
       toast.success("Escudo actualizado");
     } catch (err: any) {
@@ -96,7 +96,7 @@ function TeamPage() {
     const number = fd.get("number") as string;
     const position = fd.get("position") as string;
 
-    const { error } = await supabase.from("players").insert({
+    const { error } = await (supabase as any).from("players").insert({
       team_id: selectedTeam.id,
       owner_id: user.id,
       name,
@@ -119,7 +119,7 @@ function TeamPage() {
       if (uploadError) throw uploadError;
 
       const { data } = supabase.storage.from("team-images").getPublicUrl(fileName);
-      await supabase.from("players").update({ photo_url: data.publicUrl }).eq("id", playerId);
+      await (supabase as any).from("players").update({ photo_url: data.publicUrl }).eq("id", playerId);
       qc.invalidateQueries({ queryKey: ["players", selectedTeam?.id] });
       toast.success("Foto del jugador actualizada");
     } catch (err: any) {
@@ -129,7 +129,7 @@ function TeamPage() {
 
   async function removePlayer(playerId: string) {
     if (!confirm("¿Eliminar este jugador?")) return;
-    const { error } = await supabase.from("players").delete().eq("id", playerId);
+    const { error } = await (supabase as any).from("players").delete().eq("id", playerId);
     if (error) return toast.error(error.message);
     qc.invalidateQueries({ queryKey: ["players", selectedTeam?.id] });
   }
