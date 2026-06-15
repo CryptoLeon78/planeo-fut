@@ -27,6 +27,7 @@ import { Route as AuthenticatedSeasonIndexRouteImport } from './routes/_authenti
 import { Route as AuthenticatedPreseasonIndexRouteImport } from './routes/_authenticated/preseason.index'
 import { Route as AuthenticatedMicrocyclesIndexRouteImport } from './routes/_authenticated/microcycles.index'
 import { Route as AuthenticatedExercisesIndexRouteImport } from './routes/_authenticated/exercises.index'
+import { Route as EjerciciosFutbolBaseSlugRouteImport } from './routes/ejercicios.futbol-base.$slug'
 import { Route as AuthenticatedSessionsNewRouteImport } from './routes/_authenticated/sessions.new'
 import { Route as AuthenticatedSessionsIdRouteImport } from './routes/_authenticated/sessions.$id'
 import { Route as AuthenticatedSeasonIdRouteImport } from './routes/_authenticated/season.$id'
@@ -130,6 +131,12 @@ const AuthenticatedExercisesIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedExercisesRoute,
   } as any)
+const EjerciciosFutbolBaseSlugRoute =
+  EjerciciosFutbolBaseSlugRouteImport.update({
+    id: '/$slug',
+    path: '/$slug',
+    getParentRoute: () => EjerciciosFutbolBaseRoute,
+  } as any)
 const AuthenticatedSessionsNewRoute =
   AuthenticatedSessionsNewRouteImport.update({
     id: '/new',
@@ -183,7 +190,7 @@ export interface FileRoutesByFullPath {
   '/season': typeof AuthenticatedSeasonRouteWithChildren
   '/sessions': typeof AuthenticatedSessionsRouteWithChildren
   '/team': typeof AuthenticatedTeamRoute
-  '/ejercicios/futbol-base': typeof EjerciciosFutbolBaseRoute
+  '/ejercicios/futbol-base': typeof EjerciciosFutbolBaseRouteWithChildren
   '/exercises/$id': typeof AuthenticatedExercisesIdRoute
   '/microcycles/$id': typeof AuthenticatedMicrocyclesIdRoute
   '/microcycles/new': typeof AuthenticatedMicrocyclesNewRoute
@@ -191,6 +198,7 @@ export interface FileRoutesByFullPath {
   '/season/$id': typeof AuthenticatedSeasonIdRoute
   '/sessions/$id': typeof AuthenticatedSessionsIdRoute
   '/sessions/new': typeof AuthenticatedSessionsNewRoute
+  '/ejercicios/futbol-base/$slug': typeof EjerciciosFutbolBaseSlugRoute
   '/exercises/': typeof AuthenticatedExercisesIndexRoute
   '/microcycles/': typeof AuthenticatedMicrocyclesIndexRoute
   '/preseason/': typeof AuthenticatedPreseasonIndexRoute
@@ -204,7 +212,7 @@ export interface FileRoutesByTo {
   '/calendar': typeof AuthenticatedCalendarRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/team': typeof AuthenticatedTeamRoute
-  '/ejercicios/futbol-base': typeof EjerciciosFutbolBaseRoute
+  '/ejercicios/futbol-base': typeof EjerciciosFutbolBaseRouteWithChildren
   '/exercises/$id': typeof AuthenticatedExercisesIdRoute
   '/microcycles/$id': typeof AuthenticatedMicrocyclesIdRoute
   '/microcycles/new': typeof AuthenticatedMicrocyclesNewRoute
@@ -212,6 +220,7 @@ export interface FileRoutesByTo {
   '/season/$id': typeof AuthenticatedSeasonIdRoute
   '/sessions/$id': typeof AuthenticatedSessionsIdRoute
   '/sessions/new': typeof AuthenticatedSessionsNewRoute
+  '/ejercicios/futbol-base/$slug': typeof EjerciciosFutbolBaseSlugRoute
   '/exercises': typeof AuthenticatedExercisesIndexRoute
   '/microcycles': typeof AuthenticatedMicrocyclesIndexRoute
   '/preseason': typeof AuthenticatedPreseasonIndexRoute
@@ -232,7 +241,7 @@ export interface FileRoutesById {
   '/_authenticated/season': typeof AuthenticatedSeasonRouteWithChildren
   '/_authenticated/sessions': typeof AuthenticatedSessionsRouteWithChildren
   '/_authenticated/team': typeof AuthenticatedTeamRoute
-  '/ejercicios/futbol-base': typeof EjerciciosFutbolBaseRoute
+  '/ejercicios/futbol-base': typeof EjerciciosFutbolBaseRouteWithChildren
   '/_authenticated/exercises/$id': typeof AuthenticatedExercisesIdRoute
   '/_authenticated/microcycles/$id': typeof AuthenticatedMicrocyclesIdRoute
   '/_authenticated/microcycles/new': typeof AuthenticatedMicrocyclesNewRoute
@@ -240,6 +249,7 @@ export interface FileRoutesById {
   '/_authenticated/season/$id': typeof AuthenticatedSeasonIdRoute
   '/_authenticated/sessions/$id': typeof AuthenticatedSessionsIdRoute
   '/_authenticated/sessions/new': typeof AuthenticatedSessionsNewRoute
+  '/ejercicios/futbol-base/$slug': typeof EjerciciosFutbolBaseSlugRoute
   '/_authenticated/exercises/': typeof AuthenticatedExercisesIndexRoute
   '/_authenticated/microcycles/': typeof AuthenticatedMicrocyclesIndexRoute
   '/_authenticated/preseason/': typeof AuthenticatedPreseasonIndexRoute
@@ -268,6 +278,7 @@ export interface FileRouteTypes {
     | '/season/$id'
     | '/sessions/$id'
     | '/sessions/new'
+    | '/ejercicios/futbol-base/$slug'
     | '/exercises/'
     | '/microcycles/'
     | '/preseason/'
@@ -289,6 +300,7 @@ export interface FileRouteTypes {
     | '/season/$id'
     | '/sessions/$id'
     | '/sessions/new'
+    | '/ejercicios/futbol-base/$slug'
     | '/exercises'
     | '/microcycles'
     | '/preseason'
@@ -316,6 +328,7 @@ export interface FileRouteTypes {
     | '/_authenticated/season/$id'
     | '/_authenticated/sessions/$id'
     | '/_authenticated/sessions/new'
+    | '/ejercicios/futbol-base/$slug'
     | '/_authenticated/exercises/'
     | '/_authenticated/microcycles/'
     | '/_authenticated/preseason/'
@@ -327,7 +340,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
-  EjerciciosFutbolBaseRoute: typeof EjerciciosFutbolBaseRoute
+  EjerciciosFutbolBaseRoute: typeof EjerciciosFutbolBaseRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -457,6 +470,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/exercises/'
       preLoaderRoute: typeof AuthenticatedExercisesIndexRouteImport
       parentRoute: typeof AuthenticatedExercisesRoute
+    }
+    '/ejercicios/futbol-base/$slug': {
+      id: '/ejercicios/futbol-base/$slug'
+      path: '/$slug'
+      fullPath: '/ejercicios/futbol-base/$slug'
+      preLoaderRoute: typeof EjerciciosFutbolBaseSlugRouteImport
+      parentRoute: typeof EjerciciosFutbolBaseRoute
     }
     '/_authenticated/sessions/new': {
       id: '/_authenticated/sessions/new'
@@ -617,11 +637,22 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface EjerciciosFutbolBaseRouteChildren {
+  EjerciciosFutbolBaseSlugRoute: typeof EjerciciosFutbolBaseSlugRoute
+}
+
+const EjerciciosFutbolBaseRouteChildren: EjerciciosFutbolBaseRouteChildren = {
+  EjerciciosFutbolBaseSlugRoute: EjerciciosFutbolBaseSlugRoute,
+}
+
+const EjerciciosFutbolBaseRouteWithChildren =
+  EjerciciosFutbolBaseRoute._addFileChildren(EjerciciosFutbolBaseRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
-  EjerciciosFutbolBaseRoute: EjerciciosFutbolBaseRoute,
+  EjerciciosFutbolBaseRoute: EjerciciosFutbolBaseRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
