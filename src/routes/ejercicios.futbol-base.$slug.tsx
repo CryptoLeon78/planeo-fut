@@ -256,7 +256,7 @@ function ExerciseDetail() {
         <section className="mt-8">
           <h2 className="text-xl font-bold tracking-tight">Etiquetas</h2>
           <div className="mt-3 flex flex-wrap gap-2">
-            {ex.tags.map((t) => <Badge key={t} variant="secondary">#{t}</Badge>)}
+            {ex.tags.map((t: string) => <Badge key={t} variant="secondary">#{t}</Badge>)}
           </div>
         </section>
 
