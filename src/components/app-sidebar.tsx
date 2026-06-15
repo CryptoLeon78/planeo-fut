@@ -19,7 +19,7 @@ const items = [
   { title: "Calendario", url: "/calendar", icon: Calendar },
   { title: "Analytics", url: "/analytics", icon: BarChart3 },
   { title: "Equipo", url: "/team", icon: Users },
-
+  { title: "Biblioteca pública", url: "/ejercicios/futbol-base", icon: BookOpen },
 ] as const;
 
 export function AppSidebar() {
