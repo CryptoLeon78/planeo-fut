@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { Calendar, ClipboardList, Dumbbell, LineChart, Trophy, Users } from "lucide-react";
+import { Calendar, ClipboardList, Dumbbell, LineChart, Loader2, Trophy, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -50,11 +50,24 @@ export const Route = createFileRoute("/")({
 });
 
 function Landing() {
-  const { session } = useAuth();
+  const { session, loading } = useAuth();
   const navigate = useNavigate();
+
+  // Only redirect once we know the auth state (loading === false)
   useEffect(() => {
-    if (session) navigate({ to: "/dashboard" });
-  }, [session, navigate]);
+    if (!loading && session) {
+      navigate({ to: "/dashboard" });
+    }
+  }, [session, loading, navigate]);
+
+  // Avoid blank flash: show spinner while Supabase resolves the session
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
