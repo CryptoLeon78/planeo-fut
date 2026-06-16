@@ -13,9 +13,14 @@ function createSupabaseClient() {
       ...(!SUPABASE_URL ? ['SUPABASE_URL'] : []),
       ...(!SUPABASE_PUBLISHABLE_KEY ? ['SUPABASE_PUBLISHABLE_KEY'] : []),
     ];
-    const message = `Missing Supabase environment variable(s): ${missing.join(', ')}. Connect Supabase in Lovable Cloud.`;
-    console.error(`[Supabase] ${message}`);
-    throw new Error(message);
+    // Log the error but do NOT throw — throwing here crashes SSR hydration
+    // and causes a blank page. Return a no-op proxy instead.
+    console.error(
+      `[Supabase] Missing environment variable(s): ${missing.join(', ')}. ` +
+      'Connect Supabase in Lovable Cloud or add them to your .env file.',
+    );
+    // Return a safe stub so the app can at least render the error/auth state
+    return null as unknown as ReturnType<typeof createClient<Database>>;
   }
 
   return createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
@@ -31,10 +36,14 @@ let _supabase: ReturnType<typeof createSupabaseClient> | undefined;
 
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
-export const supabase = new Proxy({} as ReturnType<typeof createSupabaseClient>, {
+export const supabase = new Proxy({} as NonNullable<ReturnType<typeof createSupabaseClient>>, {
   get(_, prop, receiver) {
     if (!_supabase) _supabase = createSupabaseClient();
+    if (!_supabase) {
+      // If still null (missing env vars), return a no-op function for auth calls
+      // so the app doesn't crash while showing the error state
+      return () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } });
+    }
     return Reflect.get(_supabase, prop, receiver);
   },
 });
-
