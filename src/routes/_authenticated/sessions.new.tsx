@@ -50,10 +50,30 @@ const schema = z.object({
 function NewSessionPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { edit: editId } = Route.useSearch();
+  const { edit: editId, fromExercise } = Route.useSearch();
   const [busy, setBusy] = useState(false);
   const [blocks, setBlocks] = useState<BlockDraft[]>(DEFAULT_BLOCKS);
   const [dragIdx, setDragIdx] = useState<number | null>(null);
+
+  const { data: seedExercise } = useQuery({
+    queryKey: ["session-seed-exercise", fromExercise],
+    enabled: !!fromExercise && !editId,
+    queryFn: async () => {
+      const { data } = await supabase.from("exercises").select("*").eq("id", fromExercise!).single();
+      if (data) {
+        setBlocks((prev) =>
+          prev.map((b) =>
+            b.block_type === "parte_principal"
+              ? { ...b, exercise_ids: [data.id], duration_min: data.duration_min || b.duration_min }
+              : b,
+          ),
+        );
+      }
+      return data;
+    },
+  });
+
+
 
   const { data: editData } = useQuery({
     queryKey: ["session-edit", editId],
