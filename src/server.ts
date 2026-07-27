@@ -37,18 +37,65 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
   });
 }
 
+const CSP = [
+  "default-src 'self'",
+  // React/TanStack hydration + Vite dev; inline scripts injected by SSR runtime.
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.lovable.dev https://*.lovable.app",
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+  "img-src 'self' data: blob: https:",
+  "font-src 'self' data: https://fonts.gstatic.com",
+  "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.lovable.dev https://*.lovable.app https://ai.gateway.lovable.dev",
+  // Allow embedding inside the Lovable editor preview iframe.
+  "frame-ancestors 'self' https://*.lovable.dev https://*.lovable.app",
+  "frame-src 'self' https://accounts.google.com https://*.supabase.co",
+  "base-uri 'self'",
+  "form-action 'self' https://accounts.google.com https://*.supabase.co",
+  "object-src 'none'",
+  "worker-src 'self' blob:",
+].join("; ");
+
+function applySecurityHeaders(response: Response): Response {
+  const contentType = response.headers.get("content-type") ?? "";
+  const headers = new Headers(response.headers);
+
+  headers.set("X-Content-Type-Options", "nosniff");
+  headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+  headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
+  headers.set(
+    "Permissions-Policy",
+    "camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=()",
+  );
+  headers.set("Cross-Origin-Opener-Policy", "same-origin");
+  headers.set("X-Frame-Options", "SAMEORIGIN");
+
+  // Only send CSP on HTML documents — assets and JSON responses don't need it,
+  // and adding it to JSON breaks nothing but adds noise.
+  if (contentType.includes("text/html")) {
+    headers.set("Content-Security-Policy", CSP);
+  }
+
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
-      return await normalizeCatastrophicSsrResponse(response);
+      return applySecurityHeaders(await normalizeCatastrophicSsrResponse(response));
     } catch (error) {
       console.error(error);
-      return new Response(renderErrorPage(), {
-        status: 500,
-        headers: { "content-type": "text/html; charset=utf-8" },
-      });
+      return applySecurityHeaders(
+        new Response(renderErrorPage(), {
+          status: 500,
+          headers: { "content-type": "text/html; charset=utf-8" },
+        }),
+      );
     }
   },
 };
+
