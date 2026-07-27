@@ -20,6 +20,7 @@ export const Route = createFileRoute("/_authenticated/sessions/new")({
   component: NewSessionPage,
   validateSearch: (search: Record<string, unknown>) => ({
     edit: (search.edit as string) || undefined,
+    fromExercise: (search.fromExercise as string) || undefined,
   }),
 });
 
@@ -49,10 +50,30 @@ const schema = z.object({
 function NewSessionPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { edit: editId } = Route.useSearch();
+  const { edit: editId, fromExercise } = Route.useSearch();
   const [busy, setBusy] = useState(false);
   const [blocks, setBlocks] = useState<BlockDraft[]>(DEFAULT_BLOCKS);
   const [dragIdx, setDragIdx] = useState<number | null>(null);
+
+  const { data: seedExercise } = useQuery({
+    queryKey: ["session-seed-exercise", fromExercise],
+    enabled: !!fromExercise && !editId,
+    queryFn: async () => {
+      const { data } = await supabase.from("exercises").select("*").eq("id", fromExercise!).single();
+      if (data) {
+        setBlocks((prev) =>
+          prev.map((b) =>
+            b.block_type === "parte_principal"
+              ? { ...b, exercise_ids: [data.id], duration_min: data.duration_min || b.duration_min }
+              : b,
+          ),
+        );
+      }
+      return data;
+    },
+  });
+
+
 
   const { data: editData } = useQuery({
     queryKey: ["session-edit", editId],
@@ -170,27 +191,38 @@ function NewSessionPage() {
     }
   }
 
+  const seedName = seedExercise ? `Sesión: ${seedExercise.name}` : "";
+  const seedObjective = seedExercise?.objective ?? "";
+  const seedIntensity = seedExercise?.intensity ?? "media";
+  const seedDuration = seedExercise?.duration_min ?? "";
+  const formKey = editData?.session?.id ?? seedExercise?.id ?? "new";
+
   return (
-    <form onSubmit={onSubmit} className="mx-auto max-w-5xl space-y-6">
+    <form key={formKey} onSubmit={onSubmit} className="mx-auto max-w-5xl space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">{editId ? "Editar sesión" : "Nueva sesión"}</h1>
-        <p className="text-sm text-muted-foreground">Define los datos básicos y arrastra los bloques para reordenarlos.</p>
+        <p className="text-sm text-muted-foreground">
+          {seedExercise
+            ? `Sesión prellenada con el ejercicio "${seedExercise.name}". Ajusta los bloques según necesites.`
+            : "Define los datos básicos y arrastra los bloques para reordenarlos."}
+        </p>
       </div>
 
       <Card className="grid gap-4 p-5 sm:grid-cols-2">
-        <div className="space-y-1.5 sm:col-span-2"><Label htmlFor="name">Nombre *</Label><Input id="name" name="name" defaultValue={editData?.session?.name ?? ""} required maxLength={120} placeholder="Ej. MD-3 Posesión bajo presión" /></div>
-        <div className="space-y-1.5 sm:col-span-2"><Label htmlFor="objective">Objetivo</Label><Textarea id="objective" name="objective" defaultValue={editData?.session?.objective ?? ""} rows={2} /></div>
+        <div className="space-y-1.5 sm:col-span-2"><Label htmlFor="name">Nombre *</Label><Input id="name" name="name" defaultValue={editData?.session?.name ?? seedName} required maxLength={120} placeholder="Ej. MD-3 Posesión bajo presión" /></div>
+        <div className="space-y-1.5 sm:col-span-2"><Label htmlFor="objective">Objetivo</Label><Textarea id="objective" name="objective" defaultValue={editData?.session?.objective ?? seedObjective} rows={2} /></div>
         <div className="space-y-1.5"><Label htmlFor="session_date">Fecha</Label><Input id="session_date" name="session_date" defaultValue={editData?.session?.session_date ?? ""} type="date" /></div>
-        <div className="space-y-1.5"><Label htmlFor="duration_min">Duración total (min)</Label><Input id="duration_min" name="duration_min" defaultValue={editData?.session?.duration_min ?? ""} type="number" min={1} max={360} placeholder="75" /></div>
+        <div className="space-y-1.5"><Label htmlFor="duration_min">Duración total (min)</Label><Input id="duration_min" name="duration_min" defaultValue={editData?.session?.duration_min ?? seedDuration} type="number" min={1} max={360} placeholder="75" /></div>
         <div className="space-y-1.5 sm:col-span-2">
           <Label>Intensidad</Label>
-          <input type="hidden" name="intensity" defaultValue={editData?.session?.intensity || "media"} id="hidden-intensity" />
-          <Select defaultValue={editData?.session?.intensity || "media"} onValueChange={(v) => { (document.getElementById("hidden-intensity") as HTMLInputElement).value = v; }}>
+          <input type="hidden" name="intensity" defaultValue={editData?.session?.intensity || seedIntensity} id="hidden-intensity" />
+          <Select defaultValue={editData?.session?.intensity || seedIntensity} onValueChange={(v) => { (document.getElementById("hidden-intensity") as HTMLInputElement).value = v; }}>
             <SelectTrigger className="sm:max-w-xs"><SelectValue /></SelectTrigger>
             <SelectContent>{INTENSITIES.map((i) => <SelectItem key={i.value} value={i.value}>{i.label}</SelectItem>)}</SelectContent>
           </Select>
         </div>
       </Card>
+
 
       <div className="space-y-3">
         <h2 className="font-semibold">Bloques de la sesión</h2>
