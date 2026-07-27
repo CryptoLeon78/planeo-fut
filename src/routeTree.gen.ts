@@ -9,70 +9,65 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as EjerciciosFutbolBaseRouteImport } from './routes/ejercicios.futbol-base'
-import { Route as AuthenticatedTeamRouteImport } from './routes/_authenticated/team'
-import { Route as AuthenticatedSessionsRouteImport } from './routes/_authenticated/sessions'
-import { Route as AuthenticatedSeasonRouteImport } from './routes/_authenticated/season'
-import { Route as AuthenticatedPreseasonRouteImport } from './routes/_authenticated/preseason'
-import { Route as AuthenticatedMicrocyclesRouteImport } from './routes/_authenticated/microcycles'
-import { Route as AuthenticatedExercisesRouteImport } from './routes/_authenticated/exercises'
-import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
-import { Route as AuthenticatedCalendarRouteImport } from './routes/_authenticated/calendar'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedAnalyticsRouteImport } from './routes/_authenticated/analytics'
-import { Route as AuthenticatedSessionsIndexRouteImport } from './routes/_authenticated/sessions.index'
-import { Route as AuthenticatedSeasonIndexRouteImport } from './routes/_authenticated/season.index'
-import { Route as AuthenticatedPreseasonIndexRouteImport } from './routes/_authenticated/preseason.index'
-import { Route as AuthenticatedMicrocyclesIndexRouteImport } from './routes/_authenticated/microcycles.index'
+import { Route as AuthenticatedCalendarRouteImport } from './routes/_authenticated/calendar'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedExercisesRouteImport } from './routes/_authenticated/exercises'
+import { Route as AuthenticatedMicrocyclesRouteImport } from './routes/_authenticated/microcycles'
+import { Route as AuthenticatedPreseasonRouteImport } from './routes/_authenticated/preseason'
+import { Route as AuthenticatedSeasonRouteImport } from './routes/_authenticated/season'
+import { Route as AuthenticatedSessionsRouteImport } from './routes/_authenticated/sessions'
+import { Route as AuthenticatedTeamRouteImport } from './routes/_authenticated/team'
+import { Route as EjerciciosFutbolBaseRouteImport } from './routes/ejercicios.futbol-base'
 import { Route as AuthenticatedExercisesIndexRouteImport } from './routes/_authenticated/exercises.index'
-import { Route as EjerciciosFutbolBaseSlugRouteImport } from './routes/ejercicios.futbol-base.$slug'
-import { Route as AuthenticatedSessionsNewRouteImport } from './routes/_authenticated/sessions.new'
-import { Route as AuthenticatedSessionsIdRouteImport } from './routes/_authenticated/sessions.$id'
-import { Route as AuthenticatedSeasonIdRouteImport } from './routes/_authenticated/season.$id'
-import { Route as AuthenticatedPreseasonIdRouteImport } from './routes/_authenticated/preseason.$id'
-import { Route as AuthenticatedMicrocyclesNewRouteImport } from './routes/_authenticated/microcycles.new'
-import { Route as AuthenticatedMicrocyclesIdRouteImport } from './routes/_authenticated/microcycles.$id'
 import { Route as AuthenticatedExercisesIdRouteImport } from './routes/_authenticated/exercises.$id'
+import { Route as AuthenticatedMicrocyclesIndexRouteImport } from './routes/_authenticated/microcycles.index'
+import { Route as AuthenticatedMicrocyclesIdRouteImport } from './routes/_authenticated/microcycles.$id'
+import { Route as AuthenticatedMicrocyclesNewRouteImport } from './routes/_authenticated/microcycles.new'
+import { Route as AuthenticatedPreseasonIndexRouteImport } from './routes/_authenticated/preseason.index'
+import { Route as AuthenticatedPreseasonIdRouteImport } from './routes/_authenticated/preseason.$id'
+import { Route as AuthenticatedSeasonIndexRouteImport } from './routes/_authenticated/season.index'
+import { Route as AuthenticatedSeasonIdRouteImport } from './routes/_authenticated/season.$id'
+import { Route as AuthenticatedSessionsIndexRouteImport } from './routes/_authenticated/sessions.index'
+import { Route as AuthenticatedSessionsIdRouteImport } from './routes/_authenticated/sessions.$id'
+import { Route as AuthenticatedSessionsNewRouteImport } from './routes/_authenticated/sessions.new'
+import { Route as EjerciciosFutbolBaseSlugRouteImport } from './routes/ejercicios.futbol-base.$slug'
 
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EjerciciosFutbolBaseRoute = EjerciciosFutbolBaseRouteImport.update({
-  id: '/ejercicios/futbol-base',
-  path: '/ejercicios/futbol-base',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthenticatedTeamRoute = AuthenticatedTeamRouteImport.update({
-  id: '/team',
-  path: '/team',
+const AuthenticatedAnalyticsRoute = AuthenticatedAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedSessionsRoute = AuthenticatedSessionsRouteImport.update({
-  id: '/sessions',
-  path: '/sessions',
+const AuthenticatedCalendarRoute = AuthenticatedCalendarRouteImport.update({
+  id: '/calendar',
+  path: '/calendar',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedSeasonRoute = AuthenticatedSeasonRouteImport.update({
-  id: '/season',
-  path: '/season',
+const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedPreseasonRoute = AuthenticatedPreseasonRouteImport.update({
-  id: '/preseason',
-  path: '/preseason',
+const AuthenticatedExercisesRoute = AuthenticatedExercisesRouteImport.update({
+  id: '/exercises',
+  path: '/exercises',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedMicrocyclesRoute =
@@ -81,88 +76,47 @@ const AuthenticatedMicrocyclesRoute =
     path: '/microcycles',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedExercisesRoute = AuthenticatedExercisesRouteImport.update({
-  id: '/exercises',
-  path: '/exercises',
+const AuthenticatedPreseasonRoute = AuthenticatedPreseasonRouteImport.update({
+  id: '/preseason',
+  path: '/preseason',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
+const AuthenticatedSeasonRoute = AuthenticatedSeasonRouteImport.update({
+  id: '/season',
+  path: '/season',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedCalendarRoute = AuthenticatedCalendarRouteImport.update({
-  id: '/calendar',
-  path: '/calendar',
+const AuthenticatedSessionsRoute = AuthenticatedSessionsRouteImport.update({
+  id: '/sessions',
+  path: '/sessions',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedAnalyticsRoute = AuthenticatedAnalyticsRouteImport.update({
-  id: '/analytics',
-  path: '/analytics',
+const AuthenticatedTeamRoute = AuthenticatedTeamRouteImport.update({
+  id: '/team',
+  path: '/team',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedSessionsIndexRoute =
-  AuthenticatedSessionsIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => AuthenticatedSessionsRoute,
-  } as any)
-const AuthenticatedSeasonIndexRoute =
-  AuthenticatedSeasonIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => AuthenticatedSeasonRoute,
-  } as any)
-const AuthenticatedPreseasonIndexRoute =
-  AuthenticatedPreseasonIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => AuthenticatedPreseasonRoute,
-  } as any)
-const AuthenticatedMicrocyclesIndexRoute =
-  AuthenticatedMicrocyclesIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => AuthenticatedMicrocyclesRoute,
-  } as any)
+const EjerciciosFutbolBaseRoute = EjerciciosFutbolBaseRouteImport.update({
+  id: '/ejercicios/futbol-base',
+  path: '/ejercicios/futbol-base',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedExercisesIndexRoute =
   AuthenticatedExercisesIndexRouteImport.update({
     id: '/',
     path: '/',
     getParentRoute: () => AuthenticatedExercisesRoute,
   } as any)
-const EjerciciosFutbolBaseSlugRoute =
-  EjerciciosFutbolBaseSlugRouteImport.update({
-    id: '/$slug',
-    path: '/$slug',
-    getParentRoute: () => EjerciciosFutbolBaseRoute,
-  } as any)
-const AuthenticatedSessionsNewRoute =
-  AuthenticatedSessionsNewRouteImport.update({
-    id: '/new',
-    path: '/new',
-    getParentRoute: () => AuthenticatedSessionsRoute,
-  } as any)
-const AuthenticatedSessionsIdRoute = AuthenticatedSessionsIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => AuthenticatedSessionsRoute,
-} as any)
-const AuthenticatedSeasonIdRoute = AuthenticatedSeasonIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => AuthenticatedSeasonRoute,
-} as any)
-const AuthenticatedPreseasonIdRoute =
-  AuthenticatedPreseasonIdRouteImport.update({
+const AuthenticatedExercisesIdRoute =
+  AuthenticatedExercisesIdRouteImport.update({
     id: '/$id',
     path: '/$id',
-    getParentRoute: () => AuthenticatedPreseasonRoute,
+    getParentRoute: () => AuthenticatedExercisesRoute,
   } as any)
-const AuthenticatedMicrocyclesNewRoute =
-  AuthenticatedMicrocyclesNewRouteImport.update({
-    id: '/new',
-    path: '/new',
+const AuthenticatedMicrocyclesIndexRoute =
+  AuthenticatedMicrocyclesIndexRouteImport.update({
+    id: '/',
+    path: '/',
     getParentRoute: () => AuthenticatedMicrocyclesRoute,
   } as any)
 const AuthenticatedMicrocyclesIdRoute =
@@ -171,11 +125,57 @@ const AuthenticatedMicrocyclesIdRoute =
     path: '/$id',
     getParentRoute: () => AuthenticatedMicrocyclesRoute,
   } as any)
-const AuthenticatedExercisesIdRoute =
-  AuthenticatedExercisesIdRouteImport.update({
+const AuthenticatedMicrocyclesNewRoute =
+  AuthenticatedMicrocyclesNewRouteImport.update({
+    id: '/new',
+    path: '/new',
+    getParentRoute: () => AuthenticatedMicrocyclesRoute,
+  } as any)
+const AuthenticatedPreseasonIndexRoute =
+  AuthenticatedPreseasonIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedPreseasonRoute,
+  } as any)
+const AuthenticatedPreseasonIdRoute =
+  AuthenticatedPreseasonIdRouteImport.update({
     id: '/$id',
     path: '/$id',
-    getParentRoute: () => AuthenticatedExercisesRoute,
+    getParentRoute: () => AuthenticatedPreseasonRoute,
+  } as any)
+const AuthenticatedSeasonIndexRoute =
+  AuthenticatedSeasonIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedSeasonRoute,
+  } as any)
+const AuthenticatedSeasonIdRoute = AuthenticatedSeasonIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AuthenticatedSeasonRoute,
+} as any)
+const AuthenticatedSessionsIndexRoute =
+  AuthenticatedSessionsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedSessionsRoute,
+  } as any)
+const AuthenticatedSessionsIdRoute = AuthenticatedSessionsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AuthenticatedSessionsRoute,
+} as any)
+const AuthenticatedSessionsNewRoute =
+  AuthenticatedSessionsNewRouteImport.update({
+    id: '/new',
+    path: '/new',
+    getParentRoute: () => AuthenticatedSessionsRoute,
+  } as any)
+const EjerciciosFutbolBaseSlugRoute =
+  EjerciciosFutbolBaseSlugRouteImport.update({
+    id: '/$slug',
+    path: '/$slug',
+    getParentRoute: () => EjerciciosFutbolBaseRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -345,11 +345,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -359,67 +359,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/ejercicios/futbol-base': {
-      id: '/ejercicios/futbol-base'
-      path: '/ejercicios/futbol-base'
-      fullPath: '/ejercicios/futbol-base'
-      preLoaderRoute: typeof EjerciciosFutbolBaseRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated/team': {
-      id: '/_authenticated/team'
-      path: '/team'
-      fullPath: '/team'
-      preLoaderRoute: typeof AuthenticatedTeamRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/sessions': {
-      id: '/_authenticated/sessions'
-      path: '/sessions'
-      fullPath: '/sessions'
-      preLoaderRoute: typeof AuthenticatedSessionsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/season': {
-      id: '/_authenticated/season'
-      path: '/season'
-      fullPath: '/season'
-      preLoaderRoute: typeof AuthenticatedSeasonRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/preseason': {
-      id: '/_authenticated/preseason'
-      path: '/preseason'
-      fullPath: '/preseason'
-      preLoaderRoute: typeof AuthenticatedPreseasonRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/microcycles': {
-      id: '/_authenticated/microcycles'
-      path: '/microcycles'
-      fullPath: '/microcycles'
-      preLoaderRoute: typeof AuthenticatedMicrocyclesRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/exercises': {
-      id: '/_authenticated/exercises'
-      path: '/exercises'
-      fullPath: '/exercises'
-      preLoaderRoute: typeof AuthenticatedExercisesRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/dashboard': {
-      id: '/_authenticated/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+    '/_authenticated/analytics': {
+      id: '/_authenticated/analytics'
+      path: '/analytics'
+      fullPath: '/analytics'
+      preLoaderRoute: typeof AuthenticatedAnalyticsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/calendar': {
@@ -429,40 +380,61 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCalendarRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/analytics': {
-      id: '/_authenticated/analytics'
-      path: '/analytics'
-      fullPath: '/analytics'
-      preLoaderRoute: typeof AuthenticatedAnalyticsRouteImport
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/sessions/': {
-      id: '/_authenticated/sessions/'
-      path: '/'
-      fullPath: '/sessions/'
-      preLoaderRoute: typeof AuthenticatedSessionsIndexRouteImport
-      parentRoute: typeof AuthenticatedSessionsRoute
+    '/_authenticated/exercises': {
+      id: '/_authenticated/exercises'
+      path: '/exercises'
+      fullPath: '/exercises'
+      preLoaderRoute: typeof AuthenticatedExercisesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/season/': {
-      id: '/_authenticated/season/'
-      path: '/'
-      fullPath: '/season/'
-      preLoaderRoute: typeof AuthenticatedSeasonIndexRouteImport
-      parentRoute: typeof AuthenticatedSeasonRoute
+    '/_authenticated/microcycles': {
+      id: '/_authenticated/microcycles'
+      path: '/microcycles'
+      fullPath: '/microcycles'
+      preLoaderRoute: typeof AuthenticatedMicrocyclesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/preseason/': {
-      id: '/_authenticated/preseason/'
-      path: '/'
-      fullPath: '/preseason/'
-      preLoaderRoute: typeof AuthenticatedPreseasonIndexRouteImport
-      parentRoute: typeof AuthenticatedPreseasonRoute
+    '/_authenticated/preseason': {
+      id: '/_authenticated/preseason'
+      path: '/preseason'
+      fullPath: '/preseason'
+      preLoaderRoute: typeof AuthenticatedPreseasonRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/microcycles/': {
-      id: '/_authenticated/microcycles/'
-      path: '/'
-      fullPath: '/microcycles/'
-      preLoaderRoute: typeof AuthenticatedMicrocyclesIndexRouteImport
-      parentRoute: typeof AuthenticatedMicrocyclesRoute
+    '/_authenticated/season': {
+      id: '/_authenticated/season'
+      path: '/season'
+      fullPath: '/season'
+      preLoaderRoute: typeof AuthenticatedSeasonRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/sessions': {
+      id: '/_authenticated/sessions'
+      path: '/sessions'
+      fullPath: '/sessions'
+      preLoaderRoute: typeof AuthenticatedSessionsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/team': {
+      id: '/_authenticated/team'
+      path: '/team'
+      fullPath: '/team'
+      preLoaderRoute: typeof AuthenticatedTeamRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/ejercicios/futbol-base': {
+      id: '/ejercicios/futbol-base'
+      path: '/ejercicios/futbol-base'
+      fullPath: '/ejercicios/futbol-base'
+      preLoaderRoute: typeof EjerciciosFutbolBaseRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/exercises/': {
       id: '/_authenticated/exercises/'
@@ -471,46 +443,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedExercisesIndexRouteImport
       parentRoute: typeof AuthenticatedExercisesRoute
     }
-    '/ejercicios/futbol-base/$slug': {
-      id: '/ejercicios/futbol-base/$slug'
-      path: '/$slug'
-      fullPath: '/ejercicios/futbol-base/$slug'
-      preLoaderRoute: typeof EjerciciosFutbolBaseSlugRouteImport
-      parentRoute: typeof EjerciciosFutbolBaseRoute
-    }
-    '/_authenticated/sessions/new': {
-      id: '/_authenticated/sessions/new'
-      path: '/new'
-      fullPath: '/sessions/new'
-      preLoaderRoute: typeof AuthenticatedSessionsNewRouteImport
-      parentRoute: typeof AuthenticatedSessionsRoute
-    }
-    '/_authenticated/sessions/$id': {
-      id: '/_authenticated/sessions/$id'
+    '/_authenticated/exercises/$id': {
+      id: '/_authenticated/exercises/$id'
       path: '/$id'
-      fullPath: '/sessions/$id'
-      preLoaderRoute: typeof AuthenticatedSessionsIdRouteImport
-      parentRoute: typeof AuthenticatedSessionsRoute
+      fullPath: '/exercises/$id'
+      preLoaderRoute: typeof AuthenticatedExercisesIdRouteImport
+      parentRoute: typeof AuthenticatedExercisesRoute
     }
-    '/_authenticated/season/$id': {
-      id: '/_authenticated/season/$id'
-      path: '/$id'
-      fullPath: '/season/$id'
-      preLoaderRoute: typeof AuthenticatedSeasonIdRouteImport
-      parentRoute: typeof AuthenticatedSeasonRoute
-    }
-    '/_authenticated/preseason/$id': {
-      id: '/_authenticated/preseason/$id'
-      path: '/$id'
-      fullPath: '/preseason/$id'
-      preLoaderRoute: typeof AuthenticatedPreseasonIdRouteImport
-      parentRoute: typeof AuthenticatedPreseasonRoute
-    }
-    '/_authenticated/microcycles/new': {
-      id: '/_authenticated/microcycles/new'
-      path: '/new'
-      fullPath: '/microcycles/new'
-      preLoaderRoute: typeof AuthenticatedMicrocyclesNewRouteImport
+    '/_authenticated/microcycles/': {
+      id: '/_authenticated/microcycles/'
+      path: '/'
+      fullPath: '/microcycles/'
+      preLoaderRoute: typeof AuthenticatedMicrocyclesIndexRouteImport
       parentRoute: typeof AuthenticatedMicrocyclesRoute
     }
     '/_authenticated/microcycles/$id': {
@@ -520,12 +464,68 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMicrocyclesIdRouteImport
       parentRoute: typeof AuthenticatedMicrocyclesRoute
     }
-    '/_authenticated/exercises/$id': {
-      id: '/_authenticated/exercises/$id'
+    '/_authenticated/microcycles/new': {
+      id: '/_authenticated/microcycles/new'
+      path: '/new'
+      fullPath: '/microcycles/new'
+      preLoaderRoute: typeof AuthenticatedMicrocyclesNewRouteImport
+      parentRoute: typeof AuthenticatedMicrocyclesRoute
+    }
+    '/_authenticated/preseason/': {
+      id: '/_authenticated/preseason/'
+      path: '/'
+      fullPath: '/preseason/'
+      preLoaderRoute: typeof AuthenticatedPreseasonIndexRouteImport
+      parentRoute: typeof AuthenticatedPreseasonRoute
+    }
+    '/_authenticated/preseason/$id': {
+      id: '/_authenticated/preseason/$id'
       path: '/$id'
-      fullPath: '/exercises/$id'
-      preLoaderRoute: typeof AuthenticatedExercisesIdRouteImport
-      parentRoute: typeof AuthenticatedExercisesRoute
+      fullPath: '/preseason/$id'
+      preLoaderRoute: typeof AuthenticatedPreseasonIdRouteImport
+      parentRoute: typeof AuthenticatedPreseasonRoute
+    }
+    '/_authenticated/season/': {
+      id: '/_authenticated/season/'
+      path: '/'
+      fullPath: '/season/'
+      preLoaderRoute: typeof AuthenticatedSeasonIndexRouteImport
+      parentRoute: typeof AuthenticatedSeasonRoute
+    }
+    '/_authenticated/season/$id': {
+      id: '/_authenticated/season/$id'
+      path: '/$id'
+      fullPath: '/season/$id'
+      preLoaderRoute: typeof AuthenticatedSeasonIdRouteImport
+      parentRoute: typeof AuthenticatedSeasonRoute
+    }
+    '/_authenticated/sessions/': {
+      id: '/_authenticated/sessions/'
+      path: '/'
+      fullPath: '/sessions/'
+      preLoaderRoute: typeof AuthenticatedSessionsIndexRouteImport
+      parentRoute: typeof AuthenticatedSessionsRoute
+    }
+    '/_authenticated/sessions/$id': {
+      id: '/_authenticated/sessions/$id'
+      path: '/$id'
+      fullPath: '/sessions/$id'
+      preLoaderRoute: typeof AuthenticatedSessionsIdRouteImport
+      parentRoute: typeof AuthenticatedSessionsRoute
+    }
+    '/_authenticated/sessions/new': {
+      id: '/_authenticated/sessions/new'
+      path: '/new'
+      fullPath: '/sessions/new'
+      preLoaderRoute: typeof AuthenticatedSessionsNewRouteImport
+      parentRoute: typeof AuthenticatedSessionsRoute
+    }
+    '/ejercicios/futbol-base/$slug': {
+      id: '/ejercicios/futbol-base/$slug'
+      path: '/$slug'
+      fullPath: '/ejercicios/futbol-base/$slug'
+      preLoaderRoute: typeof EjerciciosFutbolBaseSlugRouteImport
+      parentRoute: typeof EjerciciosFutbolBaseRoute
     }
   }
 }
