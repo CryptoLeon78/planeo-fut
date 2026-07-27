@@ -20,6 +20,7 @@ export const Route = createFileRoute("/_authenticated/sessions/new")({
   component: NewSessionPage,
   validateSearch: (search: Record<string, unknown>) => ({
     edit: (search.edit as string) || undefined,
+    fromExercise: (search.fromExercise as string) || undefined,
   }),
 });
 
