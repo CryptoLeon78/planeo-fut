@@ -65,9 +65,10 @@ const API_CSP = [
 
 
 
+// Data endpoints: TSS server routes under /api/* and server-function RPC calls.
 function isApiRequest(request: Request): boolean {
   const { pathname } = new URL(request.url);
-  return pathname.startsWith("/api/") || pathname === "/api";
+  return pathname === "/api" || pathname.startsWith("/api/") || pathname.startsWith("/_serverFn");
 }
 
 function applySecurityHeaders(response: Response, request?: Request): Response {
