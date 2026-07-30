@@ -54,9 +54,28 @@ const CSP = [
   "worker-src 'self' blob:",
 ].join("; ");
 
-function applySecurityHeaders(response: Response): Response {
+// Data endpoints render nothing and must never be framed or load subresources.
+const API_CSP = [
+  "default-src 'none'",
+  "frame-ancestors 'none'",
+  "base-uri 'none'",
+  "form-action 'none'",
+  "sandbox",
+].join("; ");
+
+
+
+// Data endpoints: TSS server routes under /api/* and server-function RPC calls.
+function isApiRequest(request: Request): boolean {
+  const { pathname } = new URL(request.url);
+  return pathname === "/api" || pathname.startsWith("/api/") || pathname.startsWith("/_serverFn");
+}
+
+function applySecurityHeaders(response: Response, request?: Request): Response {
   const contentType = response.headers.get("content-type") ?? "";
   const headers = new Headers(response.headers);
+  const isHtml = contentType.includes("text/html");
+  const isApi = request ? isApiRequest(request) : false;
 
   headers.set("X-Content-Type-Options", "nosniff");
   headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
@@ -66,12 +85,20 @@ function applySecurityHeaders(response: Response): Response {
     "camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=()",
   );
   headers.set("Cross-Origin-Opener-Policy", "same-origin");
-  headers.set("X-Frame-Options", "SAMEORIGIN");
 
-  // Only send CSP on HTML documents — assets and JSON responses don't need it,
-  // and adding it to JSON breaks nothing but adds noise.
-  if (contentType.includes("text/html")) {
-    headers.set("Content-Security-Policy", CSP);
+  if (isApi && !isHtml) {
+    // API/data endpoints are never meant to be rendered or framed: lock them down
+    // harder than documents so SSR and endpoints stay consistent, not divergent.
+    headers.set("Content-Security-Policy", API_CSP);
+    headers.set("X-Frame-Options", "DENY");
+    if (!headers.has("Cache-Control")) {
+      headers.set("Cache-Control", "no-store");
+    }
+  } else {
+    headers.set("X-Frame-Options", "SAMEORIGIN");
+    if (isHtml) {
+      headers.set("Content-Security-Policy", CSP);
+    }
   }
 
   return new Response(response.body, {
@@ -86,7 +113,7 @@ export default {
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
-      return applySecurityHeaders(await normalizeCatastrophicSsrResponse(response));
+      return applySecurityHeaders(await normalizeCatastrophicSsrResponse(response), request);
     } catch (error) {
       console.error(error);
       return applySecurityHeaders(
@@ -94,6 +121,7 @@ export default {
           status: 500,
           headers: { "content-type": "text/html; charset=utf-8" },
         }),
+        request,
       );
     }
   },
