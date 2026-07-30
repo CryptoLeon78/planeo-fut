@@ -54,6 +54,17 @@ const CSP = [
   "worker-src 'self' blob:",
 ].join("; ");
 
+// Data endpoints render nothing and must never be framed or load subresources.
+const API_CSP = [
+  "default-src 'none'",
+  "frame-ancestors 'none'",
+  "base-uri 'none'",
+  "form-action 'none'",
+  "sandbox",
+].join("; ");
+
+
+
 function isApiRequest(request: Request): boolean {
   const { pathname } = new URL(request.url);
   return pathname.startsWith("/api/") || pathname === "/api";
