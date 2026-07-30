@@ -1,11 +1,14 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import {
   API_CSP,
   BASE_SECURITY_HEADERS,
   DOCUMENT_CSP,
   applySecurityHeaders,
+  buildDocumentCsp,
+  detectEnvironment,
   isDataEndpoint,
 } from "@/lib/security-headers";
+
 
 const html = () =>
   new Response("<html></html>", { headers: { "content-type": "text/html; charset=utf-8" } });
