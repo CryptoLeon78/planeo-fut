@@ -89,3 +89,54 @@ describe("security headers", () => {
     expect(await res.text()).toBe("nope");
   });
 });
+
+describe("CSP por entorno", () => {
+  const original = { ...process.env };
+  afterEach(() => {
+    process.env = { ...original };
+  });
+
+  it("detecta el entorno desde APP_ENV y luego NODE_ENV", () => {
+    process.env.APP_ENV = "prod";
+    expect(detectEnvironment()).toBe("production");
+    process.env.APP_ENV = "preview";
+    expect(detectEnvironment()).toBe("staging");
+    delete process.env.APP_ENV;
+    process.env.NODE_ENV = "production";
+    expect(detectEnvironment()).toBe("production");
+  });
+
+  it("solo development permite localhost en connect-src", () => {
+    expect(buildDocumentCsp("development")).toContain("ws://localhost:*");
+    expect(buildDocumentCsp("staging")).not.toContain("localhost");
+    expect(buildDocumentCsp("production")).not.toContain("localhost");
+  });
+
+  it("production añade upgrade-insecure-requests", () => {
+    expect(buildDocumentCsp("production")).toContain("upgrade-insecure-requests");
+    expect(buildDocumentCsp("development")).not.toContain("upgrade-insecure-requests");
+  });
+
+  it("todos los entornos comparten la base (Supabase, fuentes, gateway IA)", () => {
+    for (const env of ["development", "staging", "production"] as const) {
+      const csp = buildDocumentCsp(env);
+      expect(csp).toContain("https://*.supabase.co");
+      expect(csp).toContain("https://fonts.gstatic.com");
+      expect(csp).toContain("https://ai.gateway.lovable.dev");
+      expect(csp).toContain("object-src 'none'");
+    }
+  });
+
+  it("permite añadir orígenes extra por variable de entorno sin tocar código", () => {
+    process.env.CSP_CONNECT_SRC = "https://api.partner.com, https://otro.com";
+    process.env.CSP_FRAME_SRC = "https://player.vimeo.com";
+    const csp = buildDocumentCsp("production");
+    expect(csp).toContain("https://api.partner.com");
+    expect(csp).toContain("https://otro.com");
+    expect(csp).toContain("https://player.vimeo.com");
+  });
+
+  it("DOCUMENT_CSP es la política resuelta para el entorno actual", () => {
+    expect(DOCUMENT_CSP).toBe(buildDocumentCsp(detectEnvironment()));
+  });
+});
