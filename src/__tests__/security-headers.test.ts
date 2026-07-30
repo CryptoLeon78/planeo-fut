@@ -57,7 +57,8 @@ describe("security headers", () => {
   });
 
   it("la CSP de documento permite los recursos que la app necesita", () => {
-    expect(DOCUMENT_CSP).toContain("script-src 'self' 'unsafe-inline' 'unsafe-eval'");
+    expect(DOCUMENT_CSP).toContain("script-src 'self' 'unsafe-inline'");
+    expect(DOCUMENT_CSP).toContain("'unsafe-eval'");
     expect(DOCUMENT_CSP).toContain("https://fonts.googleapis.com");
     expect(DOCUMENT_CSP).toContain("https://fonts.gstatic.com");
     expect(DOCUMENT_CSP).toContain("https://*.supabase.co");
