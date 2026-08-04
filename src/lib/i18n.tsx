@@ -47,8 +47,6 @@ const ENGLISH: Record<string, string> = {
   "Ver calendario": "View calendar",
   "Configurar equipo": "Set up squad",
   "Equipos": "Squads",
-  "Microciclos": "Microcycles",
-  "Biblioteca de ejercicios": "Practice library",
   "Crea, filtra y reutiliza ejercicios con ficha completa.": "Create, filter and reuse detailed football practices.",
   "Buscar por nombre, objetivo o etiqueta…": "Search by name, coaching outcome or tag…",
   "Fase del juego": "Phase of play",
@@ -92,7 +90,7 @@ const ENGLISH: Record<string, string> = {
   "media": "moderate",
   "alta": "high",
   "muy_alta": "very high",
-  "Inicio": "Build-up",
+  "Fase de inicio": "Build-up phase",
   "Progresión": "Progression",
   "Finalización": "Finishing",
   "Transición Ataque-Defensa": "Attacking-to-defensive transition",
@@ -176,8 +174,7 @@ const SPANISH = Object.fromEntries(Object.entries(ENGLISH).map(([es, en]) => [en
 const MONTHS: Record<string, string> = {
   enero: "January", febrero: "February", marzo: "March", abril: "April", mayo: "May", junio: "June",
   julio: "July", agosto: "August", septiembre: "September", octubre: "October", noviembre: "November", diciembre: "December",
-  ene: "Jan", feb: "Feb", mar: "Mar", abr: "Apr", may: "May", jun: "Jun", jul: "Jul", ago: "Aug", sep: "Sep", oct: "Oct", nov: "Nov", dic: "Dec",
-  lun: "Mon", mar: "Tue", mié: "Wed", jue: "Thu", vie: "Fri", sáb: "Sat", dom: "Sun",
+  lunes: "Monday", martes: "Tuesday", miércoles: "Wednesday", jueves: "Thursday", viernes: "Friday", sábado: "Saturday", domingo: "Sunday",
 };
 
 export function translateCopy(value: string, language: AppLanguage): string {
