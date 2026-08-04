@@ -15,6 +15,8 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AuthProvider } from "@/hooks/use-auth";
 import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { I18nProvider } from "@/lib/i18n";
+import { LanguageSwitcher } from "@/components/language-switcher";
 
 function NotFoundComponent() {
   return (
@@ -113,6 +115,9 @@ function SocialHeader() {
         <a href="mailto:info@planeofut.com" className="text-muted-foreground hover:text-primary transition-colors">
           <Mail className="h-3.5 w-3.5" />
         </a>
+        <div className="ml-1 border-l border-border pl-3">
+          <LanguageSwitcher />
+        </div>
       </div>
     </div>
   );
@@ -120,10 +125,9 @@ function SocialHeader() {
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="es">
+    <html lang="es-ES">
       <head><HeadContent /></head>
       <body>
-        <SocialHeader />
         {children}
         <Scripts />
       </body>
@@ -146,10 +150,13 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <Outlet />
-        <Toaster richColors position="top-right" />
-      </AuthProvider>
+      <I18nProvider>
+        <SocialHeader />
+        <AuthProvider>
+          <Outlet />
+          <Toaster richColors position="top-right" />
+        </AuthProvider>
+      </I18nProvider>
     </QueryClientProvider>
   );
 }

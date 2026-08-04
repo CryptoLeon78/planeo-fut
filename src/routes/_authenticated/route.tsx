@@ -3,6 +3,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { useAuth } from "@/hooks/use-auth";
 import { Loader2 } from "lucide-react";
+import { LanguageSwitcher } from "@/components/language-switcher";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
@@ -27,6 +28,7 @@ function AuthLayout() {
         <div className="flex flex-1 flex-col">
           <header className="sticky top-0 z-10 flex h-14 items-center gap-2 border-b border-border/60 bg-background/80 px-4 backdrop-blur">
             <SidebarTrigger />
+            <div className="ml-auto"><LanguageSwitcher /></div>
           </header>
           <main className="flex-1 p-6">
             <Outlet />

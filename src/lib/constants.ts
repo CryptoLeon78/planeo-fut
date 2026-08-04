@@ -103,5 +103,6 @@ export function ymd(d: Date): string {
 
 export function formatDate(d: string | Date, opts?: Intl.DateTimeFormatOptions): string {
   const date = typeof d === "string" ? new Date(d) : d;
-  return date.toLocaleDateString("es-ES", opts ?? { day: "numeric", month: "short" });
+  const locale = typeof document !== "undefined" && document.documentElement.lang === "en-GB" ? "en-GB" : "es-ES";
+  return date.toLocaleDateString(locale, opts ?? { day: "numeric", month: "short" });
 }
