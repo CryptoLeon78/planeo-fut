@@ -1,0 +1,26 @@
+name: Security headers
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  smoke:
+    strategy:
+      matrix:
+        app_env: [development, staging, production]
+    runs-on: ubuntu-latest
+    env:
+      APP_ENV: ${{ matrix.app_env }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - run: bun run test -- src/__tests__/security-headers.test.ts
+      - name: Start app
+        run: |
+          bun run dev > /tmp/planeofut-vite.log 2>&1 &
+          for i in {1..30}; do curl -fsS http://localhost:8080/ >/dev/null && exit 0; sleep 1; done
+          cat /tmp/planeofut-vite.log
+          exit 1
+      - run: bun run test:security-smoke

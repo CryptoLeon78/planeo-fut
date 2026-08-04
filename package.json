@@ -10,6 +10,8 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:security-smoke": "bash scripts/security-headers-smoke.sh",
     "format": "prettier --write ."
   },
   "dependencies": {
