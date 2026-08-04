@@ -21,7 +21,6 @@ import { Route as AuthenticatedPreseasonRouteImport } from './routes/_authentica
 import { Route as AuthenticatedSeasonRouteImport } from './routes/_authenticated/season'
 import { Route as AuthenticatedSessionsRouteImport } from './routes/_authenticated/sessions'
 import { Route as AuthenticatedTeamRouteImport } from './routes/_authenticated/team'
-import { Route as ServerFnSecurityProbeRouteImport } from './routes/_serverFn/security-probe'
 import { Route as EjerciciosFutbolBaseRouteImport } from './routes/ejercicios.futbol-base'
 import { Route as AuthenticatedExercisesIndexRouteImport } from './routes/_authenticated/exercises.index'
 import { Route as AuthenticatedExercisesIdRouteImport } from './routes/_authenticated/exercises.$id'
@@ -36,6 +35,7 @@ import { Route as AuthenticatedSessionsIndexRouteImport } from './routes/_authen
 import { Route as AuthenticatedSessionsIdRouteImport } from './routes/_authenticated/sessions.$id'
 import { Route as AuthenticatedSessionsNewRouteImport } from './routes/_authenticated/sessions.new'
 import { Route as ApiPublicHealthRouteImport } from './routes/api/public/health'
+import { Route as ApiRpcSecurityProbeRouteImport } from './routes/api/rpc/security-probe'
 import { Route as EjerciciosFutbolBaseSlugRouteImport } from './routes/ejercicios.futbol-base.$slug'
 import { Route as ApiPublicSecurityCspRouteImport } from './routes/api/public/security/csp'
 
@@ -98,11 +98,6 @@ const AuthenticatedTeamRoute = AuthenticatedTeamRouteImport.update({
   id: '/team',
   path: '/team',
   getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const ServerFnSecurityProbeRoute = ServerFnSecurityProbeRouteImport.update({
-  id: '/_serverFn/security-probe',
-  path: '/security-probe',
-  getParentRoute: () => rootRouteImport,
 } as any)
 const EjerciciosFutbolBaseRoute = EjerciciosFutbolBaseRouteImport.update({
   id: '/ejercicios/futbol-base',
@@ -184,6 +179,11 @@ const ApiPublicHealthRoute = ApiPublicHealthRouteImport.update({
   path: '/api/public/health',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiRpcSecurityProbeRoute = ApiRpcSecurityProbeRouteImport.update({
+  id: '/api/rpc/security-probe',
+  path: '/api/rpc/security-probe',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EjerciciosFutbolBaseSlugRoute =
   EjerciciosFutbolBaseSlugRouteImport.update({
     id: '/$slug',
@@ -208,7 +208,6 @@ export interface FileRoutesByFullPath {
   '/season': typeof AuthenticatedSeasonRouteWithChildren
   '/sessions': typeof AuthenticatedSessionsRouteWithChildren
   '/team': typeof AuthenticatedTeamRoute
-  '/security-probe': typeof ServerFnSecurityProbeRoute
   '/ejercicios/futbol-base': typeof EjerciciosFutbolBaseRouteWithChildren
   '/exercises/$id': typeof AuthenticatedExercisesIdRoute
   '/microcycles/$id': typeof AuthenticatedMicrocyclesIdRoute
@@ -218,6 +217,7 @@ export interface FileRoutesByFullPath {
   '/sessions/$id': typeof AuthenticatedSessionsIdRoute
   '/sessions/new': typeof AuthenticatedSessionsNewRoute
   '/api/public/health': typeof ApiPublicHealthRoute
+  '/api/rpc/security-probe': typeof ApiRpcSecurityProbeRoute
   '/ejercicios/futbol-base/$slug': typeof EjerciciosFutbolBaseSlugRoute
   '/exercises/': typeof AuthenticatedExercisesIndexRoute
   '/microcycles/': typeof AuthenticatedMicrocyclesIndexRoute
@@ -233,7 +233,6 @@ export interface FileRoutesByTo {
   '/calendar': typeof AuthenticatedCalendarRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/team': typeof AuthenticatedTeamRoute
-  '/security-probe': typeof ServerFnSecurityProbeRoute
   '/ejercicios/futbol-base': typeof EjerciciosFutbolBaseRouteWithChildren
   '/exercises/$id': typeof AuthenticatedExercisesIdRoute
   '/microcycles/$id': typeof AuthenticatedMicrocyclesIdRoute
@@ -243,6 +242,7 @@ export interface FileRoutesByTo {
   '/sessions/$id': typeof AuthenticatedSessionsIdRoute
   '/sessions/new': typeof AuthenticatedSessionsNewRoute
   '/api/public/health': typeof ApiPublicHealthRoute
+  '/api/rpc/security-probe': typeof ApiRpcSecurityProbeRoute
   '/ejercicios/futbol-base/$slug': typeof EjerciciosFutbolBaseSlugRoute
   '/exercises': typeof AuthenticatedExercisesIndexRoute
   '/microcycles': typeof AuthenticatedMicrocyclesIndexRoute
@@ -265,7 +265,6 @@ export interface FileRoutesById {
   '/_authenticated/season': typeof AuthenticatedSeasonRouteWithChildren
   '/_authenticated/sessions': typeof AuthenticatedSessionsRouteWithChildren
   '/_authenticated/team': typeof AuthenticatedTeamRoute
-  '/_serverFn/security-probe': typeof ServerFnSecurityProbeRoute
   '/ejercicios/futbol-base': typeof EjerciciosFutbolBaseRouteWithChildren
   '/_authenticated/exercises/$id': typeof AuthenticatedExercisesIdRoute
   '/_authenticated/microcycles/$id': typeof AuthenticatedMicrocyclesIdRoute
@@ -275,6 +274,7 @@ export interface FileRoutesById {
   '/_authenticated/sessions/$id': typeof AuthenticatedSessionsIdRoute
   '/_authenticated/sessions/new': typeof AuthenticatedSessionsNewRoute
   '/api/public/health': typeof ApiPublicHealthRoute
+  '/api/rpc/security-probe': typeof ApiRpcSecurityProbeRoute
   '/ejercicios/futbol-base/$slug': typeof EjerciciosFutbolBaseSlugRoute
   '/_authenticated/exercises/': typeof AuthenticatedExercisesIndexRoute
   '/_authenticated/microcycles/': typeof AuthenticatedMicrocyclesIndexRoute
@@ -297,7 +297,6 @@ export interface FileRouteTypes {
     | '/season'
     | '/sessions'
     | '/team'
-    | '/security-probe'
     | '/ejercicios/futbol-base'
     | '/exercises/$id'
     | '/microcycles/$id'
@@ -307,6 +306,7 @@ export interface FileRouteTypes {
     | '/sessions/$id'
     | '/sessions/new'
     | '/api/public/health'
+    | '/api/rpc/security-probe'
     | '/ejercicios/futbol-base/$slug'
     | '/exercises/'
     | '/microcycles/'
@@ -322,7 +322,6 @@ export interface FileRouteTypes {
     | '/calendar'
     | '/dashboard'
     | '/team'
-    | '/security-probe'
     | '/ejercicios/futbol-base'
     | '/exercises/$id'
     | '/microcycles/$id'
@@ -332,6 +331,7 @@ export interface FileRouteTypes {
     | '/sessions/$id'
     | '/sessions/new'
     | '/api/public/health'
+    | '/api/rpc/security-probe'
     | '/ejercicios/futbol-base/$slug'
     | '/exercises'
     | '/microcycles'
@@ -353,7 +353,6 @@ export interface FileRouteTypes {
     | '/_authenticated/season'
     | '/_authenticated/sessions'
     | '/_authenticated/team'
-    | '/_serverFn/security-probe'
     | '/ejercicios/futbol-base'
     | '/_authenticated/exercises/$id'
     | '/_authenticated/microcycles/$id'
@@ -363,6 +362,7 @@ export interface FileRouteTypes {
     | '/_authenticated/sessions/$id'
     | '/_authenticated/sessions/new'
     | '/api/public/health'
+    | '/api/rpc/security-probe'
     | '/ejercicios/futbol-base/$slug'
     | '/_authenticated/exercises/'
     | '/_authenticated/microcycles/'
@@ -376,9 +376,9 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
-  ServerFnSecurityProbeRoute: typeof ServerFnSecurityProbeRoute
   EjerciciosFutbolBaseRoute: typeof EjerciciosFutbolBaseRouteWithChildren
   ApiPublicHealthRoute: typeof ApiPublicHealthRoute
+  ApiRpcSecurityProbeRoute: typeof ApiRpcSecurityProbeRoute
   ApiPublicSecurityCspRoute: typeof ApiPublicSecurityCspRoute
 }
 
@@ -467,13 +467,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/team'
       preLoaderRoute: typeof AuthenticatedTeamRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_serverFn/security-probe': {
-      id: '/_serverFn/security-probe'
-      path: '/security-probe'
-      fullPath: '/security-probe'
-      preLoaderRoute: typeof ServerFnSecurityProbeRouteImport
-      parentRoute: typeof rootRouteImport
     }
     '/ejercicios/futbol-base': {
       id: '/ejercicios/futbol-base'
@@ -571,6 +564,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/health'
       fullPath: '/api/public/health'
       preLoaderRoute: typeof ApiPublicHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/rpc/security-probe': {
+      id: '/api/rpc/security-probe'
+      path: '/api/rpc/security-probe'
+      fullPath: '/api/rpc/security-probe'
+      preLoaderRoute: typeof ApiRpcSecurityProbeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ejercicios/futbol-base/$slug': {
@@ -712,9 +712,9 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
-  ServerFnSecurityProbeRoute: ServerFnSecurityProbeRoute,
   EjerciciosFutbolBaseRoute: EjerciciosFutbolBaseRouteWithChildren,
   ApiPublicHealthRoute: ApiPublicHealthRoute,
+  ApiRpcSecurityProbeRoute: ApiRpcSecurityProbeRoute,
   ApiPublicSecurityCspRoute: ApiPublicSecurityCspRoute,
 }
 export const routeTree = rootRouteImport

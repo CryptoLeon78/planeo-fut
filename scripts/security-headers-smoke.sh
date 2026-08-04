@@ -8,7 +8,7 @@ trap 'rm -rf "$TMP_DIR"' EXIT
 
 curl -fsS -D "$TMP_DIR/ssr" -o /dev/null "$BASE_URL/"
 curl -fsS -D "$TMP_DIR/api" -o /dev/null "$BASE_URL/api/public/health"
-curl -fsS -X POST -D "$TMP_DIR/rpc" -o /dev/null "$BASE_URL/_serverFn/security-probe"
+curl -fsS -X POST -D "$TMP_DIR/rpc" -o /dev/null "$BASE_URL/api/rpc/security-probe"
 
 header() { tr -d '\r' < "$1" | awk -F': ' -v key="$2" 'tolower($1)==tolower(key) { print substr($0, index($0, ":") + 2) }' | tail -1; }
 

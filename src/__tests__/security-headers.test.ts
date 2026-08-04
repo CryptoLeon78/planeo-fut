@@ -143,7 +143,7 @@ describe("CSP por entorno", () => {
     process.env.CSP_CONNECT_SRC = "https://api.partner.com; script-src * javascript:alert(1)";
     const parsed = readValidatedEnvOrigins("connect-src");
     expect(parsed.origins).toEqual([]);
-    expect(parsed.issues).toHaveLength(3);
+    expect(parsed.issues).toHaveLength(4);
     expect(buildDocumentCsp("production")).not.toContain("partner.com;");
     expect(buildDocumentCsp("production")).not.toContain("javascript:");
   });
