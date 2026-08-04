@@ -34,7 +34,10 @@ import { Route as AuthenticatedSeasonIdRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedSessionsIndexRouteImport } from './routes/_authenticated/sessions.index'
 import { Route as AuthenticatedSessionsIdRouteImport } from './routes/_authenticated/sessions.$id'
 import { Route as AuthenticatedSessionsNewRouteImport } from './routes/_authenticated/sessions.new'
+import { Route as ApiPublicHealthRouteImport } from './routes/api/public/health'
+import { Route as ApiRpcSecurityProbeRouteImport } from './routes/api/rpc/security-probe'
 import { Route as EjerciciosFutbolBaseSlugRouteImport } from './routes/ejercicios.futbol-base.$slug'
+import { Route as ApiPublicSecurityCspRouteImport } from './routes/api/public/security/csp'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -171,12 +174,27 @@ const AuthenticatedSessionsNewRoute =
     path: '/new',
     getParentRoute: () => AuthenticatedSessionsRoute,
   } as any)
+const ApiPublicHealthRoute = ApiPublicHealthRouteImport.update({
+  id: '/api/public/health',
+  path: '/api/public/health',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiRpcSecurityProbeRoute = ApiRpcSecurityProbeRouteImport.update({
+  id: '/api/rpc/security-probe',
+  path: '/api/rpc/security-probe',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EjerciciosFutbolBaseSlugRoute =
   EjerciciosFutbolBaseSlugRouteImport.update({
     id: '/$slug',
     path: '/$slug',
     getParentRoute: () => EjerciciosFutbolBaseRoute,
   } as any)
+const ApiPublicSecurityCspRoute = ApiPublicSecurityCspRouteImport.update({
+  id: '/api/public/security/csp',
+  path: '/api/public/security/csp',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -198,12 +216,15 @@ export interface FileRoutesByFullPath {
   '/season/$id': typeof AuthenticatedSeasonIdRoute
   '/sessions/$id': typeof AuthenticatedSessionsIdRoute
   '/sessions/new': typeof AuthenticatedSessionsNewRoute
+  '/api/public/health': typeof ApiPublicHealthRoute
+  '/api/rpc/security-probe': typeof ApiRpcSecurityProbeRoute
   '/ejercicios/futbol-base/$slug': typeof EjerciciosFutbolBaseSlugRoute
   '/exercises/': typeof AuthenticatedExercisesIndexRoute
   '/microcycles/': typeof AuthenticatedMicrocyclesIndexRoute
   '/preseason/': typeof AuthenticatedPreseasonIndexRoute
   '/season/': typeof AuthenticatedSeasonIndexRoute
   '/sessions/': typeof AuthenticatedSessionsIndexRoute
+  '/api/public/security/csp': typeof ApiPublicSecurityCspRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -220,12 +241,15 @@ export interface FileRoutesByTo {
   '/season/$id': typeof AuthenticatedSeasonIdRoute
   '/sessions/$id': typeof AuthenticatedSessionsIdRoute
   '/sessions/new': typeof AuthenticatedSessionsNewRoute
+  '/api/public/health': typeof ApiPublicHealthRoute
+  '/api/rpc/security-probe': typeof ApiRpcSecurityProbeRoute
   '/ejercicios/futbol-base/$slug': typeof EjerciciosFutbolBaseSlugRoute
   '/exercises': typeof AuthenticatedExercisesIndexRoute
   '/microcycles': typeof AuthenticatedMicrocyclesIndexRoute
   '/preseason': typeof AuthenticatedPreseasonIndexRoute
   '/season': typeof AuthenticatedSeasonIndexRoute
   '/sessions': typeof AuthenticatedSessionsIndexRoute
+  '/api/public/security/csp': typeof ApiPublicSecurityCspRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -249,12 +273,15 @@ export interface FileRoutesById {
   '/_authenticated/season/$id': typeof AuthenticatedSeasonIdRoute
   '/_authenticated/sessions/$id': typeof AuthenticatedSessionsIdRoute
   '/_authenticated/sessions/new': typeof AuthenticatedSessionsNewRoute
+  '/api/public/health': typeof ApiPublicHealthRoute
+  '/api/rpc/security-probe': typeof ApiRpcSecurityProbeRoute
   '/ejercicios/futbol-base/$slug': typeof EjerciciosFutbolBaseSlugRoute
   '/_authenticated/exercises/': typeof AuthenticatedExercisesIndexRoute
   '/_authenticated/microcycles/': typeof AuthenticatedMicrocyclesIndexRoute
   '/_authenticated/preseason/': typeof AuthenticatedPreseasonIndexRoute
   '/_authenticated/season/': typeof AuthenticatedSeasonIndexRoute
   '/_authenticated/sessions/': typeof AuthenticatedSessionsIndexRoute
+  '/api/public/security/csp': typeof ApiPublicSecurityCspRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -278,12 +305,15 @@ export interface FileRouteTypes {
     | '/season/$id'
     | '/sessions/$id'
     | '/sessions/new'
+    | '/api/public/health'
+    | '/api/rpc/security-probe'
     | '/ejercicios/futbol-base/$slug'
     | '/exercises/'
     | '/microcycles/'
     | '/preseason/'
     | '/season/'
     | '/sessions/'
+    | '/api/public/security/csp'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -300,12 +330,15 @@ export interface FileRouteTypes {
     | '/season/$id'
     | '/sessions/$id'
     | '/sessions/new'
+    | '/api/public/health'
+    | '/api/rpc/security-probe'
     | '/ejercicios/futbol-base/$slug'
     | '/exercises'
     | '/microcycles'
     | '/preseason'
     | '/season'
     | '/sessions'
+    | '/api/public/security/csp'
   id:
     | '__root__'
     | '/'
@@ -328,12 +361,15 @@ export interface FileRouteTypes {
     | '/_authenticated/season/$id'
     | '/_authenticated/sessions/$id'
     | '/_authenticated/sessions/new'
+    | '/api/public/health'
+    | '/api/rpc/security-probe'
     | '/ejercicios/futbol-base/$slug'
     | '/_authenticated/exercises/'
     | '/_authenticated/microcycles/'
     | '/_authenticated/preseason/'
     | '/_authenticated/season/'
     | '/_authenticated/sessions/'
+    | '/api/public/security/csp'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -341,6 +377,9 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   EjerciciosFutbolBaseRoute: typeof EjerciciosFutbolBaseRouteWithChildren
+  ApiPublicHealthRoute: typeof ApiPublicHealthRoute
+  ApiRpcSecurityProbeRoute: typeof ApiRpcSecurityProbeRoute
+  ApiPublicSecurityCspRoute: typeof ApiPublicSecurityCspRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -520,12 +559,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSessionsNewRouteImport
       parentRoute: typeof AuthenticatedSessionsRoute
     }
+    '/api/public/health': {
+      id: '/api/public/health'
+      path: '/api/public/health'
+      fullPath: '/api/public/health'
+      preLoaderRoute: typeof ApiPublicHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/rpc/security-probe': {
+      id: '/api/rpc/security-probe'
+      path: '/api/rpc/security-probe'
+      fullPath: '/api/rpc/security-probe'
+      preLoaderRoute: typeof ApiRpcSecurityProbeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/ejercicios/futbol-base/$slug': {
       id: '/ejercicios/futbol-base/$slug'
       path: '/$slug'
       fullPath: '/ejercicios/futbol-base/$slug'
       preLoaderRoute: typeof EjerciciosFutbolBaseSlugRouteImport
       parentRoute: typeof EjerciciosFutbolBaseRoute
+    }
+    '/api/public/security/csp': {
+      id: '/api/public/security/csp'
+      path: '/api/public/security/csp'
+      fullPath: '/api/public/security/csp'
+      preLoaderRoute: typeof ApiPublicSecurityCspRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -653,6 +713,9 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   EjerciciosFutbolBaseRoute: EjerciciosFutbolBaseRouteWithChildren,
+  ApiPublicHealthRoute: ApiPublicHealthRoute,
+  ApiRpcSecurityProbeRoute: ApiRpcSecurityProbeRoute,
+  ApiPublicSecurityCspRoute: ApiPublicSecurityCspRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

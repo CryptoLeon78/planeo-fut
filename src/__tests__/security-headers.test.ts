@@ -6,7 +6,9 @@ import {
   applySecurityHeaders,
   buildDocumentCsp,
   detectEnvironment,
+  getEffectiveSecurityConfig,
   isDataEndpoint,
+  readValidatedEnvOrigins,
 } from "@/lib/security-headers";
 
 
@@ -135,6 +137,24 @@ describe("CSP por entorno", () => {
     expect(csp).toContain("https://api.partner.com");
     expect(csp).toContain("https://otro.com");
     expect(csp).toContain("https://player.vimeo.com");
+  });
+
+  it("descarta valores CSP_* inválidos sin contaminar la política", () => {
+    process.env.CSP_CONNECT_SRC = "https://api.partner.com; script-src * javascript:alert(1)";
+    const parsed = readValidatedEnvOrigins("connect-src");
+    expect(parsed.origins).toEqual([]);
+    expect(parsed.issues).toHaveLength(4);
+    expect(buildDocumentCsp("production")).not.toContain("partner.com;");
+    expect(buildDocumentCsp("production")).not.toContain("javascript:");
+  });
+
+  it("expone versión, hash estable y problemas de validación para auditoría", () => {
+    process.env.CSP_FRAME_SRC = "invalid-origin";
+    const first = getEffectiveSecurityConfig("staging");
+    const second = getEffectiveSecurityConfig("staging");
+    expect(first.policyVersion).toMatch(/^\d{4}-\d{2}-\d{2}\./);
+    expect(first.policyHash).toBe(second.policyHash);
+    expect(first.validationIssues[0]?.variable).toBe("CSP_FRAME_SRC");
   });
 
   it("DOCUMENT_CSP es la política resuelta para el entorno actual", () => {

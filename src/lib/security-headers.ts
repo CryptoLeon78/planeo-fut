@@ -12,6 +12,24 @@ export type AppEnvironment = "development" | "staging" | "production";
 
 type Directives = Record<string, string[]>;
 
+export const CSP_POLICY_SCHEMA_VERSION = "2026-08-04.1";
+
+export type CspValidationIssue = {
+  variable: string;
+  value: string;
+  reason: string;
+};
+
+export type EffectiveSecurityConfig = {
+  environment: AppEnvironment;
+  policyVersion: string;
+  policyHash: string;
+  documentCsp: string;
+  apiCsp: string;
+  baseHeaders: Record<string, string>;
+  validationIssues: CspValidationIssue[];
+};
+
 /** Env vars that append origins to a directive, e.g. CSP_CONNECT_SRC="https://a.com https://b.com". */
 const ENV_VAR_BY_DIRECTIVE: Record<string, string> = {
   "connect-src": "CSP_CONNECT_SRC",
@@ -89,10 +107,31 @@ export function detectEnvironment(): AppEnvironment {
   return "development";
 }
 
-function readEnvOrigins(directive: string): string[] {
+const SAFE_SOURCE_TOKEN = /^(?:'self'|'none'|'unsafe-inline'|'unsafe-eval'|data:|blob:|https?:\/\/(?:\*\.)?[a-z0-9.-]+(?::\d+|:\*)?|wss?:\/\/(?:\*\.)?[a-z0-9.-]+(?::\d+|:\*)?)$/i;
+
+function validateSourceToken(value: string): string | undefined {
+  if (value.includes(";") || value.includes("\n") || value.includes("\r")) {
+    return "contains a directive separator or line break";
+  }
+  if (!SAFE_SOURCE_TOKEN.test(value)) return "is not a supported CSP source expression";
+  return undefined;
+}
+
+/** Parses CSP_* additions defensively. Invalid entries fall back to the safe built-in policy. */
+export function readValidatedEnvOrigins(directive: string): {
+  origins: string[];
+  issues: CspValidationIssue[];
+} {
   const varName = ENV_VAR_BY_DIRECTIVE[directive];
-  if (!varName) return [];
-  return (readEnv(varName) ?? "").split(/[\s,]+/).filter(Boolean);
+  if (!varName) return { origins: [], issues: [] };
+  const origins: string[] = [];
+  const issues: CspValidationIssue[] = [];
+  for (const value of (readEnv(varName) ?? "").split(/[\s,]+/).filter(Boolean)) {
+    const reason = validateSourceToken(value);
+    if (reason) issues.push({ variable: varName, value, reason });
+    else origins.push(value);
+  }
+  return { origins: [...new Set(origins)], issues };
 }
 
 function mergeUnique(...lists: string[][]): string[] {
@@ -108,8 +147,8 @@ export function buildDocumentCsp(environment: AppEnvironment = detectEnvironment
     directives[directive] = mergeUnique(directives[directive] ?? [], values);
   }
   for (const directive of Object.keys(directives)) {
-    const extra = readEnvOrigins(directive);
-    if (extra.length) directives[directive] = mergeUnique(directives[directive], extra);
+    const { origins } = readValidatedEnvOrigins(directive);
+    if (origins.length) directives[directive] = mergeUnique(directives[directive], origins);
   }
 
   return Object.entries(directives)
@@ -143,6 +182,49 @@ export const BASE_SECURITY_HEADERS: Record<string, string> = {
     "camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=()",
   "Cross-Origin-Opener-Policy": "same-origin",
 };
+
+function stableHash(value: string): string {
+  let hash = 0x811c9dc5;
+  for (let index = 0; index < value.length; index += 1) {
+    hash ^= value.charCodeAt(index);
+    hash = Math.imul(hash, 0x01000193);
+  }
+  return `fnv1a-${(hash >>> 0).toString(16).padStart(8, "0")}`;
+}
+
+export function getEffectiveSecurityConfig(
+  environment: AppEnvironment = detectEnvironment(),
+): EffectiveSecurityConfig {
+  const validationIssues = Object.keys(ENV_VAR_BY_DIRECTIVE).flatMap(
+    (directive) => readValidatedEnvOrigins(directive).issues,
+  );
+  const documentCsp = buildDocumentCsp(environment);
+  return {
+    environment,
+    policyVersion: CSP_POLICY_SCHEMA_VERSION,
+    policyHash: stableHash(`${CSP_POLICY_SCHEMA_VERSION}:${environment}:${documentCsp}`),
+    documentCsp,
+    apiCsp: API_CSP,
+    baseHeaders: { ...BASE_SECURITY_HEADERS },
+    validationIssues,
+  };
+}
+
+const auditedPolicies = new Set<string>();
+
+/** Emits one structured audit event per effective policy version in this server instance. */
+export function auditEffectiveCsp(): EffectiveSecurityConfig {
+  const config = getEffectiveSecurityConfig();
+  const auditKey = `${config.environment}:${config.policyHash}`;
+  if (!auditedPolicies.has(auditKey)) {
+    auditedPolicies.add(auditKey);
+    console.info(JSON.stringify({ event: "security.csp.policy", ...config }));
+    for (const issue of config.validationIssues) {
+      console.warn(JSON.stringify({ event: "security.csp.invalid_override", ...issue }));
+    }
+  }
+  return config;
+}
 
 /** True for REST routes under /api/* and server-function RPC endpoints. */
 export function isDataEndpoint(url: string): boolean {
