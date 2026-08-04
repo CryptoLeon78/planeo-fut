@@ -128,10 +128,7 @@ function RootShell({ children }: { children: ReactNode }) {
     <html lang="es-ES">
       <head><HeadContent /></head>
       <body>
-        <I18nProvider>
-          <SocialHeader />
-          {children}
-        </I18nProvider>
+        {children}
         <Scripts />
       </body>
     </html>
@@ -153,10 +150,13 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <Outlet />
-        <Toaster richColors position="top-right" />
-      </AuthProvider>
+      <I18nProvider>
+        <SocialHeader />
+        <AuthProvider>
+          <Outlet />
+          <Toaster richColors position="top-right" />
+        </AuthProvider>
+      </I18nProvider>
     </QueryClientProvider>
   );
 }
