@@ -1,14 +1,14 @@
 import { expect, test } from "@playwright/test";
 
-test("la CSP permite cargar dashboard, navegar y llamar a la API", async ({ page, request }) => {
-  const storageKey = process.env.LOVABLE_BROWSER_SUPABASE_STORAGE_KEY;
-  const sessionJson = process.env.LOVABLE_BROWSER_SUPABASE_SESSION_JSON;
-  test.skip(!storageKey || !sessionJson, "Requiere la sesión E2E gestionada del proyecto");
+const storageKey = process.env.LOVABLE_BROWSER_SUPABASE_STORAGE_KEY;
+const sessionJson = process.env.LOVABLE_BROWSER_SUPABASE_SESSION_JSON;
+test.skip(!storageKey || !sessionJson, "Requiere la sesión E2E gestionada del proyecto");
 
+test("la CSP permite cargar dashboard, navegar y llamar a la API", async ({ page, request }) => {
   await page.goto("/");
   await page.evaluate(
     ([key, value]) => window.localStorage.setItem(key, value),
-    [storageKey as string, sessionJson as string],
+    [storageKey ?? "", sessionJson ?? ""],
   );
   await page.goto("/dashboard");
   await expect(page.getByRole("heading", { name: /Hola,/ })).toBeVisible();
