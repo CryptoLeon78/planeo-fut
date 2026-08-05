@@ -1,0 +1,271 @@
+{
+  "version": 1,
+  "sdk_version": "0.24.0",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://aparvgdelraynacisdrq.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "planeofut",
+      "version": "0.1.0",
+      "title": "PlaneoFUT"
+    },
+    "tools": [
+      {
+        "name": "list_exercises",
+        "title": "List exercises",
+        "description": "Find football practices in the signed-in coach's private library, including favourites and planning details.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "search": {
+              "type": "string",
+              "description": "Optional text found in the exercise name or objective."
+            },
+            "favouritesOnly": {
+              "type": "boolean",
+              "description": "Return only exercises marked as favourites."
+            },
+            "limit": {
+              "type": "integer",
+              "description": "Maximum records to return; values are clamped between 1 and 50."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "create_exercise",
+        "title": "Create exercise",
+        "description": "Create a complete football practice in the signed-in coach's library for later session planning.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Clear football practice name."
+            },
+            "objective": {
+              "type": "string",
+              "description": "Coaching objective or intended outcome."
+            },
+            "durationMinutes": {
+              "type": "integer",
+              "description": "Planned duration in minutes."
+            },
+            "playersCount": {
+              "type": "integer",
+              "description": "Recommended number of players."
+            },
+            "space": {
+              "type": "string",
+              "description": "Pitch dimensions or working area."
+            },
+            "materials": {
+              "type": "string",
+              "description": "Required equipment."
+            },
+            "observations": {
+              "type": "string",
+              "description": "Organisation, coaching points and constraints."
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Short searchable labels."
+            },
+            "favourite": {
+              "type": "boolean",
+              "description": "Mark the exercise as a favourite."
+            }
+          },
+          "required": [
+            "name"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_sessions",
+        "title": "List sessions",
+        "description": "List the signed-in coach's football training sessions with objectives, dates, load and evaluation details.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "fromDate": {
+              "type": "string",
+              "description": "Optional inclusive start date in YYYY-MM-DD format."
+            },
+            "toDate": {
+              "type": "string",
+              "description": "Optional inclusive end date in YYYY-MM-DD format."
+            },
+            "limit": {
+              "type": "integer",
+              "description": "Maximum records to return; values are clamped between 1 and 50."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "create_session",
+        "title": "Create session",
+        "description": "Create a football training session for the signed-in coach with its date, objective and planned load.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Session name."
+            },
+            "objective": {
+              "type": "string",
+              "description": "Main coaching objective."
+            },
+            "sessionDate": {
+              "type": "string",
+              "description": "Planned date in YYYY-MM-DD format."
+            },
+            "durationMinutes": {
+              "type": "integer",
+              "description": "Total planned duration in minutes."
+            },
+            "intensity": {
+              "type": "string",
+              "enum": [
+                "low",
+                "medium",
+                "high"
+              ],
+              "description": "Planned session intensity."
+            },
+            "weeklyFocus": {
+              "type": "string",
+              "description": "Weekly tactical or physical focus."
+            },
+            "notes": {
+              "type": "string",
+              "description": "Organisation and coaching notes."
+            }
+          },
+          "required": [
+            "name"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_microcycles",
+        "title": "List microcycles",
+        "description": "List weekly football microcycles and their MD slots for the signed-in coach.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "fromWeek": {
+              "type": "string",
+              "description": "Optional earliest week start in YYYY-MM-DD format."
+            },
+            "limit": {
+              "type": "integer",
+              "description": "Maximum microcycles to return; values are clamped between 1 and 20."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "create_microcycle",
+        "title": "Create microcycle",
+        "description": "Create a weekly football microcycle and its MD-4 to match-day planning slots for the signed-in coach.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Microcycle name."
+            },
+            "weekStart": {
+              "type": "string",
+              "description": "First planning date in YYYY-MM-DD format."
+            },
+            "matchDay": {
+              "type": "string",
+              "enum": [
+                "sabado",
+                "domingo"
+              ],
+              "description": "Whether the competitive fixture is on Saturday or Sunday."
+            },
+            "weeklyObjective": {
+              "type": "string",
+              "description": "Primary outcome for the week."
+            },
+            "notes": {
+              "type": "string",
+              "description": "Context, constraints or load notes."
+            }
+          },
+          "required": [
+            "name",
+            "weekStart",
+            "matchDay"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}

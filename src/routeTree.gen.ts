@@ -22,6 +22,7 @@ import { Route as AuthenticatedSeasonRouteImport } from './routes/_authenticated
 import { Route as AuthenticatedSessionsRouteImport } from './routes/_authenticated/sessions'
 import { Route as AuthenticatedTeamRouteImport } from './routes/_authenticated/team'
 import { Route as EjerciciosFutbolBaseRouteImport } from './routes/ejercicios.futbol-base'
+import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as AuthenticatedExercisesIndexRouteImport } from './routes/_authenticated/exercises.index'
 import { Route as AuthenticatedExercisesIdRouteImport } from './routes/_authenticated/exercises.$id'
 import { Route as AuthenticatedMicrocyclesIndexRouteImport } from './routes/_authenticated/microcycles.index'
@@ -102,6 +103,11 @@ const AuthenticatedTeamRoute = AuthenticatedTeamRouteImport.update({
 const EjerciciosFutbolBaseRoute = EjerciciosFutbolBaseRouteImport.update({
   id: '/ejercicios/futbol-base',
   path: '/ejercicios/futbol-base',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
+  id: '/.lovable/oauth/consent',
+  path: '/.lovable/oauth/consent',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedExercisesIndexRoute =
@@ -209,6 +215,7 @@ export interface FileRoutesByFullPath {
   '/sessions': typeof AuthenticatedSessionsRouteWithChildren
   '/team': typeof AuthenticatedTeamRoute
   '/ejercicios/futbol-base': typeof EjerciciosFutbolBaseRouteWithChildren
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/exercises/$id': typeof AuthenticatedExercisesIdRoute
   '/microcycles/$id': typeof AuthenticatedMicrocyclesIdRoute
   '/microcycles/new': typeof AuthenticatedMicrocyclesNewRoute
@@ -234,6 +241,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/team': typeof AuthenticatedTeamRoute
   '/ejercicios/futbol-base': typeof EjerciciosFutbolBaseRouteWithChildren
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/exercises/$id': typeof AuthenticatedExercisesIdRoute
   '/microcycles/$id': typeof AuthenticatedMicrocyclesIdRoute
   '/microcycles/new': typeof AuthenticatedMicrocyclesNewRoute
@@ -266,6 +274,7 @@ export interface FileRoutesById {
   '/_authenticated/sessions': typeof AuthenticatedSessionsRouteWithChildren
   '/_authenticated/team': typeof AuthenticatedTeamRoute
   '/ejercicios/futbol-base': typeof EjerciciosFutbolBaseRouteWithChildren
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/_authenticated/exercises/$id': typeof AuthenticatedExercisesIdRoute
   '/_authenticated/microcycles/$id': typeof AuthenticatedMicrocyclesIdRoute
   '/_authenticated/microcycles/new': typeof AuthenticatedMicrocyclesNewRoute
@@ -298,6 +307,7 @@ export interface FileRouteTypes {
     | '/sessions'
     | '/team'
     | '/ejercicios/futbol-base'
+    | '/.lovable/oauth/consent'
     | '/exercises/$id'
     | '/microcycles/$id'
     | '/microcycles/new'
@@ -323,6 +333,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/team'
     | '/ejercicios/futbol-base'
+    | '/.lovable/oauth/consent'
     | '/exercises/$id'
     | '/microcycles/$id'
     | '/microcycles/new'
@@ -354,6 +365,7 @@ export interface FileRouteTypes {
     | '/_authenticated/sessions'
     | '/_authenticated/team'
     | '/ejercicios/futbol-base'
+    | '/.lovable/oauth/consent'
     | '/_authenticated/exercises/$id'
     | '/_authenticated/microcycles/$id'
     | '/_authenticated/microcycles/new'
@@ -377,6 +389,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   EjerciciosFutbolBaseRoute: typeof EjerciciosFutbolBaseRouteWithChildren
+  DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   ApiPublicHealthRoute: typeof ApiPublicHealthRoute
   ApiRpcSecurityProbeRoute: typeof ApiRpcSecurityProbeRoute
   ApiPublicSecurityCspRoute: typeof ApiPublicSecurityCspRoute
@@ -473,6 +486,13 @@ declare module '@tanstack/react-router' {
       path: '/ejercicios/futbol-base'
       fullPath: '/ejercicios/futbol-base'
       preLoaderRoute: typeof EjerciciosFutbolBaseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.lovable/oauth/consent': {
+      id: '/.lovable/oauth/consent'
+      path: '/.lovable/oauth/consent'
+      fullPath: '/.lovable/oauth/consent'
+      preLoaderRoute: typeof DotlovableOauthConsentRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/exercises/': {
@@ -713,6 +733,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   EjerciciosFutbolBaseRoute: EjerciciosFutbolBaseRouteWithChildren,
+  DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   ApiPublicHealthRoute: ApiPublicHealthRoute,
   ApiRpcSecurityProbeRoute: ApiRpcSecurityProbeRoute,
   ApiPublicSecurityCspRoute: ApiPublicSecurityCspRoute,
