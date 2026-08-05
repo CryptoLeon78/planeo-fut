@@ -1,5 +1,5 @@
-import { createFileRoute, Navigate, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { Trophy } from "lucide-react";
 import { z } from "zod";
 import { toast } from "sonner";
@@ -39,13 +39,16 @@ const passwordSchema = z.string().min(6, "Mínimo 6 caracteres").max(128);
 function AuthPage() {
   const { session, loading } = useAuth();
   const { next } = Route.useSearch();
-  const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
 
   const safeNext = next.startsWith("/") && !next.startsWith("//") ? next : "/dashboard";
 
+  useEffect(() => {
+    if (session) window.location.replace(safeNext);
+  }, [safeNext, session]);
+
   if (loading) return null;
-  if (session) return <Navigate href={safeNext} />;
+  if (session) return null;
 
   async function handleEmail(mode: "signin" | "signup", form: HTMLFormElement) {
     const fd = new FormData(form);
