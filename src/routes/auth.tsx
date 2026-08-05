@@ -1,5 +1,5 @@
-import { createFileRoute, Navigate, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { Trophy } from "lucide-react";
 import { z } from "zod";
 import { toast } from "sonner";
@@ -15,6 +15,9 @@ import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
+  validateSearch: (search: Record<string, unknown>) => ({
+    next: typeof search.next === "string" ? search.next : "",
+  }),
   component: AuthPage,
   head: () => ({
     meta: [
@@ -35,11 +38,17 @@ const passwordSchema = z.string().min(6, "Mínimo 6 caracteres").max(128);
 
 function AuthPage() {
   const { session, loading } = useAuth();
-  const navigate = useNavigate();
+  const { next } = Route.useSearch();
   const [busy, setBusy] = useState(false);
 
+  const safeNext = next.startsWith("/") && !next.startsWith("//") ? next : "/dashboard";
+
+  useEffect(() => {
+    if (session) window.location.replace(safeNext);
+  }, [safeNext, session]);
+
   if (loading) return null;
-  if (session) return <Navigate to="/dashboard" />;
+  if (session) return null;
 
   async function handleEmail(mode: "signin" | "signup", form: HTMLFormElement) {
     const fd = new FormData(form);
@@ -58,13 +67,13 @@ function AuthPage() {
         const { error } = await supabase.auth.signInWithPassword({ email: email.data, password: password.data });
         if (error) throw error;
         toast.success("Bienvenido");
-        navigate({ to: "/dashboard" });
+        window.location.assign(safeNext);
       } else {
         const { error } = await supabase.auth.signUp({
           email: email.data,
           password: password.data,
           options: {
-            emailRedirectTo: `${window.location.origin}/dashboard`,
+            emailRedirectTo: `${window.location.origin}/auth?next=${encodeURIComponent(safeNext)}`,
             data: { full_name: fullName || email.data.split("@")[0] },
           },
         });
@@ -81,10 +90,15 @@ function AuthPage() {
   async function handleGoogle() {
     setBusy(true);
     try {
-      const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
+      sessionStorage.setItem("planeofut-auth-next", safeNext);
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: `${window.location.origin}/auth?next=${encodeURIComponent(safeNext)}`,
+      });
       if (result.error) throw result.error;
       if (result.redirected) return;
-      navigate({ to: "/dashboard" });
+      const target = sessionStorage.getItem("planeofut-auth-next") ?? safeNext;
+      sessionStorage.removeItem("planeofut-auth-next");
+      window.location.assign(target.startsWith("/") && !target.startsWith("//") ? target : "/dashboard");
     } catch (e: any) {
       toast.error(e?.message ?? "No se pudo iniciar sesión con Google");
       setBusy(false);
