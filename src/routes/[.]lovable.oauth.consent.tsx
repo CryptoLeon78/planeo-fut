@@ -23,7 +23,7 @@ export const Route = createFileRoute("/.lovable/oauth/consent")({
     }
   },
   loader: async ({ location }) => {
-    const authorizationId = new URLSearchParams(location.search).get("authorization_id");
+    const authorizationId = new URLSearchParams(location.searchStr).get("authorization_id");
     if (!authorizationId) throw new Error("Missing authorization request identifier.");
     const { data, error } = await supabase.auth.oauth.getAuthorizationDetails(authorizationId);
     if (error) throw error;

@@ -91,7 +91,9 @@ function AuthPage() {
     setBusy(true);
     try {
       sessionStorage.setItem("planeofut-auth-next", safeNext);
-      const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: `${window.location.origin}/auth?next=${encodeURIComponent(safeNext)}`,
+      });
       if (result.error) throw result.error;
       if (result.redirected) return;
       const target = sessionStorage.getItem("planeofut-auth-next") ?? safeNext;
