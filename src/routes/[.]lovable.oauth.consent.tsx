@@ -22,8 +22,10 @@ export const Route = createFileRoute("/.lovable/oauth/consent")({
       throw redirect({ to: "/auth", search: { next } });
     }
   },
-  loader: async ({ search }) => {
-    const { data, error } = await supabase.auth.oauth.getAuthorizationDetails(search.authorization_id);
+  loader: async ({ location }) => {
+    const authorizationId = new URLSearchParams(location.search).get("authorization_id");
+    if (!authorizationId) throw new Error("Missing authorization request identifier.");
+    const { data, error } = await supabase.auth.oauth.getAuthorizationDetails(authorizationId);
     if (error) throw error;
     if ("redirect_url" in data) throw redirect({ href: data.redirect_url });
     return data;

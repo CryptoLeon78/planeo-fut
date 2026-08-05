@@ -169,11 +169,12 @@
             "intensity": {
               "type": "string",
               "enum": [
-                "low",
-                "medium",
-                "high"
+                "baja",
+                "media",
+                "alta",
+                "muy_alta"
               ],
-              "description": "Planned session intensity."
+              "description": "Planned session intensity: baja, media, alta or muy_alta."
             },
             "weeklyFocus": {
               "type": "string",

@@ -11,7 +11,7 @@ export default defineTool({
     objective: z.string().trim().optional().describe("Main coaching objective."),
     sessionDate: z.string().optional().describe("Planned date in YYYY-MM-DD format."),
     durationMinutes: z.number().int().optional().describe("Total planned duration in minutes."),
-    intensity: z.enum(["low", "medium", "high"]).optional().describe("Planned session intensity."),
+    intensity: z.enum(["baja", "media", "alta", "muy_alta"]).optional().describe("Planned session intensity: baja, media, alta or muy_alta."),
     weeklyFocus: z.string().trim().optional().describe("Weekly tactical or physical focus."),
     notes: z.string().trim().optional().describe("Organisation and coaching notes."),
   },
