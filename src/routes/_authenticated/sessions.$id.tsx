@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
+import { exportToPdf } from "@/lib/i18n";
 import { BLOCK_TYPES, INTENSITIES, labelOf } from "@/lib/constants";
 import { SessionEvaluationCard } from "@/components/session-evaluation-card";
 
@@ -32,7 +33,7 @@ function SessionDetail() {
   if (isLoading || !data?.session) return <p className="text-sm text-muted-foreground">Cargando…</p>;
   const { session, blocks, items } = data;
 
-  function exportPDF() { window.print(); }
+  function exportPDF() { exportToPdf(session.name); }
 
   return (
     <div className="mx-auto max-w-4xl space-y-6 print-area">
