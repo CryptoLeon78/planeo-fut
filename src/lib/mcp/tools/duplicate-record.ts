@@ -48,8 +48,9 @@ export default defineAuthedTool({
         .from("microcycle_slots")
         .select("slot_type,slot_date,notes,session_id")
         .eq("microcycle_id", input.recordId);
+      const createdRow = created as unknown as Record<string, unknown>;
       const offset =
-        new Date(`${created.week_start as string}T12:00:00Z`).getTime() -
+        new Date(`${createdRow.week_start as string}T12:00:00Z`).getTime() -
         new Date(`${original.week_start as string}T12:00:00Z`).getTime();
       const days = Math.round(offset / 86_400_000);
       if (originalSlots?.length) {
@@ -75,7 +76,7 @@ export default defineAuthedTool({
       label: `duplicated-from:${input.recordId}`,
     });
 
-    return toolSuccess(`Duplicated ${input.entity} as “${created.name}”.`, {
+    return toolSuccess(`Duplicated ${input.entity} as “${String((created as unknown as Record<string, unknown>).name)}”.`, {
       record: created,
       slots,
       version,
