@@ -41,7 +41,7 @@ function AuthPage() {
   const { next } = Route.useSearch();
   const [busy, setBusy] = useState(false);
 
-  const safeNext = next.startsWith("/") && !next.startsWith("//") ? next : "/dashboard";
+  const safeNext = next && next.startsWith("/") && !next.startsWith("//") ? next : "/dashboard";
 
   useEffect(() => {
     if (session) window.location.replace(safeNext);
