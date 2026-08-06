@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      entity_versions: {
+        Row: {
+          created_at: string
+          entity_id: string
+          entity_type: string
+          id: string
+          label: string | null
+          owner_id: string
+          snapshot: Json
+          source: string
+          version: number
+        }
+        Insert: {
+          created_at?: string
+          entity_id: string
+          entity_type: string
+          id?: string
+          label?: string | null
+          owner_id: string
+          snapshot?: Json
+          source?: string
+          version: number
+        }
+        Update: {
+          created_at?: string
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          label?: string | null
+          owner_id?: string
+          snapshot?: Json
+          source?: string
+          version?: number
+        }
+        Relationships: []
+      }
       exercises: {
         Row: {
           age_group: string | null
@@ -93,6 +129,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      mcp_audit_log: {
+        Row: {
+          created_at: string
+          duration_ms: number | null
+          error_code: string | null
+          error_message: string | null
+          id: string
+          params: Json
+          status: string
+          tool: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          duration_ms?: number | null
+          error_code?: string | null
+          error_message?: string | null
+          id?: string
+          params?: Json
+          status: string
+          tool: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          duration_ms?: number | null
+          error_code?: string | null
+          error_message?: string | null
+          id?: string
+          params?: Json
+          status?: string
+          tool?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       mesocycles: {
         Row: {
@@ -252,6 +324,7 @@ export type Database = {
           created_at: string
           full_name: string | null
           id: string
+          language: string
           updated_at: string
         }
         Insert: {
@@ -259,6 +332,7 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id: string
+          language?: string
           updated_at?: string
         }
         Update: {
@@ -266,6 +340,7 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id?: string
+          language?: string
           updated_at?: string
         }
         Relationships: []
