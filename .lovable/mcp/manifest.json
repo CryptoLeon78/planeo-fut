@@ -30,6 +30,8 @@
           "properties": {
             "search": {
               "type": "string",
+              "minLength": 1,
+              "maxLength": 80,
               "description": "Optional text found in the exercise name or objective."
             },
             "favouritesOnly": {
@@ -38,7 +40,9 @@
             },
             "limit": {
               "type": "integer",
-              "description": "Maximum records to return; values are clamped between 1 and 50."
+              "minimum": 1,
+              "maximum": 50,
+              "description": "Maximum records to return (1-50, defaults to 20)."
             }
           },
           "additionalProperties": false,
@@ -61,38 +65,55 @@
           "properties": {
             "name": {
               "type": "string",
+              "minLength": 1,
+              "maxLength": 120,
               "description": "Clear football practice name."
             },
             "objective": {
               "type": "string",
+              "minLength": 1,
+              "maxLength": 600,
               "description": "Coaching objective or intended outcome."
             },
             "durationMinutes": {
               "type": "integer",
-              "description": "Planned duration in minutes."
+              "minimum": 1,
+              "maximum": 240,
+              "description": "Planned duration in minutes (1-240)."
             },
             "playersCount": {
               "type": "integer",
-              "description": "Recommended number of players."
+              "minimum": 1,
+              "maximum": 40,
+              "description": "Recommended number of players (1-40)."
             },
             "space": {
               "type": "string",
+              "minLength": 1,
+              "maxLength": 120,
               "description": "Pitch dimensions or working area."
             },
             "materials": {
               "type": "string",
+              "minLength": 1,
+              "maxLength": 600,
               "description": "Required equipment."
             },
             "observations": {
               "type": "string",
+              "minLength": 1,
+              "maxLength": 2000,
               "description": "Organisation, coaching points and constraints."
             },
             "tags": {
               "type": "array",
               "items": {
-                "type": "string"
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 30
               },
-              "description": "Short searchable labels."
+              "maxItems": 20,
+              "description": "Short searchable labels (max 20)."
             },
             "favourite": {
               "type": "boolean",
@@ -121,15 +142,18 @@
           "properties": {
             "fromDate": {
               "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
               "description": "Optional inclusive start date in YYYY-MM-DD format."
             },
             "toDate": {
-              "type": "string",
+              "$ref": "#/properties/fromDate",
               "description": "Optional inclusive end date in YYYY-MM-DD format."
             },
             "limit": {
               "type": "integer",
-              "description": "Maximum records to return; values are clamped between 1 and 50."
+              "minimum": 1,
+              "maximum": 50,
+              "description": "Maximum records to return (1-50, defaults to 20)."
             }
           },
           "additionalProperties": false,
@@ -152,19 +176,26 @@
           "properties": {
             "name": {
               "type": "string",
+              "minLength": 1,
+              "maxLength": 120,
               "description": "Session name."
             },
             "objective": {
               "type": "string",
+              "minLength": 1,
+              "maxLength": 600,
               "description": "Main coaching objective."
             },
             "sessionDate": {
               "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
               "description": "Planned date in YYYY-MM-DD format."
             },
             "durationMinutes": {
               "type": "integer",
-              "description": "Total planned duration in minutes."
+              "minimum": 15,
+              "maximum": 240,
+              "description": "Total planned duration in minutes (15-240)."
             },
             "intensity": {
               "type": "string",
@@ -178,10 +209,14 @@
             },
             "weeklyFocus": {
               "type": "string",
+              "minLength": 1,
+              "maxLength": 160,
               "description": "Weekly tactical or physical focus."
             },
             "notes": {
               "type": "string",
+              "minLength": 1,
+              "maxLength": 2000,
               "description": "Organisation and coaching notes."
             }
           },
@@ -207,11 +242,14 @@
           "properties": {
             "fromWeek": {
               "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
               "description": "Optional earliest week start in YYYY-MM-DD format."
             },
             "limit": {
               "type": "integer",
-              "description": "Maximum microcycles to return; values are clamped between 1 and 20."
+              "minimum": 1,
+              "maximum": 20,
+              "description": "Maximum records to return (1-20, defaults to 10)."
             }
           },
           "additionalProperties": false,
@@ -234,10 +272,13 @@
           "properties": {
             "name": {
               "type": "string",
+              "minLength": 1,
+              "maxLength": 120,
               "description": "Microcycle name."
             },
             "weekStart": {
               "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
               "description": "First planning date in YYYY-MM-DD format."
             },
             "matchDay": {
@@ -250,10 +291,14 @@
             },
             "weeklyObjective": {
               "type": "string",
+              "minLength": 1,
+              "maxLength": 600,
               "description": "Primary outcome for the week."
             },
             "notes": {
               "type": "string",
+              "minLength": 1,
+              "maxLength": 2000,
               "description": "Context, constraints or load notes."
             }
           },

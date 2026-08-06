@@ -1,30 +1,27 @@
-import { defineTool } from "@lovable.dev/mcp-js";
-import { z } from "zod";
+import { defineAuthedTool, toolError, toolSuccess } from "../runtime";
 import { supabaseForUser } from "../supabase";
+import { isoDate, limitField } from "../schemas";
 
-export default defineTool({
+export default defineAuthedTool({
   name: "list_microcycles",
   title: "List microcycles",
   description: "List weekly football microcycles and their MD slots for the signed-in coach.",
   inputSchema: {
-    fromWeek: z.string().optional().describe("Optional earliest week start in YYYY-MM-DD format."),
-    limit: z.number().int().optional().describe("Maximum microcycles to return; values are clamped between 1 and 20."),
+    fromWeek: isoDate.optional().describe("Optional earliest week start in YYYY-MM-DD format."),
+    limit: limitField(20, 10),
   },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
-  handler: async ({ fromWeek, limit }, ctx) => {
-    if (!ctx.isAuthenticated()) return { content: [{ type: "text", text: "Authentication required." }], isError: true };
-    const userId = ctx.getUserId();
-    if (!userId) return { content: [{ type: "text", text: "The authenticated user has no identifier." }], isError: true };
+  handler: async ({ fromWeek, limit }, ctx, userId) => {
     let query = supabaseForUser(ctx)
       .from("microcycles")
       .select("id,name,week_start,match_day,weekly_objective,notes,mesocycle_id,microcycle_slots(id,slot_type,slot_date,notes,session_id)")
       .eq("owner_id", userId)
       .order("week_start", { ascending: false })
-      .limit(Math.min(20, Math.max(1, limit ?? 10)));
+      .limit(limit ?? 10);
     if (fromWeek) query = query.gte("week_start", fromWeek);
     const { data, error } = await query;
-    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    if (error) return toolError("backend_error", error.message);
     const items = data ?? [];
-    return { content: [{ type: "text", text: `Found ${items.length} microcycles.` }], structuredContent: { items, count: items.length } };
+    return toolSuccess(`Found ${items.length} microcycles.`, { items, count: items.length });
   },
 });

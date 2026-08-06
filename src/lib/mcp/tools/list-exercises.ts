@@ -1,37 +1,37 @@
-import { defineTool } from "@lovable.dev/mcp-js";
 import { z } from "zod";
+import { defineAuthedTool, toolError, toolSuccess } from "../runtime";
 import { supabaseForUser } from "../supabase";
+import { limitField } from "../schemas";
 
-export default defineTool({
+export default defineAuthedTool({
   name: "list_exercises",
   title: "List exercises",
   description: "Find football practices in the signed-in coach's private library, including favourites and planning details.",
   inputSchema: {
-    search: z.string().trim().optional().describe("Optional text found in the exercise name or objective."),
+    search: z.string().trim().min(1).max(80).optional().describe("Optional text found in the exercise name or objective."),
     favouritesOnly: z.boolean().optional().describe("Return only exercises marked as favourites."),
-    limit: z.number().int().optional().describe("Maximum records to return; values are clamped between 1 and 50."),
+    limit: limitField(50, 20),
   },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
-  handler: async ({ search, favouritesOnly, limit }, ctx) => {
-    if (!ctx.isAuthenticated()) return { content: [{ type: "text", text: "Authentication required." }], isError: true };
-    const userId = ctx.getUserId();
-    if (!userId) return { content: [{ type: "text", text: "The authenticated user has no identifier." }], isError: true };
-
+  handler: async ({ search, favouritesOnly, limit }, ctx, userId) => {
     let query = supabaseForUser(ctx)
       .from("exercises")
-      .select("id,name,objective,game_phase,intensity,task_type,duration_min,players_count,space,materials,tags,is_favorite,observations,variants")
+      .select("id,name,objective,game_phase,intensity,task_type,duration_min,players_count,space,materials,tags,is_favorite,observations,variants,updated_at")
       .eq("owner_id", userId)
       .order("updated_at", { ascending: false })
-      .limit(Math.min(50, Math.max(1, limit ?? 20)));
+      .limit(limit ?? 20);
     if (favouritesOnly) query = query.eq("is_favorite", true);
-    if (search) query = query.or(`name.ilike.%${search.replaceAll(",", " ")}%,objective.ilike.%${search.replaceAll(",", " ")}%`);
+    if (search) {
+      const term = search.replaceAll(",", " ").replaceAll("%", "");
+      query = query.or(`name.ilike.%${term}%,objective.ilike.%${term}%`);
+    }
 
     const { data, error } = await query;
-    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    if (error) return toolError("backend_error", error.message);
     const items = data ?? [];
-    return {
-      content: [{ type: "text", text: items.length ? `Found ${items.length} exercises.` : "No matching exercises found." }],
-      structuredContent: { items, count: items.length },
-    };
+    return toolSuccess(
+      items.length ? `Found ${items.length} exercises.` : "No matching exercises found.",
+      { items, count: items.length },
+    );
   },
 });
