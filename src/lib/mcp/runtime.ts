@@ -113,7 +113,7 @@ export function defineAuthedTool<Shape extends ZodRawShape>(config: {
     description: config.description,
     inputSchema: config.inputSchema,
     annotations: config.annotations,
-    handler: async (rawInput: unknown, ctx: ToolContext) => {
+    handler: (async (rawInput: unknown, ctx: ToolContext) => {
       const started = Date.now();
       const finish = async (result: ToolResult) => {
         const error = (result.structuredContent as { error?: { code?: string; message?: string } } | undefined)?.error;
@@ -154,6 +154,6 @@ export function defineAuthedTool<Shape extends ZodRawShape>(config: {
         const message = error instanceof Error ? error.message : String(error);
         return finish(toolError("unexpected_error", message));
       }
-    },
+    }) as never,
   });
 }

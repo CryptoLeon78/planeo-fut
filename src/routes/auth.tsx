@@ -15,8 +15,8 @@ import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
-  validateSearch: (search: Record<string, unknown>) => ({
-    next: typeof search.next === "string" ? search.next : "",
+  validateSearch: (search: Record<string, unknown>): { next?: string } => ({
+    next: typeof search.next === "string" ? search.next : undefined,
   }),
   component: AuthPage,
   head: () => ({

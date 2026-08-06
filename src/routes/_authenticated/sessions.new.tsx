@@ -18,7 +18,7 @@ import { BLOCK_TYPES, INTENSITIES, labelOf } from "@/lib/constants";
 
 export const Route = createFileRoute("/_authenticated/sessions/new")({
   component: NewSessionPage,
-  validateSearch: (search: Record<string, unknown>) => ({
+  validateSearch: (search: Record<string, unknown>): { edit?: string; fromExercise?: string } => ({
     edit: (search.edit as string) || undefined,
     fromExercise: (search.fromExercise as string) || undefined,
   }),
@@ -79,8 +79,8 @@ function NewSessionPage() {
     queryKey: ["session-edit", editId],
     enabled: !!editId && !!user,
     queryFn: async () => {
-      const { data: s } = await supabase.from("sessions").select("*").eq("id", editId).single();
-      const { data: blks } = await supabase.from("session_blocks").select("*").eq("session_id", editId).order("position");
+      const { data: s } = await supabase.from("sessions").select("*").eq("id", editId!).single();
+      const { data: blks } = await supabase.from("session_blocks").select("*").eq("session_id", editId!).order("position");
       const blockIds = (blks ?? []).map((b: any) => b.id);
       const { data: items } = blockIds.length
         ? await supabase.from("session_block_exercises").select("*").in("block_id", blockIds).order("position")
@@ -145,12 +145,12 @@ function NewSessionPage() {
           intensity: (parsed.data.intensity || "media") as "alta" | "baja" | "media" | "muy_alta",
           session_date: parsed.data.session_date || null,
           duration_min: parsed.data.duration_min === "" ? null : parsed.data.duration_min,
-        }).eq("id", editId);
+        }).eq("id", editId!);
         if (error) throw error;
 
         // Limpiar bloques antiguos y sus ejercicios (cascada manual si no está en DB)
         // Por simplicidad en este MVP, borramos y re-insertamos bloques
-        await supabase.from("session_blocks").delete().eq("session_id", editId);
+        await supabase.from("session_blocks").delete().eq("session_id", editId!);
       } else {
         const { data: created, error } = await (supabase.from("sessions") as any).insert({
           owner_id: user.id,
