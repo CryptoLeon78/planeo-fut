@@ -40,6 +40,7 @@ import { Route as AuthenticatedSessionsIndexRouteImport } from './routes/_authen
 import { Route as AuthenticatedSessionsIdRouteImport } from './routes/_authenticated/sessions.$id'
 import { Route as AuthenticatedSessionsNewRouteImport } from './routes/_authenticated/sessions.new'
 import { Route as ApiPublicHealthRouteImport } from './routes/api/public/health'
+import { Route as ApiRpcMcpAuditRouteImport } from './routes/api/rpc/mcp-audit'
 import { Route as ApiRpcSecurityProbeRouteImport } from './routes/api/rpc/security-probe'
 import { Route as EjerciciosFutbolBaseSlugRouteImport } from './routes/ejercicios.futbol-base.$slug'
 import { Route as ApiPublicSecurityCspRouteImport } from './routes/api/public/security/csp'
@@ -212,6 +213,11 @@ const ApiPublicHealthRoute = ApiPublicHealthRouteImport.update({
   path: '/api/public/health',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiRpcMcpAuditRoute = ApiRpcMcpAuditRouteImport.update({
+  id: '/api/rpc/mcp-audit',
+  path: '/api/rpc/mcp-audit',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiRpcSecurityProbeRoute = ApiRpcSecurityProbeRouteImport.update({
   id: '/api/rpc/security-probe',
   path: '/api/rpc/security-probe',
@@ -255,6 +261,7 @@ export interface FileRoutesByFullPath {
   '/sessions/$id': typeof AuthenticatedSessionsIdRoute
   '/sessions/new': typeof AuthenticatedSessionsNewRoute
   '/api/public/health': typeof ApiPublicHealthRoute
+  '/api/rpc/mcp-audit': typeof ApiRpcMcpAuditRoute
   '/api/rpc/security-probe': typeof ApiRpcSecurityProbeRoute
   '/ejercicios/futbol-base/$slug': typeof EjerciciosFutbolBaseSlugRoute
   '/exercises/': typeof AuthenticatedExercisesIndexRoute
@@ -285,6 +292,7 @@ export interface FileRoutesByTo {
   '/sessions/$id': typeof AuthenticatedSessionsIdRoute
   '/sessions/new': typeof AuthenticatedSessionsNewRoute
   '/api/public/health': typeof ApiPublicHealthRoute
+  '/api/rpc/mcp-audit': typeof ApiRpcMcpAuditRoute
   '/api/rpc/security-probe': typeof ApiRpcSecurityProbeRoute
   '/ejercicios/futbol-base/$slug': typeof EjerciciosFutbolBaseSlugRoute
   '/exercises': typeof AuthenticatedExercisesIndexRoute
@@ -322,6 +330,7 @@ export interface FileRoutesById {
   '/_authenticated/sessions/$id': typeof AuthenticatedSessionsIdRoute
   '/_authenticated/sessions/new': typeof AuthenticatedSessionsNewRoute
   '/api/public/health': typeof ApiPublicHealthRoute
+  '/api/rpc/mcp-audit': typeof ApiRpcMcpAuditRoute
   '/api/rpc/security-probe': typeof ApiRpcSecurityProbeRoute
   '/ejercicios/futbol-base/$slug': typeof EjerciciosFutbolBaseSlugRoute
   '/_authenticated/exercises/': typeof AuthenticatedExercisesIndexRoute
@@ -359,6 +368,7 @@ export interface FileRouteTypes {
     | '/sessions/$id'
     | '/sessions/new'
     | '/api/public/health'
+    | '/api/rpc/mcp-audit'
     | '/api/rpc/security-probe'
     | '/ejercicios/futbol-base/$slug'
     | '/exercises/'
@@ -389,6 +399,7 @@ export interface FileRouteTypes {
     | '/sessions/$id'
     | '/sessions/new'
     | '/api/public/health'
+    | '/api/rpc/mcp-audit'
     | '/api/rpc/security-probe'
     | '/ejercicios/futbol-base/$slug'
     | '/exercises'
@@ -425,6 +436,7 @@ export interface FileRouteTypes {
     | '/_authenticated/sessions/$id'
     | '/_authenticated/sessions/new'
     | '/api/public/health'
+    | '/api/rpc/mcp-audit'
     | '/api/rpc/security-probe'
     | '/ejercicios/futbol-base/$slug'
     | '/_authenticated/exercises/'
@@ -446,6 +458,7 @@ export interface RootRouteChildren {
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiPublicHealthRoute: typeof ApiPublicHealthRoute
+  ApiRpcMcpAuditRoute: typeof ApiRpcMcpAuditRoute
   ApiRpcSecurityProbeRoute: typeof ApiRpcSecurityProbeRoute
   ApiPublicSecurityCspRoute: typeof ApiPublicSecurityCspRoute
 }
@@ -669,6 +682,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHealthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/rpc/mcp-audit': {
+      id: '/api/rpc/mcp-audit'
+      path: '/api/rpc/mcp-audit'
+      fullPath: '/api/rpc/mcp-audit'
+      preLoaderRoute: typeof ApiRpcMcpAuditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/rpc/security-probe': {
       id: '/api/rpc/security-probe'
       path: '/api/rpc/security-probe'
@@ -823,6 +843,7 @@ const rootRouteChildren: RootRouteChildren = {
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiPublicHealthRoute: ApiPublicHealthRoute,
+  ApiRpcMcpAuditRoute: ApiRpcMcpAuditRoute,
   ApiRpcSecurityProbeRoute: ApiRpcSecurityProbeRoute,
   ApiPublicSecurityCspRoute: ApiPublicSecurityCspRoute,
 }

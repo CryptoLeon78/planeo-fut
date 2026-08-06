@@ -16,6 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
+import { exportToPdf } from "@/lib/i18n";
 import { formatDate, MICROCYCLE_SLOT_TYPES } from "@/lib/constants";
 import { suggestMicrocycle, type MicrocycleSuggestion } from "@/lib/microcycle-ai.functions";
 
@@ -172,7 +173,7 @@ function MicroDetailPage() {
             </div>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={() => window.print()}><FileDown className="mr-1 h-4 w-4" /> PDF</Button>
+            <Button variant="outline" onClick={() => exportToPdf(micro.name)}><FileDown className="mr-1 h-4 w-4" /> PDF</Button>
             <Button variant="outline" onClick={() => setAiOpen(true)}>
               <Sparkles className="mr-1 h-4 w-4" /> Generar con IA
             </Button>

@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 export type AppLanguage = "es-ES" | "en-GB";
 
@@ -221,10 +222,41 @@ function localiseDom(root: ParentNode, language: AppLanguage) {
 
 export function I18nProvider({ children }: { children: ReactNode }) {
   const [language, setLanguageState] = useState<AppLanguage>("es-ES");
+  const [hydratedFromProfile, setHydratedFromProfile] = useState(false);
+
   useEffect(() => {
     const saved = window.localStorage.getItem(STORAGE_KEY);
     if (saved === "en-GB" || saved === "es-ES") setLanguageState(saved);
   }, []);
+
+  // Load the coach's stored preference so the language follows them across devices.
+  useEffect(() => {
+    let active = true;
+    void (async () => {
+      const { data } = await supabase.auth.getSession();
+      const userId = data.session?.user.id;
+      if (!userId || !active) return;
+      const { data: profile } = await supabase.from("profiles").select("language").eq("id", userId).maybeSingle();
+      const stored = profile?.language;
+      if (active && (stored === "en-GB" || stored === "es-ES")) setLanguageState(stored);
+      if (active) setHydratedFromProfile(true);
+    })();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  // Persist changes made after the profile preference has been read.
+  useEffect(() => {
+    if (!hydratedFromProfile) return;
+    void (async () => {
+      const { data } = await supabase.auth.getSession();
+      const userId = data.session?.user.id;
+      if (!userId) return;
+      await supabase.from("profiles").update({ language }).eq("id", userId);
+    })();
+  }, [language, hydratedFromProfile]);
+
   useEffect(() => {
     document.documentElement.lang = language;
     window.localStorage.setItem(STORAGE_KEY, language);
@@ -249,4 +281,16 @@ export function useLanguage() {
 export function getAppLocale(): AppLanguage {
   if (typeof window === "undefined") return "es-ES";
   return window.localStorage.getItem(STORAGE_KEY) === "en-GB" ? "en-GB" : "es-ES";
+}
+/** Localised document title used as the PDF filename when exporting. */
+export function exportToPdf(recordName: string) {
+  if (typeof window === "undefined") return;
+  const language = getAppLocale();
+  const prefix = language === "en-GB" ? "PlaneoFUT — Training plan" : "PlaneoFUT — Plan de entrenamiento";
+  const previous = document.title;
+  document.title = `${prefix} · ${translateCopy(recordName, language)}`;
+  window.print();
+  window.setTimeout(() => {
+    document.title = previous;
+  }, 1000);
 }

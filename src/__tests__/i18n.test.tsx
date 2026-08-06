@@ -14,13 +14,13 @@ describe("language switcher", () => {
       </I18nProvider>,
     );
 
-    fireEvent.click(screen.getByRole("button", { name: "English (United Kingdom)" }));
+    fireEvent.click(screen.getByRole("radio", { name: "English (United Kingdom)" }));
     expect(await screen.findByRole("heading", { name: "Weekly schedule" })).toBeInTheDocument();
     expect(screen.getByText("Were the coaching outcomes achieved?")).toBeInTheDocument();
     expect(document.documentElement.lang).toBe("en-GB");
     await waitFor(() => expect(localStorage.getItem("planeofut-language")).toBe("en-GB"));
 
-    fireEvent.click(screen.getByRole("button", { name: "Español (España)" }));
+    fireEvent.click(screen.getByRole("radio", { name: "Español (España)" }));
     expect(await screen.findByRole("heading", { name: "Calendario semanal" })).toBeInTheDocument();
     expect(document.documentElement.lang).toBe("es-ES");
   });

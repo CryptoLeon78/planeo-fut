@@ -33,8 +33,8 @@ describe("microcycles routes", () => {
     const mod = await import("@/routes/_authenticated/microcycles.$id");
     const Cmp = (mod.Route as any).component;
     renderWithProviders(<Cmp />);
-    expect(await screen.findByText("Mc 1")).toBeInTheDocument();
-    expect(await screen.findByText("MD-4")).toBeInTheDocument();
-    expect(await screen.findByText("MD")).toBeInTheDocument();
+    expect((await screen.findAllByText("Mc 1")).length).toBeGreaterThan(0);
+    expect((await screen.findAllByText("MD-4")).length).toBeGreaterThan(0);
+    expect((await screen.findAllByText("MD")).length).toBeGreaterThan(0);
   });
 });

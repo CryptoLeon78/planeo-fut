@@ -15,8 +15,8 @@ import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
-  validateSearch: (search: Record<string, unknown>) => ({
-    next: typeof search.next === "string" ? search.next : "",
+  validateSearch: (search: Record<string, unknown>): { next?: string } => ({
+    next: typeof search.next === "string" ? search.next : undefined,
   }),
   component: AuthPage,
   head: () => ({
@@ -41,7 +41,7 @@ function AuthPage() {
   const { next } = Route.useSearch();
   const [busy, setBusy] = useState(false);
 
-  const safeNext = next.startsWith("/") && !next.startsWith("//") ? next : "/dashboard";
+  const safeNext = next && next.startsWith("/") && !next.startsWith("//") ? next : "/dashboard";
 
   useEffect(() => {
     if (session) window.location.replace(safeNext);
