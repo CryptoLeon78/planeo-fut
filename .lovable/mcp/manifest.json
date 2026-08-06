@@ -12,7 +12,7 @@
   "mcp": {
     "server": {
       "name": "planeofut",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "PlaneoFUT"
     },
     "tools": [
@@ -129,6 +129,141 @@
         "outputSchema": null
       },
       {
+        "name": "update_exercise",
+        "title": "Update exercise",
+        "description": "Update fields of an existing practice in the coach's library, storing a version snapshot before the change.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "exerciseId": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Identifier of the exercise to update."
+            },
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120,
+              "description": "New practice name."
+            },
+            "objective": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 600
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "New coaching objective; pass null to clear."
+            },
+            "durationMinutes": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 240
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "New duration in minutes."
+            },
+            "playersCount": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 40
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "New recommended player count."
+            },
+            "space": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "New working area."
+            },
+            "materials": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 600
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "New equipment list."
+            },
+            "observations": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 2000
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "New coaching points."
+            },
+            "intensity": {
+              "type": "string",
+              "enum": [
+                "baja",
+                "media",
+                "alta",
+                "muy_alta"
+              ],
+              "description": "New intensity: baja, media, alta or muy_alta."
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 30
+              },
+              "maxItems": 20,
+              "description": "Replacement list of labels."
+            },
+            "favourite": {
+              "type": "boolean",
+              "description": "Mark or unmark as favourite."
+            }
+          },
+          "required": [
+            "exerciseId"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
         "name": "list_sessions",
         "title": "List sessions",
         "description": "List the signed-in coach's football training sessions with objectives, dates, load and evaluation details.",
@@ -229,6 +364,126 @@
         "outputSchema": null
       },
       {
+        "name": "update_session",
+        "title": "Update session",
+        "description": "Update an existing training session (date, objective, load or notes), storing a version snapshot first.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "sessionId": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Identifier of the session to update."
+            },
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120,
+              "description": "New session name."
+            },
+            "objective": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 600
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "New main objective; pass null to clear."
+            },
+            "sessionDate": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "New planned date in YYYY-MM-DD format."
+            },
+            "durationMinutes": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 15,
+                  "maximum": 240
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "New duration in minutes."
+            },
+            "intensity": {
+              "type": "string",
+              "enum": [
+                "baja",
+                "media",
+                "alta",
+                "muy_alta"
+              ],
+              "description": "New intensity: baja, media, alta or muy_alta."
+            },
+            "weeklyFocus": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 160
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "New weekly focus."
+            },
+            "notes": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 2000
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "New coaching notes."
+            },
+            "evaluation": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 2000
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Post-session evaluation summary."
+            }
+          },
+          "required": [
+            "sessionId"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
         "name": "list_microcycles",
         "title": "List microcycles",
         "description": "List weekly football microcycles and their MD slots for the signed-in coach.",
@@ -306,6 +561,251 @@
             "name",
             "weekStart",
             "matchDay"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "update_microcycle",
+        "title": "Update microcycle",
+        "description": "Update a weekly microcycle header and optionally assign a session to one of its MD slots.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "microcycleId": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Identifier of the microcycle to update."
+            },
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120,
+              "description": "New microcycle name."
+            },
+            "weekStart": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "description": "New first planning date in YYYY-MM-DD format."
+            },
+            "matchDay": {
+              "type": "string",
+              "enum": [
+                "sabado",
+                "domingo"
+              ],
+              "description": "New fixture day."
+            },
+            "weeklyObjective": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 600
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "New weekly objective; pass null to clear."
+            },
+            "notes": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 2000
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "New notes; pass null to clear."
+            },
+            "assignSession": {
+              "type": "object",
+              "properties": {
+                "slotType": {
+                  "type": "string",
+                  "enum": [
+                    "MD-4",
+                    "MD-3",
+                    "MD-2",
+                    "MD-1",
+                    "MD"
+                  ],
+                  "description": "Slot to fill."
+                },
+                "sessionId": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "description": "Session to assign, or null to clear the slot."
+                }
+              },
+              "required": [
+                "slotType",
+                "sessionId"
+              ],
+              "additionalProperties": false,
+              "description": "Optionally assign or clear a training session in one planning slot."
+            }
+          },
+          "required": [
+            "microcycleId"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "duplicate_record",
+        "title": "Duplicate exercise, session or microcycle",
+        "description": "Clone a practice, session or weekly microcycle owned by the coach, optionally renaming it or shifting its dates.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "entity": {
+              "type": "string",
+              "enum": [
+                "exercise",
+                "session",
+                "microcycle"
+              ],
+              "description": "What to duplicate: exercise, session or microcycle."
+            },
+            "recordId": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Identifier of the record to duplicate."
+            },
+            "newName": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120,
+              "description": "Name for the copy; defaults to the original plus a copy suffix."
+            },
+            "shiftDays": {
+              "type": "integer",
+              "minimum": -365,
+              "maximum": 365,
+              "description": "Shift every date in the copy by this number of days."
+            },
+            "newDate": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "description": "Explicit date for the copy (sessions and microcycles)."
+            }
+          },
+          "required": [
+            "entity",
+            "recordId"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_versions",
+        "title": "List version history",
+        "description": "List stored version snapshots for one of the coach's practices, sessions or microcycles.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "entity": {
+              "type": "string",
+              "enum": [
+                "exercise",
+                "session",
+                "microcycle"
+              ],
+              "description": "Record type: exercise, session or microcycle."
+            },
+            "recordId": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Identifier of the record."
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "description": "Maximum records to return (1-50, defaults to 20)."
+            }
+          },
+          "required": [
+            "entity",
+            "recordId"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "restore_version",
+        "title": "Restore a previous version",
+        "description": "Roll a practice, session or microcycle back to a stored version snapshot, keeping the current state as a new version.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": true,
+          "idempotentHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "entity": {
+              "type": "string",
+              "enum": [
+                "exercise",
+                "session",
+                "microcycle"
+              ],
+              "description": "Record type: exercise, session or microcycle."
+            },
+            "recordId": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Identifier of the record to roll back."
+            },
+            "version": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Version number to restore."
+            }
+          },
+          "required": [
+            "entity",
+            "recordId",
+            "version"
           ],
           "additionalProperties": false,
           "$schema": "http://json-schema.org/draft-07/schema#"
