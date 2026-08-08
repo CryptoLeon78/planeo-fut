@@ -24,6 +24,7 @@ function MicrocyclesPage() {
       const { data, error } = await supabase
         .from("microcycles")
         .select("id,name,week_start,match_day,weekly_objective,notes")
+        .is("deleted_at", null)
         .order("week_start", { ascending: false });
       if (error) throw error;
       return data ?? [];

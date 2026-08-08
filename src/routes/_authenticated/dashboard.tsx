@@ -18,8 +18,8 @@ function Dashboard() {
     enabled: !!user,
     queryFn: async () => {
       const [ex, ss, tm] = await Promise.all([
-        supabase.from("exercises").select("id", { count: "exact", head: true }),
-        supabase.from("sessions").select("id", { count: "exact", head: true }),
+        supabase.from("exercises").select("id", { count: "exact", head: true }).is("deleted_at", null),
+        supabase.from("sessions").select("id", { count: "exact", head: true }).is("deleted_at", null),
         supabase.from("teams").select("id", { count: "exact", head: true }),
       ]);
       return { exercises: ex.count ?? 0, sessions: ss.count ?? 0, teams: tm.count ?? 0 };
@@ -32,6 +32,7 @@ function Dashboard() {
     queryFn: async () => {
       const { data } = await supabase
         .from("sessions").select("id,name,objective,session_date,created_at")
+        .is("deleted_at", null)
         .order("created_at", { ascending: false }).limit(5);
       return data ?? [];
     },
