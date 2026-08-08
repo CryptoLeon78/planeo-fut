@@ -12,7 +12,7 @@ export const ENTITY_TABLE: Record<VersionedEntity, "exercises" | "sessions" | "m
 type Client = SupabaseClient<Database>;
 
 /** Immutable fields that must never be overwritten when restoring a snapshot. */
-const PROTECTED_FIELDS = ["id", "owner_id", "created_at", "updated_at"] as const;
+const PROTECTED_FIELDS = ["id", "owner_id", "created_at", "updated_at", "deleted_at"] as const;
 
 export function stripProtectedFields(row: Record<string, unknown>) {
   const copy: Record<string, unknown> = { ...row };

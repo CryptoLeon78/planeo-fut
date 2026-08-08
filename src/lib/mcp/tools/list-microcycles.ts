@@ -16,6 +16,7 @@ export default defineAuthedTool({
       .from("microcycles")
       .select("id,name,week_start,match_day,weekly_objective,notes,mesocycle_id,microcycle_slots(id,slot_type,slot_date,notes,session_id)")
       .eq("owner_id", userId)
+      .is("deleted_at", null)
       .order("week_start", { ascending: false })
       .limit(limit ?? 10);
     if (fromWeek) query = query.gte("week_start", fromWeek);

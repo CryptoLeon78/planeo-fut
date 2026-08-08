@@ -20,6 +20,7 @@ export default defineAuthedTool({
       .from("sessions")
       .select("id,name,objective,session_date,duration_min,intensity,weekly_focus,notes,evaluation,is_template")
       .eq("owner_id", userId)
+      .is("deleted_at", null)
       .order("session_date", { ascending: false, nullsFirst: false })
       .limit(limit ?? 20);
     if (fromDate) query = query.gte("session_date", fromDate);
