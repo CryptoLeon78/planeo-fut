@@ -55,6 +55,7 @@ export type Database = {
           age_group: string | null
           category: Database["public"]["Enums"]["team_category"] | null
           created_at: string
+          deleted_at: string | null
           duration_min: number | null
           game_phase: Database["public"]["Enums"]["game_phase"] | null
           id: string
@@ -78,6 +79,7 @@ export type Database = {
           age_group?: string | null
           category?: Database["public"]["Enums"]["team_category"] | null
           created_at?: string
+          deleted_at?: string | null
           duration_min?: number | null
           game_phase?: Database["public"]["Enums"]["game_phase"] | null
           id?: string
@@ -101,6 +103,7 @@ export type Database = {
           age_group?: string | null
           category?: Database["public"]["Enums"]["team_category"] | null
           created_at?: string
+          deleted_at?: string | null
           duration_min?: number | null
           game_phase?: Database["public"]["Enums"]["game_phase"] | null
           id?: string
@@ -264,6 +267,7 @@ export type Database = {
       microcycles: {
         Row: {
           created_at: string
+          deleted_at: string | null
           id: string
           match_day: string
           mesocycle_id: string | null
@@ -277,6 +281,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          deleted_at?: string | null
           id?: string
           match_day?: string
           mesocycle_id?: string | null
@@ -290,6 +295,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          deleted_at?: string | null
           id?: string
           match_day?: string
           mesocycle_id?: string | null
@@ -549,6 +555,7 @@ export type Database = {
       sessions: {
         Row: {
           created_at: string
+          deleted_at: string | null
           duration_min: number | null
           evaluation: string | null
           id: string
@@ -565,6 +572,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          deleted_at?: string | null
           duration_min?: number | null
           evaluation?: string | null
           id?: string
@@ -581,6 +589,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          deleted_at?: string | null
           duration_min?: number | null
           evaluation?: string | null
           id?: string

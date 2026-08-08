@@ -12,7 +12,7 @@ export const ENTITY_TABLE: Record<VersionedEntity, "exercises" | "sessions" | "m
 type Client = SupabaseClient<Database>;
 
 /** Immutable fields that must never be overwritten when restoring a snapshot. */
-const PROTECTED_FIELDS = ["id", "owner_id", "created_at", "updated_at"] as const;
+const PROTECTED_FIELDS = ["id", "owner_id", "created_at", "updated_at", "deleted_at"] as const;
 
 export function stripProtectedFields(row: Record<string, unknown>) {
   const copy: Record<string, unknown> = { ...row };
@@ -25,13 +25,15 @@ export async function fetchOwnedRow(
   entity: VersionedEntity,
   id: string,
   ownerId: string,
+  options?: { includeDeleted?: boolean },
 ) {
-  const { data, error } = await supabase
+  let query = supabase
     .from(ENTITY_TABLE[entity])
     .select("*")
     .eq("id", id)
-    .eq("owner_id", ownerId)
-    .maybeSingle();
+    .eq("owner_id", ownerId);
+  if (!options?.includeDeleted) query = query.is("deleted_at", null);
+  const { data, error } = await query.maybeSingle();
   if (error) throw new Error(error.message);
   return data as Record<string, unknown> | null;
 }

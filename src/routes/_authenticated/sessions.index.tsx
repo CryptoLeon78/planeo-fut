@@ -23,7 +23,7 @@ function SessionsPage() {
     enabled: !!user,
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("sessions").select("*").order("created_at", { ascending: false });
+        .from("sessions").select("*").is("deleted_at", null).order("created_at", { ascending: false });
       if (error) throw error;
       return data ?? [];
     },

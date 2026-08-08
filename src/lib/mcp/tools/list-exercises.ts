@@ -18,6 +18,7 @@ export default defineAuthedTool({
       .from("exercises")
       .select("id,name,objective,game_phase,intensity,task_type,duration_min,players_count,space,materials,tags,is_favorite,observations,variants,updated_at")
       .eq("owner_id", userId)
+      .is("deleted_at", null)
       .order("updated_at", { ascending: false })
       .limit(limit ?? 20);
     if (favouritesOnly) query = query.eq("is_favorite", true);
