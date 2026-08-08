@@ -33,7 +33,7 @@ function ExercisesPage() {
     enabled: !!user,
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("exercises").select("*").order("created_at", { ascending: false });
+        .from("exercises").select("*").is("deleted_at", null).order("created_at", { ascending: false });
       if (error) throw error;
       return data ?? [];
     },
