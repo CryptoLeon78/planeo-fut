@@ -26,7 +26,7 @@ export class RepositoryError extends Error {
 }
 
 /** Unwraps a Supabase `{ data, error }` result or throws a RepositoryError. */
-export function unwrap<T>(result: { data: T; error: { message: string } | null }): T {
+export function unwrap<T = any>(result: { data: any; error: { message: string } | null }): T {
   if (result.error) throw new RepositoryError(result.error.message, result.error);
-  return result.data;
+  return result.data as T;
 }
