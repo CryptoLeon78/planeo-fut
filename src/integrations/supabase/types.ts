@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      data_exports: {
+        Row: {
+          byte_size: number
+          created_at: string
+          entities: string[]
+          error_message: string | null
+          format: string
+          id: string
+          operation: string
+          owner_id: string
+          record_count: number
+          status: string
+        }
+        Insert: {
+          byte_size?: number
+          created_at?: string
+          entities?: string[]
+          error_message?: string | null
+          format?: string
+          id?: string
+          operation?: string
+          owner_id: string
+          record_count?: number
+          status?: string
+        }
+        Update: {
+          byte_size?: number
+          created_at?: string
+          entities?: string[]
+          error_message?: string | null
+          format?: string
+          id?: string
+          operation?: string
+          owner_id?: string
+          record_count?: number
+          status?: string
+        }
+        Relationships: []
+      }
       entity_versions: {
         Row: {
           created_at: string
