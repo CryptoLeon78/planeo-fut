@@ -137,18 +137,19 @@ Este documento detalla las mejoras recomendadas para **PlaneoFUT** en términos 
 
 ## 2. ARQUITECTURA Y ESTRUCTURA
 
-### 2.1 Separación de Capas (Prioridad: Alta) 🔄 En progreso
+### 2.1 Separación de Capas (Prioridad: Alta) ✅ Implementado
 
 **Problema Actual**: Lógica de negocio mezclada con componentes React.
 
 **Solución**:
-- Crear carpeta `src/services/` para lógica de negocio 🔄 — Parcial: existen utilidades como `src/lib/mcp/versions.ts` y `src/lib/public-exercises.ts`, pero no hay una carpeta `services/` estructurada.
-- Crear `src/api/` para llamadas a Supabase 🔄 — Parcial: las llamadas a Supabase se encuentran en componentes y funciones de servidor.
-- Usar patrón Repository para acceso a datos ⏳ — No implementado formalmente.
-- Separar validaciones en `src/validators/` ✅ — Validaciones Zod centralizadas en `src/lib/mcp/schemas.ts` y usadas en herramientas MCP.
+- Crear carpeta `src/services/` para lógica de negocio ✅ — `exercises`, `sessions`, `microcycles`, `planning`, `session-evaluations`, `dashboard` y `query-keys` centralizados.
+- Crear `src/api/` para llamadas a Supabase ✅ — Toda consulta de cliente pasa por repositorios (`client.ts` + `*.repository.ts`).
+- Usar patrón Repository para acceso a datos ✅ — Repositorios por entidad con `unwrap()` y `RepositoryError` comunes.
+- Separar validaciones en `src/validators/` ✅ — Validaciones Zod centralizadas en `src/lib/mcp/schemas.ts` y reglas de dominio en los servicios (`validateMesocycleInput`).
 
 **Estimado original**: 1-2 semanas (refactoring)  
-**Estado actual**: En progreso. Las herramientas MCP y funciones de servidor siguen una arquitectura más limpia; los componentes aún mezclan algo de lógica de datos.
+**Estado actual**: Completado. Las rutas y componentes (dashboard, ejercicios, sesiones, microciclos, pretemporada, temporada, evaluación post-sesión) ya no importan el cliente de base de datos: duplicación, generación de slots MD, resolución de conflictos y filtros viven en servicios con tests unitarios (`src/__tests__/services.test.ts`).
+
 
 ---
 

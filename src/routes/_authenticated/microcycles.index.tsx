@@ -5,9 +5,10 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { formatDate } from "@/lib/constants";
+import { microcyclesService } from "@/services/microcycles.service";
+import { queryKeys } from "@/services/query-keys";
 
 export const Route = createFileRoute("/_authenticated/microcycles/")({
   component: MicrocyclesPage,
@@ -18,52 +19,36 @@ function MicrocyclesPage() {
   const qc = useQueryClient();
 
   const { data, isLoading } = useQuery({
-    queryKey: ["microcycles", user?.id],
+    queryKey: queryKeys.microcycles(user?.id),
     enabled: !!user,
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("microcycles")
-        .select("id,name,week_start,match_day,weekly_objective,notes")
-        .is("deleted_at", null)
-        .order("week_start", { ascending: false });
-      if (error) throw error;
-      return data ?? [];
-    },
+    queryFn: () => microcyclesService.list(),
   });
+
+  function refresh() {
+    qc.invalidateQueries({ queryKey: ["microcycles"] });
+  }
 
   async function remove(id: string) {
     if (!confirm("¿Eliminar este microciclo?")) return;
-    const { error } = await supabase.from("microcycles").delete().eq("id", id);
-    if (error) return toast.error(error.message);
-    toast.success("Eliminado");
-    qc.invalidateQueries({ queryKey: ["microcycles"] });
+    try {
+      await microcyclesService.remove(id);
+      toast.success("Eliminado");
+      refresh();
+    } catch (e: any) {
+      toast.error(e?.message ?? "Error");
+    }
   }
 
   async function duplicate(id: string) {
-    const { data: src } = await supabase.from("microcycles").select("*").eq("id", id).single();
-    if (!src) return;
-    const { data: slots } = await supabase.from("microcycle_slots").select("*").eq("microcycle_id", id);
-    const nextStart = new Date(src.week_start);
-    nextStart.setDate(nextStart.getDate() + 7);
-    const ymd = nextStart.toISOString().slice(0, 10);
-    const { data: created, error } = await (supabase.from("microcycles") as any).insert({
-      owner_id: src.owner_id, team_id: src.team_id, mesocycle_id: src.mesocycle_id,
-      name: `${src.name} (copia)`, week_start: ymd, match_day: src.match_day,
-      weekly_objective: src.weekly_objective, notes: src.notes,
-    }).select("id").single();
-    if (error || !created) return toast.error(error?.message ?? "Error");
-    if (slots?.length) {
-      const diff = 7 * 86400000;
-      await (supabase.from("microcycle_slots") as any).insert(slots.map((s: any) => ({
-        microcycle_id: created.id, slot_type: s.slot_type,
-        slot_date: new Date(new Date(s.slot_date).getTime() + diff).toISOString().slice(0, 10),
-        session_id: s.session_id, notes: s.notes,
-      })));
+    try {
+      const created = await microcyclesService.duplicate(id);
+      if (!created) return;
+      toast.success("Microciclo duplicado (+7 días)");
+      refresh();
+    } catch (e: any) {
+      toast.error(e?.message ?? "Error");
     }
-    toast.success("Microciclo duplicado (+7 días)");
-    qc.invalidateQueries({ queryKey: ["microcycles"] });
   }
-
 
   return (
     <div className="mx-auto max-w-6xl space-y-6">
@@ -79,7 +64,7 @@ function MicrocyclesPage() {
         <p className="text-sm text-muted-foreground">Cargando…</p>
       ) : data && data.length > 0 ? (
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-          {data.map((m) => (
+          {data.map((m: any) => (
             <Card key={m.id} className="flex flex-col p-4">
               <div className="flex items-start justify-between">
                 <Link to="/microcycles/$id" params={{ id: m.id }} className="font-semibold hover:text-primary">{m.name}</Link>

@@ -7,24 +7,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { INTENSITIES, labelOf } from "@/lib/constants";
-
-type Evaluation = {
-  id?: string;
-  rating: number | null;
-  intensity_perceived: string | null;
-  objectives_met: boolean | null;
-  what_worked: string | null;
-  what_to_improve: string | null;
-  player_notes: string | null;
-};
-
-const empty: Evaluation = {
-  rating: null, intensity_perceived: null, objectives_met: null,
-  what_worked: "", what_to_improve: "", player_notes: "",
-};
+import {
+  emptyEvaluation as empty,
+  sessionEvaluationsService,
+  type SessionEvaluation as Evaluation,
+} from "@/services/session-evaluations.service";
 
 export function SessionEvaluationCard({ sessionId }: { sessionId: string }) {
   const { user } = useAuth();
@@ -35,12 +24,8 @@ export function SessionEvaluationCard({ sessionId }: { sessionId: string }) {
   useEffect(() => {
     let active = true;
     (async () => {
-      const { data } = await supabase
-        .from("session_evaluations")
-        .select("*")
-        .eq("session_id", sessionId)
-        .maybeSingle();
-      if (active && data) setEvaluation(data as any);
+      const data = await sessionEvaluationsService.get(sessionId);
+      if (active && data) setEvaluation(data);
       setLoaded(true);
     })();
     return () => { active = false; };
@@ -51,20 +36,13 @@ export function SessionEvaluationCard({ sessionId }: { sessionId: string }) {
     const next = { ...evaluation, ...patch };
     setEvaluation(next);
     setSaving(true);
-    const payload: any = {
-      session_id: sessionId,
-      owner_id: user.id,
-      rating: next.rating,
-      intensity_perceived: next.intensity_perceived,
-      objectives_met: next.objectives_met,
-      what_worked: next.what_worked || null,
-      what_to_improve: next.what_to_improve || null,
-      player_notes: next.player_notes || null,
-    };
-    const { error } = await (supabase.from("session_evaluations") as any)
-      .upsert(payload, { onConflict: "session_id" });
-    setSaving(false);
-    if (error) toast.error(error.message);
+    try {
+      await sessionEvaluationsService.save(sessionId, user.id, next);
+    } catch (e: any) {
+      toast.error(e?.message ?? "Error");
+    } finally {
+      setSaving(false);
+    }
   }
 
   if (!loaded) return null;
@@ -130,7 +108,7 @@ export function SessionEvaluationCard({ sessionId }: { sessionId: string }) {
       {evaluation.id && (
         <Button variant="ghost" size="sm" onClick={async () => {
           if (!confirm("¿Borrar evaluación?")) return;
-          await supabase.from("session_evaluations").delete().eq("session_id", sessionId);
+          await sessionEvaluationsService.remove(sessionId);
           setEvaluation(empty);
           toast.success("Evaluación borrada");
         }}>Eliminar evaluación</Button>

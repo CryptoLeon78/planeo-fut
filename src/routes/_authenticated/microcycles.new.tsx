@@ -7,9 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { startOfWeek, addDays, ymd, MICROCYCLE_SLOT_TYPES } from "@/lib/constants";
+import { startOfWeek, ymd, MICROCYCLE_SLOT_TYPES } from "@/lib/constants";
+import { microcyclesService } from "@/services/microcycles.service";
 
 export const Route = createFileRoute("/_authenticated/microcycles/new")({
   component: NewMicrocyclePage,
@@ -29,30 +29,13 @@ function NewMicrocyclePage() {
     if (!user) return;
     setBusy(true);
     try {
-      const { data: micro, error } = await (supabase.from("microcycles") as any).insert({
-        owner_id: user.id, name, week_start: weekStart, match_day: matchDay,
-        weekly_objective: objective || null,
-      }).select("id").single();
-      if (error) throw error;
-
-      // Generate slots: MD-4 (Mon), MD-3 (Tue), MD-2 (Wed/Thu depending), MD-1 (Fri), MD (Sat/Sun)
-      const base = new Date(weekStart);
-      const matchOffset = matchDay === "sabado" ? 5 : 6;
-      const slotDefs = matchDay === "sabado"
-        ? [["MD-4", 1], ["MD-3", 2], ["MD-2", 3], ["MD-1", 4], ["MD", 5]] as const
-        : [["MD-4", 1], ["MD-3", 2], ["MD-2", 3], ["MD-1", 5], ["MD", 6]] as const;
-      void matchOffset;
-
-      const slots = slotDefs.map(([type, offset]) => ({
-        microcycle_id: micro.id,
-        slot_type: type,
-        slot_date: ymd(addDays(base, offset)),
-        session_id: null,
-        notes: null,
-      }));
-      const { error: e2 } = await (supabase.from("microcycle_slots") as any).insert(slots);
-      if (e2) throw e2;
-
+      const micro = await microcyclesService.create({
+        ownerId: user.id,
+        name,
+        weekStart,
+        matchDay,
+        weeklyObjective: objective,
+      });
       toast.success("Microciclo creado");
       navigate({ to: "/microcycles/$id", params: { id: micro.id } });
     } catch (e: any) {

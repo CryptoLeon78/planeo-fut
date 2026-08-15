@@ -15,8 +15,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { supabase } from "@/integrations/supabase/client";
 import { exportToPdf } from "@/lib/i18n";
+import { microcyclesRepository } from "@/api/microcycles.repository";
+import { sessionsRepository } from "@/api/sessions.repository";
+import { microcyclesService } from "@/services/microcycles.service";
 import { formatDate, MICROCYCLE_SLOT_TYPES } from "@/lib/constants";
 import { suggestMicrocycle, type MicrocycleSuggestion } from "@/lib/microcycle-ai.functions";
 
@@ -37,42 +39,35 @@ function MicroDetailPage() {
 
   const { data: micro } = useQuery({
     queryKey: ["microcycle", id],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("microcycles").select("*").eq("id", id).single();
-      if (error) throw error;
-      return data;
-    },
+    queryFn: () => microcyclesService.getById(id),
   });
 
   const { data: slots } = useQuery({
     queryKey: ["microcycle-slots", id],
-    queryFn: async () => {
-      const { data } = await supabase.from("microcycle_slots")
-        .select("id,slot_type,slot_date,notes,session_id")
-        .eq("microcycle_id", id).order("slot_date");
-      return data ?? [];
-    },
+    queryFn: () => microcyclesService.listSlots(id),
   });
 
   const { data: sessions } = useQuery({
     queryKey: ["sessions-min"],
-    queryFn: async () => {
-      const { data } = await supabase.from("sessions").select("id,name,intensity,duration_min")
-        .order("created_at", { ascending: false }).limit(50);
-      return data ?? [];
-    },
+    queryFn: () => sessionsRepository.list(),
   });
 
   async function saveMeta(payload: any) {
-    const { error } = await (supabase.from("microcycles") as any).update(payload).eq("id", id);
-    if (error) return toast.error(error.message);
-    qc.invalidateQueries({ queryKey: ["microcycle", id] });
+    try {
+      await microcyclesRepository.update(id, payload);
+      qc.invalidateQueries({ queryKey: ["microcycle", id] });
+    } catch (e: any) {
+      toast.error(e?.message ?? "Error");
+    }
   }
 
   async function updateSlot(slotId: string, payload: any) {
-    const { error } = await (supabase.from("microcycle_slots") as any).update(payload).eq("id", slotId);
-    if (error) return toast.error(error.message);
-    qc.invalidateQueries({ queryKey: ["microcycle-slots", id] });
+    try {
+      await microcyclesRepository.updateSlot(slotId, payload);
+      qc.invalidateQueries({ queryKey: ["microcycle-slots", id] });
+    } catch (e: any) {
+      toast.error(e?.message ?? "Error");
+    }
   }
 
   async function assignSession(slotId: string, sessionId: string) {
@@ -80,12 +75,14 @@ function MicroDetailPage() {
     const conflict = (slots ?? []).find((s: any) => s.session_id === sessionId && s.id !== slotId);
     const targetSlot = (slots ?? []).find((s: any) => s.id === slotId);
     if (targetSlot?.slot_type === "MD") return toast.error("MD es día de partido, no se asignan sesiones");
-    if (conflict) {
-      await (supabase.from("microcycle_slots") as any).update({ session_id: null }).eq("id", conflict.id);
-      toast.info(`Sesión movida desde ${conflict.slot_type} → ${targetSlot?.slot_type}`);
+    if (conflict) toast.info(`Sesión movida desde ${conflict.slot_type} → ${targetSlot?.slot_type}`);
+    try {
+      await microcyclesService.assignSession(id, slotId, sessionId);
+      qc.invalidateQueries({ queryKey: ["microcycle-slots", id] });
+      toast.success("Sesión asignada");
+    } catch (e: any) {
+      toast.error(e?.message ?? "Error");
     }
-    await updateSlot(slotId, { session_id: sessionId });
-    toast.success("Sesión asignada");
   }
 
   function onDragStart(e: DragStartEvent) {
@@ -103,7 +100,7 @@ function MicroDetailPage() {
 
   async function remove() {
     if (!confirm("¿Eliminar microciclo?")) return;
-    await supabase.from("microcycles").delete().eq("id", id);
+    await microcyclesService.remove(id);
     toast.success("Eliminado");
     navigate({ to: "/microcycles" });
   }
@@ -146,7 +143,7 @@ function MicroDetailPage() {
           ? `Ejercicios sugeridos: ${sug.recommended_exercise_ids.join(", ")}`
           : "",
       ].filter(Boolean).join("\n");
-      await (supabase.from("microcycle_slots") as any).update({ notes: noteLines }).eq("id", slot.id);
+      await microcyclesRepository.updateSlot(slot.id, { notes: noteLines });
     }
     if (aiResult.weekly_objective) {
       await saveMeta({ weekly_objective: aiResult.weekly_objective });

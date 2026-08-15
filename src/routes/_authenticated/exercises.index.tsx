@@ -11,9 +11,10 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ExerciseForm } from "@/components/exercise-form";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { GAME_PHASES, INTENSITIES, labelOf } from "@/lib/constants";
+import { exercisesService, filterExercises } from "@/services/exercises.service";
+import { queryKeys } from "@/services/query-keys";
 
 export const Route = createFileRoute("/_authenticated/exercises/")({
   component: ExercisesPage,
@@ -29,30 +30,23 @@ function ExercisesPage() {
   const [onlyFav, setOnlyFav] = useState(false);
 
   const { data: exercises, isLoading } = useQuery({
-    queryKey: ["exercises", user?.id],
+    queryKey: queryKeys.exercises(user?.id),
     enabled: !!user,
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("exercises").select("*").is("deleted_at", null).order("created_at", { ascending: false });
-      if (error) throw error;
-      return data ?? [];
-    },
+    queryFn: () => exercisesService.list(),
   });
 
-  const filtered = useMemo(() => {
-    return (exercises ?? []).filter((e: any) => {
-      if (onlyFav && !e.is_favorite) return false;
-      if (phase !== "all" && e.game_phase !== phase) return false;
-      if (intensity !== "all" && e.intensity !== intensity) return false;
-      if (q && !`${e.name} ${e.objective ?? ""} ${(e.tags ?? []).join(" ")}`.toLowerCase().includes(q.toLowerCase())) return false;
-      return true;
-    });
-  }, [exercises, q, phase, intensity, onlyFav]);
+  const filtered = useMemo(
+    () => filterExercises(exercises ?? [], { query: q, phase, intensity, onlyFavorites: onlyFav }),
+    [exercises, q, phase, intensity, onlyFav],
+  );
 
   async function toggleFav(id: string, current: boolean) {
-    const { error } = await (supabase.from("exercises") as any).update({ is_favorite: !current }).eq("id", id);
-    if (error) return toast.error(error.message);
-    qc.invalidateQueries({ queryKey: ["exercises"] });
+    try {
+      await exercisesService.toggleFavorite(id, current);
+      qc.invalidateQueries({ queryKey: ["exercises"] });
+    } catch (e: any) {
+      toast.error(e?.message ?? "Error");
+    }
   }
 
   return (

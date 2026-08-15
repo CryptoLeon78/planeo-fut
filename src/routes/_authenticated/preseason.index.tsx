@@ -9,9 +9,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { formatDate, PRESEASON_PHASES } from "@/lib/constants";
+import { formatDate } from "@/lib/constants";
+import { planningService, validateMesocycleInput } from "@/services/planning.service";
+import { queryKeys } from "@/services/query-keys";
 
 export const Route = createFileRoute("/_authenticated/preseason/")({
   component: PreseasonPage,
@@ -29,38 +30,40 @@ function PreseasonPage() {
   });
 
   const { data, isLoading } = useQuery({
-    queryKey: ["mesocycles", "pretemporada", user?.id],
+    queryKey: queryKeys.mesocycles("pretemporada", user?.id),
     enabled: !!user,
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("mesocycles")
-        .select("*")
-        .eq("type", "pretemporada")
-        .order("start_date", { ascending: false });
-      if (error) throw error;
-      return data ?? [];
-    },
+    queryFn: () => planningService.list("pretemporada"),
   });
 
   async function onCreate() {
     if (!user) return;
-    if (!form.name || !form.start_date || !form.end_date) return toast.error("Nombre y fechas obligatorios");
-    const phases = PRESEASON_PHASES.map((p) => ({ key: p.key, label: p.label, weeks: p.duration, focus: "" }));
-    const { error } = await (supabase.from("mesocycles") as any).insert({
-      owner_id: user.id, type: "pretemporada",
-      name: form.name, start_date: form.start_date, end_date: form.end_date,
-      goals: form.goals || null, phases,
-    });
-    if (error) return toast.error(error.message);
-    toast.success("Pretemporada creada");
-    setOpen(false);
-    qc.invalidateQueries({ queryKey: ["mesocycles", "pretemporada"] });
+    const input = {
+      ownerId: user.id,
+      name: form.name,
+      startDate: form.start_date,
+      endDate: form.end_date,
+      goals: form.goals,
+    };
+    const invalid = validateMesocycleInput(input);
+    if (invalid) return toast.error(invalid);
+    try {
+      await planningService.create("pretemporada", input);
+      toast.success("Pretemporada creada");
+      setOpen(false);
+      qc.invalidateQueries({ queryKey: ["mesocycles", "pretemporada"] });
+    } catch (e: any) {
+      toast.error(e?.message ?? "Error");
+    }
   }
 
   async function remove(id: string) {
     if (!confirm("¿Eliminar pretemporada?")) return;
-    await supabase.from("mesocycles").delete().eq("id", id);
-    qc.invalidateQueries({ queryKey: ["mesocycles", "pretemporada"] });
+    try {
+      await planningService.remove(id);
+      qc.invalidateQueries({ queryKey: ["mesocycles", "pretemporada"] });
+    } catch (e: any) {
+      toast.error(e?.message ?? "Error");
+    }
   }
 
   return (

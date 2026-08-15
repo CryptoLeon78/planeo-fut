@@ -4,8 +4,9 @@ import { ArrowLeft, FileDown, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { supabase } from "@/integrations/supabase/client";
 import { exportToPdf } from "@/lib/i18n";
+import { sessionsService } from "@/services/sessions.service";
+import { queryKeys } from "@/services/query-keys";
 import { BLOCK_TYPES, INTENSITIES, labelOf } from "@/lib/constants";
 import { SessionEvaluationCard } from "@/components/session-evaluation-card";
 
@@ -18,16 +19,8 @@ function SessionDetail() {
   const navigate = useNavigate();
 
   const { data, isLoading } = useQuery({
-    queryKey: ["session", id],
-    queryFn: async () => {
-      const { data: s } = await supabase.from("sessions").select("*").eq("id", id).single();
-      const { data: blocks } = await supabase.from("session_blocks").select("*").eq("session_id", id).order("position");
-      const blockIds = (blocks ?? []).map((b: any) => b.id);
-      const { data: items } = blockIds.length
-        ? await supabase.from("session_block_exercises").select("*, exercises(name, duration_min, game_phase, image_url)").in("block_id", blockIds).order("position")
-        : { data: [] };
-      return { session: s, blocks: blocks ?? [], items: items ?? [] };
-    },
+    queryKey: queryKeys.session(id),
+    queryFn: () => sessionsService.getDetail(id),
   });
 
   if (isLoading || !data?.session) return <p className="text-sm text-muted-foreground">Cargando…</p>;
