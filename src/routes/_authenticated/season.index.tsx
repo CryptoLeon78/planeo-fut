@@ -9,9 +9,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { formatDate } from "@/lib/constants";
+import { planningService, validateMesocycleInput } from "@/services/planning.service";
+import { queryKeys } from "@/services/query-keys";
 
 export const Route = createFileRoute("/_authenticated/season/")({
   component: SeasonList,
@@ -30,32 +31,40 @@ function SeasonList() {
   });
 
   const { data } = useQuery({
-    queryKey: ["mesocycles", "temporada", user?.id],
+    queryKey: queryKeys.mesocycles("temporada", user?.id),
     enabled: !!user,
-    queryFn: async () => {
-      const { data } = await supabase.from("mesocycles").select("*")
-        .eq("type", "temporada").order("start_date", { ascending: false });
-      return data ?? [];
-    },
+    queryFn: () => planningService.list("temporada"),
   });
 
   async function onCreate() {
     if (!user) return;
-    const { error } = await (supabase.from("mesocycles") as any).insert({
-      owner_id: user.id, type: "temporada",
-      name: form.name, start_date: form.start_date, end_date: form.end_date,
-      goals: form.goals || null, phases: [],
-    });
-    if (error) return toast.error(error.message);
-    toast.success("Temporada creada");
-    setOpen(false);
-    qc.invalidateQueries({ queryKey: ["mesocycles", "temporada"] });
+    const input = {
+      ownerId: user.id,
+      name: form.name,
+      startDate: form.start_date,
+      endDate: form.end_date,
+      goals: form.goals,
+    };
+    const invalid = validateMesocycleInput(input);
+    if (invalid) return toast.error(invalid);
+    try {
+      await planningService.create("temporada", input);
+      toast.success("Temporada creada");
+      setOpen(false);
+      qc.invalidateQueries({ queryKey: ["mesocycles", "temporada"] });
+    } catch (e: any) {
+      toast.error(e?.message ?? "Error");
+    }
   }
 
   async function remove(id: string) {
     if (!confirm("¿Eliminar temporada?")) return;
-    await supabase.from("mesocycles").delete().eq("id", id);
-    qc.invalidateQueries({ queryKey: ["mesocycles", "temporada"] });
+    try {
+      await planningService.remove(id);
+      qc.invalidateQueries({ queryKey: ["mesocycles", "temporada"] });
+    } catch (e: any) {
+      toast.error(e?.message ?? "Error");
+    }
   }
 
   return (

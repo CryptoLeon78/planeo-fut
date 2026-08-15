@@ -3,8 +3,9 @@ import { useQuery } from "@tanstack/react-query";
 import { Calendar, ClipboardList, Dumbbell, Plus, Trophy, Users } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import { dashboardService } from "@/services/dashboard.service";
+import { queryKeys } from "@/services/query-keys";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   component: Dashboard,
@@ -14,28 +15,15 @@ function Dashboard() {
   const { user } = useAuth();
 
   const { data: stats } = useQuery({
-    queryKey: ["dashboard-stats", user?.id],
+    queryKey: queryKeys.dashboardStats(user?.id),
     enabled: !!user,
-    queryFn: async () => {
-      const [ex, ss, tm] = await Promise.all([
-        supabase.from("exercises").select("id", { count: "exact", head: true }).is("deleted_at", null),
-        supabase.from("sessions").select("id", { count: "exact", head: true }).is("deleted_at", null),
-        supabase.from("teams").select("id", { count: "exact", head: true }),
-      ]);
-      return { exercises: ex.count ?? 0, sessions: ss.count ?? 0, teams: tm.count ?? 0 };
-    },
+    queryFn: () => dashboardService.stats(),
   });
 
   const { data: recentSessions } = useQuery({
-    queryKey: ["recent-sessions", user?.id],
+    queryKey: queryKeys.recentSessions(user?.id),
     enabled: !!user,
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("sessions").select("id,name,objective,session_date,created_at")
-        .is("deleted_at", null)
-        .order("created_at", { ascending: false }).limit(5);
-      return data ?? [];
-    },
+    queryFn: () => dashboardService.recentSessions(5),
   });
 
   return (
@@ -49,7 +37,7 @@ function Dashboard() {
         <StatCard icon={Dumbbell} label="Ejercicios" value={stats?.exercises ?? 0} href="/exercises" />
         <StatCard icon={ClipboardList} label="Sesiones" value={stats?.sessions ?? 0} href="/sessions" />
         <StatCard icon={Users} label="Equipos" value={stats?.teams ?? 0} href="/team" />
-        <StatCard icon={Trophy} label="Microciclos" value={0} href="/microcycles" />
+        <StatCard icon={Trophy} label="Microciclos" value={stats?.microcycles ?? 0} href="/microcycles" />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
@@ -60,7 +48,7 @@ function Dashboard() {
           </div>
           {recentSessions && recentSessions.length > 0 ? (
             <ul className="divide-y divide-border/60">
-              {recentSessions.map((s) => (
+              {recentSessions.map((s: any) => (
                 <li key={s.id} className="flex items-center justify-between py-3">
                   <div>
                     <p className="font-medium">{s.name}</p>

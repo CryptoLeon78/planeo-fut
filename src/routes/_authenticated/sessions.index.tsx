@@ -6,9 +6,10 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { INTENSITIES, labelOf } from "@/lib/constants";
+import { sessionsService } from "@/services/sessions.service";
+import { queryKeys } from "@/services/query-keys";
 
 export const Route = createFileRoute("/_authenticated/sessions/")({
   component: SessionsPage,
@@ -19,57 +20,31 @@ function SessionsPage() {
   const qc = useQueryClient();
 
   const { data: sessions, isLoading } = useQuery({
-    queryKey: ["sessions", user?.id],
+    queryKey: queryKeys.sessions(user?.id),
     enabled: !!user,
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("sessions").select("*").is("deleted_at", null).order("created_at", { ascending: false });
-      if (error) throw error;
-      return data ?? [];
-    },
+    queryFn: () => sessionsService.list(),
   });
 
   async function duplicate(id: string) {
-    const { data: src } = await supabase.from("sessions").select("*").eq("id", id).single();
-    if (!src) return;
-    const { data: blocks } = await supabase.from("session_blocks").select("*").eq("session_id", id);
-    const { data: created, error } = await (supabase.from("sessions") as any).insert({
-      owner_id: src.owner_id, team_id: src.team_id, name: `${src.name} (copia)`,
-      session_date: null, objective: src.objective, weekly_focus: src.weekly_focus,
-      intensity: src.intensity, duration_min: src.duration_min, notes: src.notes, is_template: src.is_template,
-    }).select("id").single();
-    if (error || !created) return toast.error(error?.message ?? "Error");
-
-    if (blocks && blocks.length > 0) {
-      const newBlocks = blocks.map((b: any) => ({
-        session_id: created.id, block_type: b.block_type, name: b.name,
-        position: b.position, duration_min: b.duration_min, notes: b.notes,
-      }));
-      const { data: insertedBlocks } = await (supabase.from("session_blocks") as any).insert(newBlocks).select("id,position,block_type");
-      // Copy exercises per block (matching by position+type)
-      if (insertedBlocks) {
-        for (const ob of blocks) {
-          const nb = insertedBlocks.find((x: any) => x.position === ob.position && x.block_type === ob.block_type);
-          if (!nb) continue;
-          const { data: exs } = await supabase.from("session_block_exercises").select("*").eq("block_id", ob.id);
-          if (exs?.length) {
-            await (supabase.from("session_block_exercises") as any).insert(
-              exs.map((e: any) => ({ block_id: nb.id, exercise_id: e.exercise_id, position: e.position, duration_override: e.duration_override, notes: e.notes }))
-            );
-          }
-        }
-      }
+    try {
+      const created = await sessionsService.duplicate(id);
+      if (!created) return;
+      toast.success("Sesión duplicada");
+      qc.invalidateQueries({ queryKey: ["sessions"] });
+    } catch (e: any) {
+      toast.error(e?.message ?? "Error");
     }
-    toast.success("Sesión duplicada");
-    qc.invalidateQueries({ queryKey: ["sessions"] });
   }
 
   async function remove(id: string) {
     if (!confirm("¿Eliminar esta sesión?")) return;
-    const { error } = await supabase.from("sessions").delete().eq("id", id);
-    if (error) return toast.error(error.message);
-    toast.success("Eliminada");
-    qc.invalidateQueries({ queryKey: ["sessions"] });
+    try {
+      await sessionsService.remove(id);
+      toast.success("Eliminada");
+      qc.invalidateQueries({ queryKey: ["sessions"] });
+    } catch (e: any) {
+      toast.error(e?.message ?? "Error");
+    }
   }
 
   return (
