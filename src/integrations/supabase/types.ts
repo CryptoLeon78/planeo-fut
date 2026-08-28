@@ -7,13 +7,69 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
-  __InternalSupabase: {
-    PostgrestVersion: "14.5"
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
   }
   public: {
     Tables: {
+      audit_log: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          id: string
+          new_data: Json | null
+          old_data: Json | null
+          record_id: string | null
+          table_name: string
+          team_id: string | null
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          new_data?: Json | null
+          old_data?: Json | null
+          record_id?: string | null
+          table_name: string
+          team_id?: string | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          new_data?: Json | null
+          old_data?: Json | null
+          record_id?: string | null
+          table_name?: string
+          team_id?: string | null
+        }
+        Relationships: []
+      }
       exercises: {
         Row: {
           age_group: string | null
@@ -22,6 +78,7 @@ export type Database = {
           duration_min: number | null
           game_phase: Database["public"]["Enums"]["game_phase"] | null
           id: string
+          image_url: string | null
           intensity: Database["public"]["Enums"]["exercise_intensity"] | null
           is_favorite: boolean
           level: string | null
@@ -45,6 +102,7 @@ export type Database = {
           duration_min?: number | null
           game_phase?: Database["public"]["Enums"]["game_phase"] | null
           id?: string
+          image_url?: string | null
           intensity?: Database["public"]["Enums"]["exercise_intensity"] | null
           is_favorite?: boolean
           level?: string | null
@@ -68,6 +126,7 @@ export type Database = {
           duration_min?: number | null
           game_phase?: Database["public"]["Enums"]["game_phase"] | null
           id?: string
+          image_url?: string | null
           intensity?: Database["public"]["Enums"]["exercise_intensity"] | null
           is_favorite?: boolean
           level?: string | null
@@ -239,6 +298,50 @@ export type Database = {
           },
           {
             foreignKeyName: "microcycles_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      players: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          number: number | null
+          owner_id: string
+          photo_url: string | null
+          position: string | null
+          team_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          number?: number | null
+          owner_id: string
+          photo_url?: string | null
+          position?: string | null
+          team_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          number?: number | null
+          owner_id?: string
+          photo_url?: string | null
+          position?: string | null
+          team_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "players_team_id_fkey"
             columns: ["team_id"]
             isOneToOne: false
             referencedRelation: "teams"
@@ -530,17 +633,95 @@ export type Database = {
           },
         ]
       }
+      team_invitations: {
+        Row: {
+          accepted_at: string | null
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          invited_by: string
+          role: Database["public"]["Enums"]["team_member_role"]
+          team_id: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          created_at?: string
+          email: string
+          expires_at?: string
+          id?: string
+          invited_by: string
+          role?: Database["public"]["Enums"]["team_member_role"]
+          team_id: string
+        }
+        Update: {
+          accepted_at?: string | null
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          invited_by?: string
+          role?: Database["public"]["Enums"]["team_member_role"]
+          team_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_invitations_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      team_members: {
+        Row: {
+          created_at: string
+          id: string
+          invited_by: string
+          role: Database["public"]["Enums"]["team_member_role"]
+          team_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          invited_by: string
+          role?: Database["public"]["Enums"]["team_member_role"]
+          team_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          invited_by?: string
+          role?: Database["public"]["Enums"]["team_member_role"]
+          team_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_members_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       teams: {
         Row: {
           age_group: string | null
           category: Database["public"]["Enums"]["team_category"]
           created_at: string
           id: string
+          logo_url: string | null
           match_day: string
           name: string
           notes: string | null
           owner_id: string
           season: string | null
+          shield_url: string | null
           updated_at: string
         }
         Insert: {
@@ -548,11 +729,13 @@ export type Database = {
           category?: Database["public"]["Enums"]["team_category"]
           created_at?: string
           id?: string
+          logo_url?: string | null
           match_day?: string
           name: string
           notes?: string | null
           owner_id: string
           season?: string | null
+          shield_url?: string | null
           updated_at?: string
         }
         Update: {
@@ -560,11 +743,13 @@ export type Database = {
           category?: Database["public"]["Enums"]["team_category"]
           created_at?: string
           id?: string
+          logo_url?: string | null
           match_day?: string
           name?: string
           notes?: string | null
           owner_id?: string
           season?: string | null
+          shield_url?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -595,12 +780,65 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      accept_team_invitation: {
+        Args: { p_invitation_id: string }
+        Returns: string
+      }
+      add_team_member: {
+        Args: {
+          p_role: Database["public"]["Enums"]["team_member_role"]
+          p_team_id: string
+          p_user_id: string
+        }
+        Returns: string
+      }
+      assign_microcycle_session: {
+        Args: { p_session_id: string; p_slot_id: string }
+        Returns: undefined
+      }
+      can_edit_team: {
+        Args: { p_team_id: string; p_user_id?: string }
+        Returns: boolean
+      }
+      create_microcycle_with_slots: {
+        Args: {
+          p_match_day: string
+          p_name: string
+          p_week_start: string
+          p_weekly_objective?: string
+        }
+        Returns: string
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
         Returns: boolean
+      }
+      invite_team_member_by_email: {
+        Args: {
+          p_email: string
+          p_role: Database["public"]["Enums"]["team_member_role"]
+          p_team_id: string
+        }
+        Returns: string
+      }
+      is_team_member: {
+        Args: { p_team_id: string; p_user_id?: string }
+        Returns: boolean
+      }
+      save_session_graph: {
+        Args: {
+          p_blocks: Json
+          p_duration_min: number
+          p_intensity: Database["public"]["Enums"]["exercise_intensity"]
+          p_name: string
+          p_objective: string
+          p_session_date: string
+          p_session_id: string
+        }
+        Returns: string
       }
     }
     Enums: {
@@ -643,6 +881,7 @@ export type Database = {
         | "cantera"
         | "alto_rendimiento"
         | "elite"
+      team_member_role: "coach" | "physical_coach" | "analyst" | "viewer"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -768,6 +1007,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {
       app_role: ["admin", "coach", "physical_coach", "analyst"],
@@ -814,6 +1056,7 @@ export const Constants = {
         "alto_rendimiento",
         "elite",
       ],
+      team_member_role: ["coach", "physical_coach", "analyst", "viewer"],
     },
   },
 } as const

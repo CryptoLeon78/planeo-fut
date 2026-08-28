@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import { resolveStorageUrl, storagePath, validateImageFile } from "@/lib/storage";
 import {
   COMMON_TAGS, GAME_PHASES, INTENSITIES, TASK_TYPES, TEAM_CATEGORIES,
 } from "@/lib/constants";
@@ -44,8 +45,19 @@ export function ExerciseForm({ initial, onSaved }: ExerciseFormProps) {
   const [busy, setBusy] = useState(false);
   const [tags, setTags] = useState<string[]>(initial?.tags ?? []);
   const [tagInput, setTagInput] = useState("");
-  const [imageUrl, setImageUrl] = useState<string>(initial?.image_url ?? "");
+  const [imageUrl, setImageUrl] = useState<string>("");
+  const [imagePath, setImagePath] = useState<string | null>(initial?.image_url ? storagePath(initial.image_url, "exercise-images") : null);
   const [uploadingImage, setUploadingImage] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    if (!initial?.image_url) return;
+    setImagePath(storagePath(initial.image_url, "exercise-images"));
+    resolveStorageUrl("exercise-images", initial.image_url).then((url) => {
+      if (active && url) setImageUrl(url);
+    });
+    return () => { active = false; };
+  }, [initial?.image_url]);
 
   const addTag = (t: string) => {
     const v = t.trim().toLowerCase();
@@ -60,6 +72,7 @@ export function ExerciseForm({ initial, onSaved }: ExerciseFormProps) {
 
     setUploadingImage(true);
     try {
+      validateImageFile(file);
       const fileName = `${user.id}/${Date.now()}-${file.name}`;
       const { error: uploadError } = await supabase.storage
         .from("exercise-images")
@@ -67,11 +80,10 @@ export function ExerciseForm({ initial, onSaved }: ExerciseFormProps) {
 
       if (uploadError) throw uploadError;
 
-      const { data } = supabase.storage
-        .from("exercise-images")
-        .getPublicUrl(fileName);
-
-      setImageUrl(data.publicUrl);
+      const signed = await resolveStorageUrl("exercise-images", fileName);
+      if (!signed) throw new Error("No se pudo generar la URL segura de la imagen");
+      setImagePath(fileName);
+      setImageUrl(signed);
       toast.success("Imagen subida correctamente");
     } catch (err: any) {
       toast.error(err?.message ?? "Error al subir la imagen");
@@ -108,7 +120,7 @@ export function ExerciseForm({ initial, onSaved }: ExerciseFormProps) {
       variants: parsed.data.variants || null,
       observations: parsed.data.observations || null,
       tags,
-      image_url: imageUrl || null,
+      image_url: imagePath || null,
     };
 
     setBusy(true);
@@ -193,7 +205,7 @@ export function ExerciseForm({ initial, onSaved }: ExerciseFormProps) {
             <img src={imageUrl} alt="Ejercicio" className="h-32 w-32 rounded-lg border border-border object-cover" />
             <button
               type="button"
-              onClick={() => setImageUrl("")}
+              onClick={() => { setImageUrl(""); setImagePath(null); }}
               className="absolute -right-2 -top-2 rounded-full bg-destructive p-1 text-destructive-foreground hover:bg-destructive/90"
             >
               <X className="h-4 w-4" />

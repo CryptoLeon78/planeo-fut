@@ -38,7 +38,7 @@ Para poner en marcha el proyecto en tu entorno local, sigue los siguientes pasos
 ### Prerrequisitos
 
 *   Node.js (versión 18 o superior)
-*   Bun (gestor de paquetes)
+*   npm (gestor de paquetes)
 *   Docker (para ejecutar Supabase localmente)
 *   Una cuenta de Supabase y un proyecto configurado
 
@@ -62,7 +62,7 @@ Este script instalará las dependencias y iniciará la aplicación en modo desar
 
 2.  **Instalar dependencias:**
     ```bash
-    bun install
+    npm install
     ```
 
 3.  **Configurar Supabase localmente:**
@@ -77,9 +77,9 @@ Este script instalará las dependencias y iniciará la aplicación en modo desar
     supabase start
     ```
     
-    Esto iniciará:
-    - PostgreSQL en `localhost:5432`
-    - Supabase Studio en `http://localhost:54323`
+    Este repositorio usa puertos locales aislados para no interferir con otros proyectos Docker:
+    - PostgreSQL en `localhost:55433`
+    - Supabase Studio en `http://localhost:55435`
     - API en `http://localhost:54321`
     
     Después de ejecutar `supabase start`, verás las credenciales de conexión. Copia la URL y la clave anon.
@@ -91,11 +91,11 @@ Este script instalará las dependencias y iniciará la aplicación en modo desar
     ```env
     # Supabase Local (si usas Supabase localmente)
     VITE_SUPABASE_URL=http://localhost:54321
-    VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+    VITE_SUPABASE_PUBLISHABLE_KEY=tu_clave_publicable_local
     
     # O Supabase Cloud (reemplaza con tus credenciales)
     # VITE_SUPABASE_URL=https://tu-proyecto.supabase.co
-    # VITE_SUPABASE_ANON_KEY=tu_anon_key_supabase
+    # VITE_SUPABASE_PUBLISHABLE_KEY=tu_clave_publicable_supabase
     ```
 
 5.  **Ejecutar las migraciones de base de datos:**
@@ -108,7 +108,7 @@ Este script instalará las dependencias y iniciará la aplicación en modo desar
 
 6.  **Ejecutar el proyecto:**
     ```bash
-    bun dev
+    npm run dev
     ```
     
     El proyecto se ejecutará en `http://localhost:5173` (o un puerto similar).
@@ -167,6 +167,16 @@ planeo-fut/
 ```
 
 ## Desarrollo
+
+PlaneoFUT se ejecuta y despliega sobre infraestructura propia: Supabase para datos/Auth/Storage y Cloudflare Workers para el runtime. No requiere cuenta, plugin ni servicio de un generador externo.
+
+```bash
+npx wrangler login
+npm run cf-typegen
+npm run deploy
+```
+
+`OPENAI_API_KEY` es exclusivamente de servidor. Las variables `VITE_*` son públicas y deben apuntar al proyecto Supabase de cada entorno.
 
 ### Agregar un nuevo ejercicio con imagen
 

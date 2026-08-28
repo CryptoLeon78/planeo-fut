@@ -1,5 +1,4 @@
 import js from "@eslint/js";
-import eslintPluginPrettier from "eslint-plugin-prettier/recommended";
 import globals from "globals";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
@@ -34,7 +33,9 @@ export default tseslint.config(
       ],
       "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
       "@typescript-eslint/no-unused-vars": "off",
+      // Existing route mocks and generated route metadata still contain any;
+      // keep this visible while the domain layer is migrated to generated types.
+      "@typescript-eslint/no-explicit-any": "warn",
     },
   },
-  eslintPluginPrettier,
 );

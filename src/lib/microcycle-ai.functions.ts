@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { generateText, Output } from "ai";
+import OpenAI from "openai";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 const InputSchema = z.object({
@@ -25,10 +25,10 @@ export type MicrocycleSuggestion = z.infer<typeof SuggestionSchema>;
 
 export const suggestMicrocycle = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => InputSchema.parse(input))
+  .validator((input: unknown) => InputSchema.parse(input))
   .handler(async ({ data, context }) => {
-    const key = process.env.LOVABLE_API_KEY;
-    if (!key) throw new Error("Missing LOVABLE_API_KEY");
+    const key = process.env.OPENAI_API_KEY;
+    if (!key) throw new Error("Missing OPENAI_API_KEY");
 
     const { supabase } = context;
     const { weekStart, matchDay, mesocycleId, context: extra } = data;
@@ -69,14 +69,45 @@ ${extra ? `Contexto extra: ${extra}` : ""}
 Catálogo de ejercicios disponibles:
 ${catalog || "(catálogo vacío)"}`;
 
-    const { createLovableAiGatewayProvider } = await import("@/lib/ai-gateway.server");
-    const gateway = createLovableAiGatewayProvider(key);
-
-    const { experimental_output } = await generateText({
-      model: gateway("google/gemini-3-flash-preview"),
-      system,
-      prompt,
-      experimental_output: Output.object({ schema: SuggestionSchema }),
+    const client = new OpenAI({ apiKey: key });
+    const response = await client.responses.create({
+      model: process.env.OPENAI_PLANNING_MODEL || "gpt-5-mini",
+      instructions: system,
+      input: prompt,
+      text: {
+        format: {
+          type: "json_schema",
+          name: "microcycle_suggestion",
+          strict: true,
+          schema: {
+            type: "object",
+            additionalProperties: false,
+            required: ["weekly_objective", "slots"],
+            properties: {
+              weekly_objective: { type: "string" },
+              slots: {
+                type: "array",
+                minItems: 5,
+                maxItems: 5,
+                items: {
+                  type: "object",
+                  additionalProperties: false,
+                  required: ["slot_type", "focus", "intensity", "recommended_exercise_ids", "notes"],
+                  properties: {
+                    slot_type: { type: "string", enum: ["MD-4", "MD-3", "MD-2", "MD-1", "MD"] },
+                    focus: { type: "string" },
+                    intensity: { type: "string" },
+                    recommended_exercise_ids: { type: "array", items: { type: "string" } },
+                    notes: { type: "string" },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     });
-    return experimental_output as MicrocycleSuggestion;
+
+    if (!response.output_text) throw new Error("OpenAI returned an empty planning response");
+    return SuggestionSchema.parse(JSON.parse(response.output_text)) as MicrocycleSuggestion;
   });

@@ -74,7 +74,7 @@ function Dashboard() {
               icon={ClipboardList}
               title="Aún no hay sesiones"
               desc="Crea tu primera sesión combinando ejercicios en bloques."
-              action={<Button asChild><Link to="/sessions/new"><Plus className="mr-1 h-4 w-4" /> Nueva sesión</Link></Button>}
+              action={<Button asChild><Link to="/sessions/new" search={{ edit: undefined }}><Plus className="mr-1 h-4 w-4" /> Nueva sesión</Link></Button>}
             />
           )}
         </Card>
@@ -83,7 +83,7 @@ function Dashboard() {
           <h2 className="mb-4 font-semibold">Accesos rápidos</h2>
           <div className="grid gap-2">
             <Button asChild variant="outline" className="justify-start"><Link to="/exercises"><Dumbbell className="mr-2 h-4 w-4" /> Nuevo ejercicio</Link></Button>
-            <Button asChild variant="outline" className="justify-start"><Link to="/sessions/new"><ClipboardList className="mr-2 h-4 w-4" /> Nueva sesión</Link></Button>
+            <Button asChild variant="outline" className="justify-start"><Link to="/sessions/new" search={{ edit: undefined }}><ClipboardList className="mr-2 h-4 w-4" /> Nueva sesión</Link></Button>
             <Button asChild variant="outline" className="justify-start"><Link to="/calendar"><Calendar className="mr-2 h-4 w-4" /> Ver calendario</Link></Button>
             <Button asChild variant="outline" className="justify-start"><Link to="/team"><Users className="mr-2 h-4 w-4" /> Configurar equipo</Link></Button>
           </div>

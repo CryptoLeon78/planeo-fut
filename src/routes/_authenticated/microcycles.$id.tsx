@@ -18,6 +18,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { supabase } from "@/integrations/supabase/client";
 import { formatDate, MICROCYCLE_SLOT_TYPES } from "@/lib/constants";
 import { suggestMicrocycle, type MicrocycleSuggestion } from "@/lib/microcycle-ai.functions";
+import { downloadStructuredPdf } from "@/lib/pdf-export";
 
 export const Route = createFileRoute("/_authenticated/microcycles/$id")({
   component: MicroDetailPage,
@@ -75,16 +76,15 @@ function MicroDetailPage() {
   }
 
   async function assignSession(slotId: string, sessionId: string) {
-    // detect conflicts: same session already assigned in another slot
-    const conflict = (slots ?? []).find((s: any) => s.session_id === sessionId && s.id !== slotId);
     const targetSlot = (slots ?? []).find((s: any) => s.id === slotId);
     if (targetSlot?.slot_type === "MD") return toast.error("MD es día de partido, no se asignan sesiones");
-    if (conflict) {
-      await (supabase.from("microcycle_slots") as any).update({ session_id: null }).eq("id", conflict.id);
-      toast.info(`Sesión movida desde ${conflict.slot_type} → ${targetSlot?.slot_type}`);
-    }
-    await updateSlot(slotId, { session_id: sessionId });
+    const { error } = await (supabase.rpc as any)("assign_microcycle_session", {
+      p_slot_id: slotId,
+      p_session_id: sessionId,
+    });
+    if (error) return toast.error(error.message);
     toast.success("Sesión asignada");
+    qc.invalidateQueries({ queryKey: ["microcycle-slots", id] });
   }
 
   function onDragStart(e: DragStartEvent) {
@@ -172,7 +172,15 @@ function MicroDetailPage() {
             </div>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={() => window.print()}><FileDown className="mr-1 h-4 w-4" /> PDF</Button>
+            <Button variant="outline" onClick={async () => downloadStructuredPdf(
+              micro.name,
+              `Semana del ${formatDate(micro.week_start, { day: "numeric", month: "long", year: "numeric" })} · partido ${micro.match_day}`,
+              (slots ?? []).map((slot: any) => ({
+                heading: `${slot.slot_type} · ${formatDate(slot.slot_date, { weekday: "long", day: "numeric", month: "long" })}`,
+                lines: [slot.notes ?? "Sin notas", ...(slot.session_id ? [`Sesión asignada: ${(sessions ?? []).find((s: any) => s.id === slot.session_id)?.name ?? slot.session_id}`] : [])],
+              })),
+              `microciclo-${micro.id}`,
+            )}><FileDown className="mr-1 h-4 w-4" /> PDF</Button>
             <Button variant="outline" onClick={() => setAiOpen(true)}>
               <Sparkles className="mr-1 h-4 w-4" /> Generar con IA
             </Button>
@@ -231,7 +239,7 @@ function MicroDetailPage() {
             <h3 className="text-sm font-semibold">Sesiones disponibles</h3>
             <div className="space-y-2">
               {(sessions ?? []).length === 0 && (
-                <p className="text-xs text-muted-foreground">No tienes sesiones aún. <Link to="/sessions/new" className="text-primary hover:underline">Crear sesión</Link></p>
+                <p className="text-xs text-muted-foreground">No tienes sesiones aún. <Link to="/sessions/new" search={{ edit: undefined }} className="text-primary hover:underline">Crear sesión</Link></p>
               )}
               {(sessions ?? []).map((sess: any) => <DraggableSession key={sess.id} session={sess} />)}
             </div>

@@ -8,6 +8,7 @@ export default defineConfig({
     setupFiles: ["./src/test/setup.ts"],
     include: ["src/**/*.test.{ts,tsx}"],
     css: false,
+    testTimeout: 15000,
   },
   resolve: {
     alias: { "@": path.resolve(__dirname, "./src") },

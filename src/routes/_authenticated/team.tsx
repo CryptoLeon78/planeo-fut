@@ -15,6 +15,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { TEAM_CATEGORIES, labelOf } from "@/lib/constants";
+import { resolveStorageUrl, validateImageFile } from "@/lib/storage";
 
 export const Route = createFileRoute("/_authenticated/team")({
   component: TeamPage,
@@ -34,13 +35,18 @@ function TeamPage() {
   const [open, setOpen] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState<any>(null);
   const [showTeamDetail, setShowTeamDetail] = useState(false);
+  const [memberEmail, setMemberEmail] = useState("");
+  const [memberRole, setMemberRole] = useState<"coach" | "physical_coach" | "analyst" | "viewer">("viewer");
 
   const { data: teams } = useQuery({
     queryKey: ["teams", user?.id],
     enabled: !!user,
     queryFn: async () => {
       const { data } = await supabase.from("teams").select("*").order("created_at", { ascending: false });
-      return data ?? [];
+      return Promise.all((data ?? []).map(async (team: any) => ({
+        ...team,
+        shield_url: await resolveStorageUrl("team-images", team.shield_url),
+      })));
     },
   });
 
@@ -49,7 +55,10 @@ function TeamPage() {
     enabled: !!selectedTeam?.id && !!user,
     queryFn: async () => {
       const { data } = await (supabase as any).from("players").select("*").eq("team_id", selectedTeam.id).order("number");
-      return data ?? [];
+      return Promise.all((data ?? []).map(async (player: any) => ({
+        ...player,
+        photo_url: await resolveStorageUrl("team-images", player.photo_url),
+      })));
     },
   });
 
@@ -73,14 +82,16 @@ function TeamPage() {
   async function handleShieldUpload(teamId: string, file: File) {
     if (!user) return;
     try {
+      validateImageFile(file);
       const fileName = `${user.id}/shield-${teamId}-${Date.now()}`;
       const { error: uploadError } = await supabase.storage
         .from("team-images")
         .upload(fileName, file, { upsert: true });
       if (uploadError) throw uploadError;
 
-      const { data } = supabase.storage.from("team-images").getPublicUrl(fileName);
-      await (supabase.from("teams") as any).update({ shield_url: data.publicUrl }).eq("id", teamId);
+      await (supabase.from("teams") as any).update({ shield_url: fileName }).eq("id", teamId);
+      const signed = await resolveStorageUrl("team-images", fileName);
+      setSelectedTeam((team: any) => team ? { ...team, shield_url: signed } : team);
       qc.invalidateQueries({ queryKey: ["teams"] });
       toast.success("Escudo actualizado");
     } catch (err: any) {
@@ -109,17 +120,30 @@ function TeamPage() {
     toast.success("Jugador añadido");
   }
 
+  async function inviteMember(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (!selectedTeam || !memberEmail.trim()) return;
+    const { error } = await supabase.rpc("invite_team_member_by_email", {
+      p_team_id: selectedTeam.id,
+      p_email: memberEmail.trim(),
+      p_role: memberRole,
+    });
+    if (error) return toast.error(error.message);
+    setMemberEmail("");
+    toast.success("Invitación registrada. El envío de correo se conectará al proveedor de notificaciones.");
+  }
+
   async function handlePlayerPhotoUpload(playerId: string, file: File) {
     if (!user) return;
     try {
+      validateImageFile(file);
       const fileName = `${user.id}/player-${playerId}-${Date.now()}`;
       const { error: uploadError } = await supabase.storage
         .from("team-images")
         .upload(fileName, file, { upsert: true });
       if (uploadError) throw uploadError;
 
-      const { data } = supabase.storage.from("team-images").getPublicUrl(fileName);
-      await (supabase as any).from("players").update({ photo_url: data.publicUrl }).eq("id", playerId);
+      await (supabase as any).from("players").update({ photo_url: fileName }).eq("id", playerId);
       qc.invalidateQueries({ queryKey: ["players", selectedTeam?.id] });
       toast.success("Foto del jugador actualizada");
     } catch (err: any) {
@@ -231,6 +255,24 @@ function TeamPage() {
           <DialogContent className="max-w-2xl">
             <DialogHeader><DialogTitle>{selectedTeam.name}</DialogTitle></DialogHeader>
             <div className="space-y-6">
+              {selectedTeam.owner_id === user?.id && (
+                <div className="space-y-2">
+                  <Label>Invitar colaborador</Label>
+                  <form onSubmit={inviteMember} className="grid gap-2 sm:grid-cols-[1fr_170px_auto]">
+                    <Input value={memberEmail} onChange={(e) => setMemberEmail(e.target.value)} type="email" placeholder="correo@club.com" required />
+                    <Select value={memberRole} onValueChange={(v) => setMemberRole(v as typeof memberRole)}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="coach">Entrenador</SelectItem>
+                        <SelectItem value="physical_coach">Preparador físico</SelectItem>
+                        <SelectItem value="analyst">Analista</SelectItem>
+                        <SelectItem value="viewer">Solo lectura</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Button type="submit">Invitar</Button>
+                  </form>
+                </div>
+              )}
               <div className="space-y-2">
                 <Label>Escudo del equipo</Label>
                 <div className="flex items-center gap-3">

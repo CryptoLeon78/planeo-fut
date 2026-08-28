@@ -10,7 +10,6 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
 import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/auth")({
@@ -23,10 +22,10 @@ export const Route = createFileRoute("/auth")({
       { property: "og:title", content: "Accede a PlaneoFUT" },
       { property: "og:description", content: "Inicia sesión o crea tu cuenta gratuita para empezar a planificar tu temporada." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://planeo-fut.lovable.app/auth" },
+      { property: "og:url", content: `${import.meta.env.VITE_PUBLIC_SITE_URL || "https://planeofut.com"}/auth` },
       { name: "robots", content: "noindex" },
     ],
-    links: [{ rel: "canonical", href: "https://planeo-fut.lovable.app/auth" }],
+    links: [{ rel: "canonical", href: `${import.meta.env.VITE_PUBLIC_SITE_URL || "https://planeofut.com"}/auth` }],
   }),
 });
 
@@ -81,12 +80,14 @@ function AuthPage() {
   async function handleGoogle() {
     setBusy(true);
     try {
-      const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
-      if (result.error) throw result.error;
-      if (result.redirected) return;
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: `${window.location.origin}/auth` },
+      });
+      if (error) throw error;
       navigate({ to: "/dashboard" });
-    } catch (e: any) {
-      toast.error(e?.message ?? "No se pudo iniciar sesión con Google");
+    } catch (e: unknown) {
+      toast.error(e instanceof Error ? e.message : "No se pudo iniciar sesión con Google");
       setBusy(false);
     }
   }

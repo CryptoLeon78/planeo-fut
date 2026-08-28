@@ -79,7 +79,7 @@ function SessionsPage() {
           <h1 className="text-2xl font-bold tracking-tight">Sesiones</h1>
           <p className="text-sm text-muted-foreground">Agrupa ejercicios en bloques estructurados.</p>
         </div>
-        <Button asChild><Link to="/sessions/new"><Plus className="mr-1 h-4 w-4" /> Nueva sesión</Link></Button>
+        <Button asChild><Link to="/sessions/new" search={{ edit: undefined }}><Plus className="mr-1 h-4 w-4" /> Nueva sesión</Link></Button>
       </div>
 
       {isLoading ? (
@@ -115,7 +115,7 @@ function SessionsPage() {
           </div>
           <p className="font-medium">Aún no tienes sesiones</p>
           <p className="mt-1 text-sm text-muted-foreground">Combina ejercicios en bloques: calentamiento, parte principal, juego y vuelta a la calma.</p>
-          <Button className="mt-4" asChild><Link to="/sessions/new"><Plus className="mr-1 h-4 w-4" /> Crear sesión</Link></Button>
+          <Button className="mt-4" asChild><Link to="/sessions/new" search={{ edit: undefined }}><Plus className="mr-1 h-4 w-4" /> Crear sesión</Link></Button>
         </Card>
       )}
     </div>

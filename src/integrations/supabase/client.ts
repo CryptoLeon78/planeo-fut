@@ -17,7 +17,7 @@ function createSupabaseClient() {
     // and causes a blank page. Return a no-op proxy instead.
     console.error(
       `[Supabase] Missing environment variable(s): ${missing.join(', ')}. ` +
-      'Connect Supabase in Lovable Cloud or add them to your .env file.',
+      'Configure Supabase in the project environment or add the variables to your local .env file.',
     );
     // Return a safe stub so the app can at least render the error/auth state
     return null as unknown as ReturnType<typeof createClient<Database>>;

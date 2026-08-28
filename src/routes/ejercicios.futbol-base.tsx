@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
-const SITE_URL = "https://planeo-fut.lovable.app";
+const SITE_URL = import.meta.env.VITE_PUBLIC_SITE_URL || "https://planeofut.com";
 const TITLE = "Ejercicios de Fútbol Base — Biblioteca gratuita por categoría | PlaneoFUT";
 const DESC = "Más de 40 ejercicios de fútbol base clasificados por categoría (Prebenjamín, Benjamín, Alevín, Infantil, Cadete) y objetivo táctico: posesión, finalización, presión, transiciones y juegos reducidos de fútbol 7 y fútbol 11.";
 

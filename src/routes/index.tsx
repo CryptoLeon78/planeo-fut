@@ -4,7 +4,7 @@ import { Calendar, ClipboardList, Dumbbell, LineChart, Loader2, Trophy, Users } 
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 
-const SITE_URL = "https://planeo-fut.lovable.app";
+const SITE_URL = import.meta.env.VITE_PUBLIC_SITE_URL || "https://planeofut.com";
 const TITLE = "PlaneoFUT — Planificación profesional de entrenamientos de fútbol";
 const DESC = "Crea ejercicios, sesiones, microciclos y temporadas completas. La herramienta del entrenador moderno para fútbol base, cantera, amateur y alto rendimiento.";
 

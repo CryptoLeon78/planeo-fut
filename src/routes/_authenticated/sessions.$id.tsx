@@ -7,6 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { BLOCK_TYPES, INTENSITIES, labelOf } from "@/lib/constants";
 import { SessionEvaluationCard } from "@/components/session-evaluation-card";
+import { resolveStorageUrl } from "@/lib/storage";
+import { downloadStructuredPdf } from "@/lib/pdf-export";
 
 export const Route = createFileRoute("/_authenticated/sessions/$id")({
   component: SessionDetail,
@@ -25,14 +27,33 @@ function SessionDetail() {
       const { data: items } = blockIds.length
         ? await supabase.from("session_block_exercises").select("*, exercises(name, duration_min, game_phase, image_url)").in("block_id", blockIds).order("position")
         : { data: [] };
-      return { session: s, blocks: blocks ?? [], items: items ?? [] };
+      const hydratedItems = await Promise.all((items ?? []).map(async (item: any) => ({
+        ...item,
+        exercises: item.exercises ? {
+          ...item.exercises,
+          image_url: await resolveStorageUrl("exercise-images", item.exercises.image_url),
+        } : item.exercises,
+      })));
+      return { session: s, blocks: blocks ?? [], items: hydratedItems };
     },
   });
 
   if (isLoading || !data?.session) return <p className="text-sm text-muted-foreground">Cargando…</p>;
   const { session, blocks, items } = data;
 
-  function exportPDF() { window.print(); }
+  async function exportPDF() {
+    await downloadStructuredPdf(
+      session.name,
+      [session.session_date ? new Date(session.session_date).toLocaleDateString("es-ES") : "Sin fecha", session.objective ?? ""].filter(Boolean).join(" · "),
+      blocks.map((block: any) => ({
+        heading: block.name ?? labelOf(BLOCK_TYPES, block.block_type),
+        lines: items.filter((item: any) => item.block_id === block.id).map((item: any) =>
+          [item.exercises?.name, item.notes].filter(Boolean).join(" — ")
+        ).concat(block.notes ? [block.notes] : []),
+      })),
+      `sesion-${session.id}`,
+    );
+  }
 
   return (
     <div className="mx-auto max-w-4xl space-y-6 print-area">

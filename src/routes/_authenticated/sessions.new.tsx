@@ -58,6 +58,7 @@ function NewSessionPage() {
     queryKey: ["session-edit", editId],
     enabled: !!editId && !!user,
     queryFn: async () => {
+      if (!editId) return { session: null, blocks: [], items: [] };
       const { data: s } = await supabase.from("sessions").select("*").eq("id", editId).single();
       const { data: blks } = await supabase.from("session_blocks").select("*").eq("session_id", editId).order("position");
       const blockIds = (blks ?? []).map((b: any) => b.id);
@@ -115,52 +116,23 @@ function NewSessionPage() {
 
     setBusy(true);
     try {
-      let sessionId = editId;
-
-      if (editId) {
-        const { error } = await supabase.from("sessions").update({
-          name: parsed.data.name,
-          objective: parsed.data.objective || null,
-          intensity: (parsed.data.intensity || "media") as "alta" | "baja" | "media" | "muy_alta",
-          session_date: parsed.data.session_date || null,
-          duration_min: parsed.data.duration_min === "" ? null : parsed.data.duration_min,
-        }).eq("id", editId);
-        if (error) throw error;
-
-        // Limpiar bloques antiguos y sus ejercicios (cascada manual si no está en DB)
-        // Por simplicidad en este MVP, borramos y re-insertamos bloques
-        await supabase.from("session_blocks").delete().eq("session_id", editId);
-      } else {
-        const { data: created, error } = await (supabase.from("sessions") as any).insert({
-          owner_id: user.id,
-          name: parsed.data.name,
-          objective: parsed.data.objective || null,
-          intensity: (parsed.data.intensity || "media") as "alta" | "baja" | "media" | "muy_alta",
-          session_date: parsed.data.session_date || null,
-          duration_min: parsed.data.duration_min === "" ? null : parsed.data.duration_min,
-        }).select("id").single();
-        if (error) throw error;
-        sessionId = created!.id;
-      }
-
-      const inserted = await (supabase.from("session_blocks") as any).insert(
-        blocks.map((b, i) => ({
-          session_id: sessionId, block_type: b.block_type, name: b.name || null,
-          position: i, duration_min: b.duration_min === "" ? null : b.duration_min, notes: b.notes || null,
+      const { data: sessionId, error } = await (supabase.rpc as any)("save_session_graph", {
+        p_session_id: editId ?? null,
+        p_name: parsed.data.name,
+        p_objective: parsed.data.objective || "",
+        p_intensity: (parsed.data.intensity || "media") as "alta" | "baja" | "media" | "muy_alta",
+        p_session_date: parsed.data.session_date || null,
+        p_duration_min: parsed.data.duration_min === "" ? null : parsed.data.duration_min,
+        p_blocks: blocks.map((b, position) => ({
+          block_type: b.block_type,
+          name: b.name,
+          position,
+          duration_min: b.duration_min === "" ? null : b.duration_min,
+          notes: b.notes,
+          exercise_ids: b.exercise_ids,
         })),
-      ).select("id,position");
-      if (inserted.error) throw inserted.error;
-
-      const rows: any[] = [];
-      blocks.forEach((b, i) => {
-        const bId = inserted.data!.find((x: any) => x.position === i)?.id;
-        if (!bId) return;
-        b.exercise_ids.forEach((exId, pos) => rows.push({ block_id: bId, exercise_id: exId, position: pos }));
       });
-      if (rows.length) {
-        const r = await (supabase.from("session_block_exercises") as any).insert(rows);
-        if (r.error) throw r.error;
-      }
+      if (error) throw error;
       toast.success(editId ? "Sesión actualizada" : "Sesión creada");
       navigate({ to: "/sessions/$id", params: { id: sessionId! } });
     } catch (err: any) {

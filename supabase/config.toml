@@ -1,1 +1,8 @@
-project_id = "aparvgdelraynacisdrq"
+project_id = "planeofut"
+
+[db]
+port = 55433
+shadow_port = 55434
+
+[studio]
+port = 55435
