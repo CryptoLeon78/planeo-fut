@@ -109,7 +109,7 @@ function SeasonDetail() {
   return (
     <div className="mx-auto max-w-5xl space-y-6">
       <div className="flex items-center gap-3">
-        <Button asChild variant="ghost" size="icon"><Link to="/season"><ArrowLeft className="h-4 w-4" /></Link></Button>
+        <Button asChild variant="ghost" size="icon" aria-label="Volver a temporadas"><Link to="/season"><ArrowLeft className="h-4 w-4" aria-hidden="true" /></Link></Button>
         <div>
           <h1 className="text-2xl font-bold tracking-tight">{meso.name}</h1>
           <p className="text-sm text-muted-foreground">{formatDate(meso.start_date)} → {formatDate(meso.end_date)}</p>
@@ -192,7 +192,9 @@ function SeasonDetail() {
                     </div>
                   </div>
                 </div>
-                <Button variant="ghost" size="icon" onClick={() => deleteEvent(e.id)}><Trash2 className="h-4 w-4" /></Button>
+                <Button variant="ghost" size="icon" aria-label={`Eliminar evento ${e.title}`} onClick={() => deleteEvent(e.id)}>
+                  <Trash2 className="h-4 w-4" aria-hidden="true" />
+                </Button>
               </div>
             ))}
           </div>

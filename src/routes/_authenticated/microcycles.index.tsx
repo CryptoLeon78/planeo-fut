@@ -90,8 +90,8 @@ function MicrocyclesPage() {
                 <Button asChild size="sm" variant="outline" className="flex-1">
                   <Link to="/microcycles/$id" params={{ id: m.id }}>Abrir</Link>
                 </Button>
-                <Button size="icon" variant="ghost" onClick={() => duplicate(m.id)} aria-label="Duplicar"><Copy className="h-4 w-4" /></Button>
-                <Button size="icon" variant="ghost" onClick={() => remove(m.id)} aria-label="Eliminar"><Trash2 className="h-4 w-4" /></Button>
+                <Button size="icon" variant="ghost" onClick={() => duplicate(m.id)} aria-label={`Duplicar microciclo ${m.name}`}><Copy className="h-4 w-4" aria-hidden="true" /></Button>
+                <Button size="icon" variant="ghost" onClick={() => remove(m.id)} aria-label={`Eliminar microciclo ${m.name}`}><Trash2 className="h-4 w-4" aria-hidden="true" /></Button>
 
               </div>
             </Card>

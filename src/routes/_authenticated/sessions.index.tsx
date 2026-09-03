@@ -98,12 +98,13 @@ function SessionsPage() {
                 {s.duration_min && <Badge variant="outline">{s.duration_min}′</Badge>}
                 {s.session_date && <Badge variant="outline">{new Date(s.session_date).toLocaleDateString("es-ES")}</Badge>}
               </div>
-              <div className="mt-4 flex gap-2">
-                <Button asChild size="sm" variant="outline" className="flex-1">
-                  <Link to="/sessions/$id" params={{ id: s.id }}>Abrir</Link>
+              <div className="mt-4 flex items-center justify-end gap-1 border-t border-border pt-3">
+                <Button size="icon" variant="ghost" aria-label={`Duplicar sesión ${s.name}`} onClick={() => duplicate(s.id)}>
+                  <Copy className="h-4 w-4" aria-hidden="true" />
                 </Button>
-                <Button size="icon" variant="ghost" onClick={() => duplicate(s.id)} aria-label="Duplicar"><Copy className="h-4 w-4" /></Button>
-                <Button size="icon" variant="ghost" onClick={() => remove(s.id)} aria-label="Eliminar"><Trash2 className="h-4 w-4" /></Button>
+                <Button size="icon" variant="ghost" aria-label={`Eliminar sesión ${s.name}`} onClick={() => remove(s.id)}>
+                  <Trash2 className="h-4 w-4" aria-hidden="true" />
+                </Button>
               </div>
             </Card>
           ))}

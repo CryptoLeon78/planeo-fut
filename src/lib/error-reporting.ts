@@ -1,11 +1,13 @@
+import { logger } from "./logger";
+
 type ErrorContext = Record<string, unknown>;
 
-/** Small runtime-neutral error boundary hook. Cloudflare captures server logs. */
+/** Standard runtime-neutral error boundary hook with structured telemetry logging. */
 export function reportError(error: unknown, context: ErrorContext = {}) {
   const normalized = error instanceof Error ? error : new Error(String(error));
-  console.error("[PlaneoFUT] application error", {
+  logger.error(normalized.message, {
     name: normalized.name,
-    message: normalized.message,
+    stack: normalized.stack,
     ...context,
   });
 }

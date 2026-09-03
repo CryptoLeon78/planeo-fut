@@ -14,6 +14,7 @@ import { ExerciseForm } from "@/components/exercise-form";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { GAME_PHASES, INTENSITIES, labelOf } from "@/lib/constants";
+import { useExerciseFilters } from "@/stores/app-store";
 
 export const Route = createFileRoute("/_authenticated/exercises/")({
   component: ExercisesPage,
@@ -23,10 +24,8 @@ function ExercisesPage() {
   const { user } = useAuth();
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
-  const [q, setQ] = useState("");
-  const [phase, setPhase] = useState<string>("all");
-  const [intensity, setIntensity] = useState<string>("all");
-  const [onlyFav, setOnlyFav] = useState(false);
+  const { filters, setFilters, resetFilters } = useExerciseFilters();
+  const { searchQuery: q, gamePhase: phase, intensity, onlyFavorites: onlyFav } = filters;
 
   const { data: exercises, isLoading } = useQuery({
     queryKey: ["exercises", user?.id],
@@ -76,25 +75,35 @@ function ExercisesPage() {
       <Card className="p-4">
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
           <div className="relative lg:col-span-2">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Buscar por nombre, objetivo o etiqueta…" className="pl-9" />
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+            <Input
+              value={q}
+              onChange={(e) => setFilters({ searchQuery: e.target.value })}
+              placeholder="Buscar por nombre, objetivo o etiqueta…"
+              className="pl-9"
+              aria-label="Buscar ejercicios"
+            />
           </div>
-          <Select value={phase} onValueChange={setPhase}>
-            <SelectTrigger><SelectValue placeholder="Fase del juego" /></SelectTrigger>
+          <Select value={phase} onValueChange={(v) => setFilters({ gamePhase: v })}>
+            <SelectTrigger aria-label="Filtrar por fase del juego"><SelectValue placeholder="Fase del juego" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todas las fases</SelectItem>
               {GAME_PHASES.map((p) => <SelectItem key={p.value} value={p.value}>{p.label}</SelectItem>)}
             </SelectContent>
           </Select>
-          <Select value={intensity} onValueChange={setIntensity}>
-            <SelectTrigger><SelectValue placeholder="Intensidad" /></SelectTrigger>
+          <Select value={intensity} onValueChange={(v) => setFilters({ intensity: v })}>
+            <SelectTrigger aria-label="Filtrar por intensidad"><SelectValue placeholder="Intensidad" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Cualquier intensidad</SelectItem>
               {INTENSITIES.map((i) => <SelectItem key={i.value} value={i.value}>{i.label}</SelectItem>)}
             </SelectContent>
           </Select>
-          <Button variant={onlyFav ? "default" : "outline"} onClick={() => setOnlyFav((v) => !v)}>
-            <Star className={`mr-1 h-4 w-4 ${onlyFav ? "fill-current" : ""}`} /> Favoritos
+          <Button
+            variant={onlyFav ? "default" : "outline"}
+            onClick={() => setFilters({ onlyFavorites: !onlyFav })}
+            aria-label={onlyFav ? "Mostrar todos los ejercicios" : "Mostrar solo ejercicios favoritos"}
+          >
+            <Star className={`mr-1 h-4 w-4 ${onlyFav ? "fill-current" : ""}`} aria-hidden="true" /> Favoritos
           </Button>
         </div>
       </Card>
@@ -122,8 +131,12 @@ function ExercisesPage() {
                 <Link to="/exercises/$id" params={{ id: e.id }} className="font-semibold leading-tight group-hover:text-primary">
                   {e.name}
                 </Link>
-                <button onClick={() => toggleFav(e.id, e.is_favorite)} aria-label="Favorito">
-                  <Star className={`h-4 w-4 ${e.is_favorite ? "fill-warning text-warning" : "text-muted-foreground"}`} />
+                <button
+                  onClick={() => toggleFav(e.id, e.is_favorite)}
+                  aria-label={e.is_favorite ? `Quitar ${e.name} de favoritos` : `Añadir ${e.name} a favoritos`}
+                  className="rounded p-1 transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  <Star className={`h-4 w-4 ${e.is_favorite ? "fill-warning text-warning" : "text-muted-foreground"}`} aria-hidden="true" />
                 </button>
               </div>
               {e.objective && <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{e.objective}</p>}

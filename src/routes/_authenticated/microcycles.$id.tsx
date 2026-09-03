@@ -163,7 +163,7 @@ function MicroDetailPage() {
       <div className="mx-auto max-w-7xl space-y-6 print-area">
         <div className="flex items-center justify-between print:hidden">
           <div className="flex items-center gap-3">
-            <Button asChild variant="ghost" size="icon"><Link to="/microcycles"><ArrowLeft className="h-4 w-4" /></Link></Button>
+            <Button asChild variant="ghost" size="icon" aria-label="Volver a microciclos"><Link to="/microcycles"><ArrowLeft className="h-4 w-4" aria-hidden="true" /></Link></Button>
             <div>
               <h1 className="text-2xl font-bold tracking-tight">{micro.name}</h1>
               <p className="text-sm text-muted-foreground">
@@ -184,7 +184,9 @@ function MicroDetailPage() {
             <Button variant="outline" onClick={() => setAiOpen(true)}>
               <Sparkles className="mr-1 h-4 w-4" /> Generar con IA
             </Button>
-            <Button variant="ghost" size="icon" onClick={remove}><Trash2 className="h-4 w-4" /></Button>
+            <Button variant="ghost" size="icon" aria-label={`Eliminar microciclo ${micro.name}`} onClick={remove}>
+              <Trash2 className="h-4 w-4" aria-hidden="true" />
+            </Button>
           </div>
         </div>
 
