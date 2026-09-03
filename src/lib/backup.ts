@@ -23,14 +23,18 @@ export const ENTITY_LABELS: Record<BackupEntity, string> = {
   session_evaluations: "Evaluaciones de sesión",
 };
 
+export type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
+
+export type BackupRow = Record<string, JsonValue>;
+
 export type BackupPayload = {
   version: 1;
   generated_at: string;
-  entities: Partial<Record<BackupEntity, Record<string, unknown>[]>>;
+  entities: Partial<Record<BackupEntity, BackupRow[]>>;
 };
 
 /** Serialises a list of flat rows to CSV (RFC 4180 quoting). */
-export function toCsv(rows: Record<string, unknown>[]): string {
+export function toCsv(rows: BackupRow[]): string {
   if (rows.length === 0) return "";
   const columns = Array.from(new Set(rows.flatMap((row) => Object.keys(row))));
   const escape = (value: unknown): string => {
@@ -51,8 +55,8 @@ export function backupFileName(format: "json" | "csv", entity?: string): string 
 /** Fields that must never be carried over when importing rows from another account. */
 const NON_PORTABLE = ["id", "owner_id", "created_at", "updated_at", "deleted_at", "team_id"];
 
-export function sanitiseImportRow(row: Record<string, unknown>): Record<string, unknown> {
-  const copy: Record<string, unknown> = { ...row };
+export function sanitiseImportRow(row: BackupRow): BackupRow {
+  const copy: BackupRow = { ...row };
   for (const field of NON_PORTABLE) delete copy[field];
   return copy;
 }
