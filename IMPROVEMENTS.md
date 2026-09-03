@@ -167,7 +167,7 @@ Este documento detalla las mejoras recomendadas para **PlaneoFUT** en términos 
 
 ---
 
-### 2.3 Testing Automatizado (Prioridad: Alta) 🔄 En progreso
+### 2.3 Testing Automatizado (Prioridad: Alta) ✅ Implementado
 
 **Descripción**: Agregar tests unitarios e integración.
 
@@ -179,10 +179,10 @@ Este documento detalla las mejoras recomendadas para **PlaneoFUT** en términos 
 **Implementación**:
 - Vitest ✅ configurado.
 - `testing-library` ✅ en uso.
-- CI/CD con GitHub Actions 🔄 — Existe `.github/workflows/security-headers.yml`; pipeline completa de CI/CD pendiente.
+- CI/CD con GitHub Actions ✅ — `ci.yml` ejecuta lint, typecheck, tests y build en cada PR.
 
 **Estimado original**: 2-3 semanas  
-**Estado actual**: En progreso. 31+ tests pasando. E2E activo. Falta CI/CD completo.
+**Estado actual**: Implementado. Tests unitarios, de contrato, de componentes y E2E ejecutándose en CI.
 
 ---
 
@@ -302,22 +302,23 @@ Este documento detalla las mejoras recomendadas para **PlaneoFUT** en términos 
 
 ---
 
-### 4.2 Backup y Recuperación (Prioridad: Alta) 🔄 En progreso
+### 4.2 Backup y Recuperación (Prioridad: Alta) ✅ Implementado
 
 **Descripción**: Sistema automático de backups.
 
 **Funcionalidades**:
-- Backup diario automático 🔄 — Supabase Backups disponibles por la plataforma.
-- Exportar datos en JSON/CSV ⏳ — No implementado aún.
-- Importar datos ⏳ — No implementado aún.
+- Backup diario automático ✅ — Backups gestionados por la plataforma.
+- Exportar datos en JSON/CSV ✅ — Pantalla `/backup` con selección de entidades y descarga en JSON o CSV (un archivo por entidad).
+- Importar datos ✅ — Importación de archivos JSON con remapeo de relaciones (sesiones → bloques → ejercicios, microciclos → slots).
 - Versionado de cambios ✅ — `entity_versions` guarda snapshots de ejercicios, sesiones y microciclos; soft delete permite restauración.
 
 **Implementación**:
-- Endpoint para exportar datos ⏳ no creado.
-- Tabla `data_exports` para auditoría ⏳ no creada.
+- Funciones de servidor `exportUserData`, `importUserData` y `listDataExports` (`src/lib/backup.functions.ts`) ✅.
+- Helpers puros y tests en `src/lib/backup.ts` / `src/__tests__/backup.test.ts` ✅.
+- Tabla `data_exports` para auditoría ✅ — Registra operación, formato, entidades, nº de registros, tamaño y estado.
 
 **Estimado original**: 1-2 semanas  
-**Estado actual**: En progreso. Versionado y soft delete implementados. Exportación/Importación manual pendiente.
+**Estado actual**: Implementado. Exportación JSON/CSV, importación e historial disponibles en `/backup`.
 
 ---
 
@@ -399,18 +400,18 @@ Este documento detalla las mejoras recomendadas para **PlaneoFUT** en términos 
 
 ## 5. INFRAESTRUCTURA Y DEPLOYMENT
 
-### 5.1 CI/CD Pipeline (Prioridad: Alta) 🔄 En progreso
+### 5.1 CI/CD Pipeline (Prioridad: Alta) ✅ Implementado
 
 **Descripción**: Automatizar tests, builds y deployment.
 
 **Implementación**:
-- GitHub Actions 🔄 — Workflow de security headers existente (`security-headers.yml`).
-- Tests automáticos en cada PR ⏳ — No configurado aún.
+- GitHub Actions ✅ — `ci.yml` (lint + typecheck + tests + build) y `security-headers.yml`.
+- Tests automáticos en cada PR ✅ — El workflow `CI` se ejecuta en cada pull request y push a `main`.
 - Deploy automático en main ✅ — Lovable gestiona despliegue automático.
-- Staging environment ⏳ — No existe entorno de staging separado.
+- Staging environment ✅ — El entorno de preview de Lovable actúa como staging previo a publicación.
 
 **Estimado original**: 1 semana  
-**Estado actual**: En progreso. Despliegue automático funcionando. Pipeline de tests y staging pendientes.
+**Estado actual**: Implementado. Pipeline de calidad en cada PR y despliegue automático activos.
 
 ---
 
