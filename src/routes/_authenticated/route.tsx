@@ -23,14 +23,15 @@ function AuthLayout() {
 
   return (
     <SidebarProvider>
+      <a href="#contenido-principal" className="skip-link">Saltar al contenido principal</a>
       <div className="flex min-h-screen w-full bg-background">
         <AppSidebar />
-        <div className="flex flex-1 flex-col">
-          <header className="sticky top-0 z-10 flex h-14 items-center gap-2 border-b border-border/60 bg-background/80 px-4 backdrop-blur">
-            <SidebarTrigger />
+        <div className="flex min-w-0 flex-1 flex-col">
+          <header className="sticky top-0 z-10 flex h-14 items-center gap-2 border-b border-border/60 bg-background/80 px-3 backdrop-blur sm:px-4">
+            <SidebarTrigger aria-label="Mostrar u ocultar el menú lateral" />
             <div className="ml-auto"><LanguageSwitcher /></div>
           </header>
-          <main className="flex-1 p-6">
+          <main id="contenido-principal" tabIndex={-1} className="page-enter min-w-0 flex-1 p-4 sm:p-5 lg:p-6">
             <Outlet />
           </main>
         </div>
