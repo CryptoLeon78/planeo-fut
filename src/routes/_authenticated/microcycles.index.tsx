@@ -65,7 +65,7 @@ function MicrocyclesPage() {
 
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6">
+    <div data-onboarding="microcycles-list" className="mx-auto max-w-6xl space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Microciclos</h1>

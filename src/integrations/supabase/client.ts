@@ -2,11 +2,21 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 
+type RuntimeConfig = { supabaseUrl?: string; supabasePublishableKey?: string };
+
+function getRuntimeConfig(): RuntimeConfig {
+  if (typeof globalThis !== 'undefined' && '__PLANEOfut_CONFIG__' in globalThis) {
+    return (globalThis as typeof globalThis & { __PLANEOfut_CONFIG__?: RuntimeConfig }).__PLANEOfut_CONFIG__ ?? {};
+  }
+  return {};
+}
+
 function createSupabaseClient() {
   // Use import.meta.env for client-side (Vite build-time replacement)
   // Fall back to process.env for SSR (server-side rendering)
-  const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
-  const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_PUBLISHABLE_KEY;
+  const runtimeConfig = getRuntimeConfig();
+  const SUPABASE_URL = runtimeConfig.supabaseUrl || import.meta.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
+  const SUPABASE_PUBLISHABLE_KEY = runtimeConfig.supabasePublishableKey || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_PUBLISHABLE_KEY;
 
   if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
     const missing = [

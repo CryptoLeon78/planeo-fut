@@ -1,0 +1,5 @@
+{
+  "supabaseUrl": "https://TU-PROYECTO.supabase.co",
+  "supabasePublishableKey": "TU_CLAVE_PUBLICABLE_SUPABASE",
+  "openaiApiKey": ""
+}

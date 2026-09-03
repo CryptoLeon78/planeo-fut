@@ -49,6 +49,13 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
     targetRoute: "/calendar",
     anchor: "[data-onboarding='calendar-view']",
   },
+  {
+    id: "team",
+    title: "Gestiona tu equipo",
+    description: "Añade jugadores, registra lesiones y controla su disponibilidad para cada semana.",
+    targetRoute: "/team",
+    anchor: "[data-onboarding='team-view']",
+  },
 ];
 
 export interface OnboardingState {
@@ -80,7 +87,9 @@ function persistOnboardingState(state: OnboardingState) {
   if (typeof window === "undefined") return;
   try {
     localStorage.setItem(ONBOARDING_KEY, JSON.stringify(state));
-  } catch {}
+  } catch {
+    // La navegación debe seguir funcionando aunque el almacenamiento esté bloqueado.
+  }
 }
 
 let currentOnboarding: OnboardingState = loadOnboardingState();

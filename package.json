@@ -18,7 +18,8 @@
     "verify:independence": "node scripts/verify-independence.mjs",
     "verify": "npm run verify:independence && npm run typecheck && npm run lint && npm test && npm run build",
     "deploy": "npm run build && wrangler deploy",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "package:win": "npm run build && electron-builder --win portable --x64"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -87,6 +88,8 @@
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^5.0.4",
+    "electron": "^44.1.1",
+    "electron-builder": "^26.15.3",
     "eslint": "^9.32.0",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-react-hooks": "^5.2.0",
@@ -99,5 +102,45 @@
     "vite": "^7.3.1",
     "vitest": "^4.1.8",
     "wrangler": "4.127.1"
-  }
+  },
+  "main": "portable/main.cjs",
+  "build": {
+    "appId": "com.planeofut.app",
+    "productName": "PlaneoFUT",
+    "artifactName": "PlaneoFUT-Portable-${version}.${ext}",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "portable/**/*",
+      "dist/**/*",
+      "package.json",
+      "portable-config.example.json",
+      "build/icon.ico",
+      "build/icon.png"
+    ],
+    "extraResources": [
+      {
+        "from": "portable-config.example.json",
+        "to": "portable-config.example.json"
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "portable": {
+      "artifactName": "PlaneoFUT-Portable-${version}.${ext}"
+    },
+    "icon": "build/icon.ico"
+  },
+  "version": "1.0.0",
+  "description": "PlaneoFUT - planificación de fútbol",
+  "author": "PlaneoFUT"
 }

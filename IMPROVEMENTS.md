@@ -42,7 +42,7 @@ Este documento detalla las mejoras recomendadas para **PlaneoFUT** en términos 
 **Funcionalidades**:
 - Marcar sesiones como "plantilla" ✅ — Se puede duplicar cualquier sesión/microciclo.
 - Duplicar plantillas con un clic ✅ — Botón "Duplicar" en microciclos que copia la estructura completa y desplaza fechas +7 días.
-- Compartir plantillas entre equipos ⏳ — Pendiente de permisos multi-equipo.
+- Compartir plantillas entre equipos ✅ — Permisos multi-equipo y miembros por rol disponibles en `team_members`.
 - Biblioteca de plantillas predefinidas por categoría ⏳ — Pendiente de contenido curado.
 
 **Implementación**:
@@ -55,7 +55,7 @@ Este documento detalla las mejoras recomendadas para **PlaneoFUT** en términos 
 
 ---
 
-### 1.3 Seguimiento de Lesiones y Recuperación (Prioridad: Media) ⏳ Pendiente
+### 1.3 Seguimiento de Lesiones y Recuperación (Prioridad: Media) ✅ Implementado
 
 **Descripción**: Módulo para registrar y monitorear lesiones, recuperación y disponibilidad de jugadores.
 
@@ -66,12 +66,12 @@ Este documento detalla las mejoras recomendadas para **PlaneoFUT** en términos 
 - Alertas de jugadores lesionados
 
 **Implementación**:
-- Tabla `player_injuries` con fechas y tipos ⏳ no creada.
-- Campo `status` en tabla `players` ⏳ no implementado.
-- Vista de disponibilidad en sesiones ⏳ no implementada.
+- Tabla `player_injuries` con fechas, tipo, estado y retorno prevista ✅.
+- Campo `status` en tabla `players` ✅.
+- Panel de lesiones y disponibilidad en el detalle de equipo ✅, con alta y resolución.
 
 **Estimado original**: 1-2 semanas  
-**Estado actual**: Pendiente. Requiere módulo de equipo más maduro.
+**Estado actual**: Implementado en el módulo de equipo; las alertas automáticas y filtros avanzados quedan como evolución de notificaciones.
 
 ---
 
@@ -96,7 +96,7 @@ Este documento detalla las mejoras recomendadas para **PlaneoFUT** en términos 
 
 ---
 
-### 1.5 Integración con Calendario Externo (Prioridad: Media) ⏳ Pendiente
+### 1.5 Integración con Calendario Externo (Prioridad: Media) 🔄 Parcial
 
 **Descripción**: Sincronizar con Google Calendar, Outlook, etc.
 
@@ -106,12 +106,12 @@ Este documento detalla las mejoras recomendadas para **PlaneoFUT** en términos 
 - Sincronización bidireccional
 
 **Implementación**:
-- Librerías como `ical.js` ⏳ no instaladas.
+- Exportación `.ics` ✅ implementada desde el calendario semanal sin dependencia externa.
 - OAuth para Google Calendar ⏳ no configurado.
 - Webhooks para sincronización ⏳ no implementados.
 
 **Estimado original**: 1-2 semanas  
-**Estado actual**: Pendiente. El calendario interno ya funciona; exportación iCal no disponible.
+**Estado actual**: Exportación iCalendar implementada; OAuth y sincronización bidireccional requieren credenciales/configuración externa.
 
 ---
 
@@ -237,7 +237,7 @@ Este documento detalla las mejoras recomendadas para **PlaneoFUT** en términos 
 
 ---
 
-### 3.3 Onboarding Interactivo (Prioridad: Media) ⏳ Pendiente
+### 3.3 Onboarding Interactivo (Prioridad: Media) ✅ Implementado
 
 **Descripción**: Tutorial guiado para nuevos usuarios.
 
@@ -248,11 +248,12 @@ Este documento detalla las mejoras recomendadas para **PlaneoFUT** en términos 
 - Checklist de configuración
 
 **Implementación**:
-- Librería como `driver.js` ⏳ no instalada.
-- Tabla `user_onboarding_status` ⏳ no creada.
+- Tour contextual accesible implementado sin dependencia externa: navegación por pasos, progreso, salto a rutas y resaltado de objetivos mediante `data-onboarding`.
+- Estado persistente en `localStorage`, reinicio y acceso manual desde la barra lateral.
+- Checklist funcional mediante pasos completables; preparado para migrar el estado a `user_onboarding_status` cuando se active persistencia por cuenta.
 
 **Estimado original**: 1-2 semanas  
-**Estado actual**: Pendiente. Sin flujo de onboarding guiado.
+**Estado actual**: Implementado. El tutorial aparece en el primer uso, puede saltarse, reabrirse desde la barra lateral y respeta navegación por teclado y `prefers-reduced-motion`.
 
 ---
 
@@ -500,21 +501,21 @@ Este documento detalla las mejoras recomendadas para **PlaneoFUT** en términos 
 ## 7. PLAN DE IMPLEMENTACIÓN RECOMENDADO (Actualizado)
 
 ### Fase 1 (Semanas 1-4): Fundamentos ✅ Completada
-1. Separación de capas (Arquitectura) — Parcialmente completada.
-2. Testing automatizado — Cubierto parcialmente.
+1. Separación de capas (Arquitectura) — Servicios de dashboard, ejercicios y sesiones extraídos; las rutas delegan consultas y mutaciones.
+2. Testing automatizado — Vitest con tests unitarios, componentes y onboarding; ejecución reproducible en CI.
 3. Seguridad de datos — Implementada.
-4. CI/CD pipeline — Despliegue automático activo; tests en PR pendientes.
+4. CI/CD pipeline — Workflow de GitHub Actions activo para push y pull request contra `main`, con independencia, tipos, lint, tests y build.
 
-### Fase 2 (Semanas 5-8): Experiencia de Usuario 🔄 En progreso
+### Fase 2 (Semanas 5-8): Experiencia de Usuario ✅ Completada
 1. Modo oscuro ✅ Completado.
-2. Onboarding interactivo ⏳ Pendiente.
+2. Onboarding interactivo ✅ Completado.
 3. Accesibilidad ✅ Implementado.
 4. Responsive design mejorado ✅ Implementado.
 
 ### Fase 3 (Semanas 9-12): Funcionalidades Avanzadas ✅ Completada en gran parte
 1. Analytics y reportes ✅ Completado.
 2. Plantillas reutilizables ✅ Duplicación implementada; biblioteca compartida pendiente.
-3. Seguimiento de lesiones ⏳ Pendiente.
+3. Seguimiento de lesiones ✅ Implementado.
 4. Notificaciones ⏳ Pendientes.
 
 ### Fase 4 (Semanas 13-16): Sincronización y Colaboración 🔄 En progreso parcial
@@ -525,7 +526,7 @@ Este documento detalla las mejoras recomendadas para **PlaneoFUT** en términos 
 
 ### Fase 5 (Semanas 17+): Integraciones y Escalabilidad 🔄 En progreso parcial
 1. API pública ✅ Completada vía MCP.
-2. Integraciones externas ⏳ Pendientes (calendarios, wearables, LMS).
+2. Integraciones externas 🔄 Parcial (exportación iCalendar disponible; OAuth, wearables y LMS pendientes).
 3. Monitoreo avanzado ✅ Implementado.
 4. Optimización de rendimiento ✅ Implementado.
 
@@ -536,8 +537,8 @@ Este documento detalla las mejoras recomendadas para **PlaneoFUT** en términos 
 **PlaneoFUT** ha avanzado significativamente desde la versión inicial. Las funcionalidades core y avanzadas de planificación deportiva están operativas, y la plataforma cuenta con una base sólida de seguridad, auditoría, internacionalización y MCP. Los próximos focos de inversión recomendados son:
 
 1. **Colaboración multi-equipo**: Permisos granulares y compartición de plantillas/equipos.
-2. **Calendario externo**: Exportación iCal/Google Calendar para integración con flujos de trabajo reales.
-3. **Notificaciones**: Recordatorios de sesiones y alertas de lesiones/disponibilidad.
+2. **Calendario externo**: OAuth y sincronización bidireccional con Google/Outlook.
+3. **Notificaciones**: Recordatorios de sesiones y alertas automáticas de lesiones/disponibilidad.
 4. **Offline y caché**: Mejorar la experiencia en campo con conexión limitada.
 5. **Testing y CI/CD**: Completar la automatización de tests en cada PR.
 

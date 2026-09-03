@@ -3,8 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Calendar, ClipboardList, Dumbbell, Plus, Trophy, Users } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import { getDashboardStats, listRecentSessions } from "@/services/dashboard.service";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   component: Dashboard,
@@ -16,29 +16,17 @@ function Dashboard() {
   const { data: stats } = useQuery({
     queryKey: ["dashboard-stats", user?.id],
     enabled: !!user,
-    queryFn: async () => {
-      const [ex, ss, tm] = await Promise.all([
-        supabase.from("exercises").select("id", { count: "exact", head: true }),
-        supabase.from("sessions").select("id", { count: "exact", head: true }),
-        supabase.from("teams").select("id", { count: "exact", head: true }),
-      ]);
-      return { exercises: ex.count ?? 0, sessions: ss.count ?? 0, teams: tm.count ?? 0 };
-    },
+    queryFn: getDashboardStats,
   });
 
   const { data: recentSessions } = useQuery({
     queryKey: ["recent-sessions", user?.id],
     enabled: !!user,
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("sessions").select("id,name,objective,session_date,created_at")
-        .order("created_at", { ascending: false }).limit(5);
-      return data ?? [];
-    },
+    queryFn: listRecentSessions,
   });
 
   return (
-    <div className="mx-auto max-w-6xl space-y-8">
+    <div data-onboarding="dashboard" className="mx-auto max-w-6xl space-y-8">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Hola, {user?.user_metadata?.full_name ?? "entrenador"} 👋</h1>
         <p className="mt-1 text-muted-foreground">Tu panel de control para diseñar entrenamientos profesionales.</p>

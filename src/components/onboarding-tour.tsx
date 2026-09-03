@@ -17,7 +17,21 @@ export function OnboardingTour() {
     if (isActive && currentStep && currentStep.targetRoute) {
       navigate({ to: currentStep.targetRoute as any });
     }
-  }, [currentStepIndex, isActive]);
+  }, [currentStepIndex, isActive, currentStep, navigate]);
+
+  useEffect(() => {
+    if (!isActive || !currentStep?.anchor) return;
+    const timer = window.setTimeout(() => {
+      const target = document.querySelector(currentStep.anchor!);
+      if (!target) return;
+      target.scrollIntoView({ behavior: "smooth", block: "center" });
+      target.classList.add("onboarding-highlight");
+    }, 250);
+    return () => {
+      window.clearTimeout(timer);
+      document.querySelectorAll(".onboarding-highlight").forEach((element) => element.classList.remove("onboarding-highlight"));
+    };
+  }, [currentStep, isActive]);
 
   if (!isActive || dismissed || !currentStep) return null;
 

@@ -186,13 +186,13 @@ function ComponentDocs() {
             <TabsTrigger value="tab3">Analytics</TabsTrigger>
           </TabsList>
           <TabsContent value="tab1">
-            <Card className="mt-2 p-4 text-sm text-muted-foreground">Contenido de Ejercicios</TabsContent>
+            <Card className="mt-2 p-4 text-sm text-muted-foreground">Contenido de Ejercicios</Card>
           </TabsContent>
           <TabsContent value="tab2">
-            <Card className="mt-2 p-4 text-sm text-muted-foreground">Contenido de Sesiones</TabsContent>
+            <Card className="mt-2 p-4 text-sm text-muted-foreground">Contenido de Sesiones</Card>
           </TabsContent>
           <TabsContent value="tab3">
-            <Card className="mt-2 p-4 text-sm text-muted-foreground">Contenido de Analytics</TabsContent>
+            <Card className="mt-2 p-4 text-sm text-muted-foreground">Contenido de Analytics</Card>
           </TabsContent>
         </Tabs>
       </Section>

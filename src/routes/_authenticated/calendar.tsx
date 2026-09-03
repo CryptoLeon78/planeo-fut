@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { addDays, formatDate, labelOf, SEASON_EVENT_TYPES, startOfWeek, ymd } from "@/lib/constants";
+import { downloadIcs } from "@/lib/ical";
 
 export const Route = createFileRoute("/_authenticated/calendar")({
   component: CalendarPage,
@@ -20,6 +21,23 @@ function CalendarPage() {
   const days = useMemo(() => Array.from({ length: 7 }, (_, i) => addDays(weekStart, i)), [weekStart]);
   const weekStartStr = ymd(weekStart);
   const weekEndStr = ymd(addDays(weekStart, 7));
+
+  function exportCalendar() {
+    const sessionItems = (sessions ?? []).map((session: any) => ({
+      id: `session-${session.id}`,
+      title: `Entrenamiento: ${session.name}`,
+      start: `${session.session_date}T09:00:00`,
+      end: session.duration_min ? new Date(new Date(`${session.session_date}T09:00:00`).getTime() + session.duration_min * 60000).toISOString() : undefined,
+      description: session.intensity ? `Intensidad: ${session.intensity}` : undefined,
+    }));
+    const eventItems = (events ?? []).map((event: any) => ({
+      id: `event-${event.id}`,
+      title: event.title,
+      start: `${event.event_date}T12:00:00`,
+      description: labelOf(SEASON_EVENT_TYPES, event.type),
+    }));
+    downloadIcs([...sessionItems, ...eventItems], "PlaneoFUT");
+  }
 
   const { data: sessions } = useQuery({
     queryKey: ["calendar-sessions", user?.id, weekStartStr],
@@ -62,7 +80,7 @@ function CalendarPage() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl space-y-6">
+    <div data-onboarding="calendar-view" className="mx-auto max-w-7xl space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Calendario semanal</h1>
@@ -71,6 +89,7 @@ function CalendarPage() {
           </p>
         </div>
         <div className="flex items-center gap-1">
+          <Button variant="outline" size="sm" onClick={exportCalendar}>Exportar .ics</Button>
           <Button variant="outline" size="icon" aria-label="Semana anterior" onClick={() => setOffset((o) => o - 1)}><ChevronLeft className="h-4 w-4" /></Button>
           <Button variant="outline" size="sm" onClick={() => setOffset(0)}>Hoy</Button>
           <Button variant="outline" size="icon" aria-label="Semana siguiente" onClick={() => setOffset((o) => o + 1)}><ChevronRight className="h-4 w-4" /></Button>

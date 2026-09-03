@@ -11,10 +11,10 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ExerciseForm } from "@/components/exercise-form";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { GAME_PHASES, INTENSITIES, labelOf } from "@/lib/constants";
 import { useExerciseFilters } from "@/stores/app-store";
+import { listExercises, setExerciseFavorite } from "@/services/exercises.service";
 
 export const Route = createFileRoute("/_authenticated/exercises/")({
   component: ExercisesPage,
@@ -30,12 +30,7 @@ function ExercisesPage() {
   const { data: exercises, isLoading } = useQuery({
     queryKey: ["exercises", user?.id],
     enabled: !!user,
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("exercises").select("*").order("created_at", { ascending: false });
-      if (error) throw error;
-      return data ?? [];
-    },
+    queryFn: listExercises,
   });
 
   const filtered = useMemo(() => {
@@ -49,13 +44,12 @@ function ExercisesPage() {
   }, [exercises, q, phase, intensity, onlyFav]);
 
   async function toggleFav(id: string, current: boolean) {
-    const { error } = await (supabase.from("exercises") as any).update({ is_favorite: !current }).eq("id", id);
-    if (error) return toast.error(error.message);
+    try { await setExerciseFavorite(id, !current); } catch (error) { return toast.error(error instanceof Error ? error.message : "No se pudo actualizar el favorito"); }
     qc.invalidateQueries({ queryKey: ["exercises"] });
   }
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6">
+    <div data-onboarding="exercises-list" className="mx-auto max-w-6xl space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Biblioteca de ejercicios</h1>

@@ -140,4 +140,13 @@
   }
 }
 
+/* Foco contextual del tour de primer uso. */
+.onboarding-highlight {
+  position: relative;
+  z-index: 40;
+  outline: 3px solid var(--color-primary);
+  outline-offset: 6px;
+  box-shadow: 0 0 0 9999px color-mix(in oklab, var(--color-background) 55%, transparent), 0 0 28px color-mix(in oklab, var(--color-primary) 45%, transparent);
+  border-radius: 0.75rem;
+}
 

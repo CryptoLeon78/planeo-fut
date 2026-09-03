@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
 import { toast } from "sonner";
-import { Plus, Trash2, Users, Upload, X, Edit2 } from "lucide-react";
+import { Plus, Trash2, Users, Upload, X, Edit2, ShieldAlert, CheckCircle2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -59,6 +59,16 @@ function TeamPage() {
         ...player,
         photo_url: await resolveStorageUrl("team-images", player.photo_url),
       })));
+    },
+  });
+
+  const { data: injuries } = useQuery({
+    queryKey: ["player-injuries", selectedTeam?.id],
+    enabled: !!selectedTeam?.id && !!user,
+    queryFn: async () => {
+      const { data, error } = await (supabase as any).from("player_injuries").select("*, players(name,number)").eq("team_id", selectedTeam.id).neq("status", "resolved").order("expected_return", { ascending: true, nullsFirst: false });
+      if (error) throw error;
+      return data ?? [];
     },
   });
 
@@ -120,6 +130,33 @@ function TeamPage() {
     toast.success("Jugador añadido");
   }
 
+  async function addInjury(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (!selectedTeam || !user) return;
+    const raw = Object.fromEntries(new FormData(e.currentTarget).entries());
+    if (!raw.player_id || !String(raw.injury_type).trim()) return toast.error("Selecciona jugador y tipo de lesión");
+    const { error } = await (supabase as any).from("player_injuries").insert({
+      player_id: raw.player_id, team_id: selectedTeam.id, owner_id: user.id,
+      injury_type: String(raw.injury_type).trim(), description: String(raw.description || "").trim() || null,
+      occurred_on: raw.occurred_on || new Date().toISOString().slice(0, 10), expected_return: raw.expected_return || null,
+    });
+    if (error) return toast.error(error.message);
+    await (supabase as any).from("players").update({ status: "injured" }).eq("id", raw.player_id);
+    qc.invalidateQueries({ queryKey: ["player-injuries", selectedTeam.id] });
+    qc.invalidateQueries({ queryKey: ["players", selectedTeam.id] });
+    e.currentTarget.reset();
+    toast.success("Lesión registrada");
+  }
+
+  async function resolveInjury(injury: any) {
+    const { error } = await (supabase as any).from("player_injuries").update({ status: "resolved", recovered_on: new Date().toISOString().slice(0, 10) }).eq("id", injury.id);
+    if (error) return toast.error(error.message);
+    await (supabase as any).from("players").update({ status: "available" }).eq("id", injury.player_id);
+    qc.invalidateQueries({ queryKey: ["player-injuries", selectedTeam?.id] });
+    qc.invalidateQueries({ queryKey: ["players", selectedTeam?.id] });
+    toast.success("Jugador marcado como disponible");
+  }
+
   async function inviteMember(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!selectedTeam || !memberEmail.trim()) return;
@@ -166,7 +203,7 @@ function TeamPage() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl space-y-6">
+    <div data-onboarding="team-view" className="mx-auto max-w-5xl space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Equipos</h1>
@@ -342,6 +379,30 @@ function TeamPage() {
                 ) : (
                   <p className="text-sm text-muted-foreground">Sin jugadores aún.</p>
                 )}
+              </div>
+
+              <div className="space-y-3 border-t border-border pt-4">
+                <div className="flex items-center justify-between">
+                  <Label>Lesiones y recuperación</Label>
+                  {injuries && injuries.length > 0 && <Badge variant="destructive">{injuries.length} activa{injuries.length !== 1 ? "s" : ""}</Badge>}
+                </div>
+                <form onSubmit={addInjury} className="grid gap-2 rounded-lg border border-border bg-muted/30 p-3 sm:grid-cols-2">
+                  <Select name="player_id" required>
+                    <SelectTrigger><SelectValue placeholder="Jugador" /></SelectTrigger>
+                    <SelectContent>{(players ?? []).map((p: any) => <SelectItem key={p.id} value={p.id}>{p.number ? `#${p.number} ` : ""}{p.name}</SelectItem>)}</SelectContent>
+                  </Select>
+                  <Input name="injury_type" placeholder="Tipo: tobillo, muscular…" required maxLength={120} />
+                  <Input name="occurred_on" type="date" aria-label="Fecha de lesión" defaultValue={new Date().toISOString().slice(0, 10)} />
+                  <Input name="expected_return" type="date" aria-label="Fecha prevista de vuelta" />
+                  <Input name="description" placeholder="Notas (opcional)" className="sm:col-span-2" maxLength={500} />
+                  <Button type="submit" size="sm" className="sm:col-span-2"><ShieldAlert className="mr-1 h-4 w-4" /> Registrar lesión</Button>
+                </form>
+                {injuries?.length ? injuries.map((injury: any) => (
+                  <Card key={injury.id} className="flex items-center justify-between gap-3 border-destructive/30 bg-destructive/5 p-3">
+                    <div className="min-w-0"><p className="text-sm font-medium">{injury.players?.number ? `#${injury.players.number} ` : ""}{injury.players?.name} · {injury.injury_type}</p><p className="text-xs text-muted-foreground">Vuelta prevista: {injury.expected_return ? new Date(injury.expected_return).toLocaleDateString("es-ES") : "sin fecha"}{injury.description ? ` · ${injury.description}` : ""}</p></div>
+                    <Button size="sm" variant="outline" onClick={() => resolveInjury(injury)}><CheckCircle2 className="mr-1 h-4 w-4" /> Disponible</Button>
+                  </Card>
+                )) : <p className="text-sm text-muted-foreground">No hay lesiones activas.</p>}
               </div>
             </div>
           </DialogContent>
