@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { BACKUP_ENTITIES, sanitiseImportRow, type BackupEntity, type BackupPayload } from "@/lib/backup";
+import { BACKUP_ENTITIES, sanitiseImportRow, type BackupEntity, type BackupPayload, type BackupRow } from "@/lib/backup";
 
 const ExportInput = z.object({
   entities: z.array(z.enum(BACKUP_ENTITIES)).min(1),
@@ -12,11 +12,11 @@ const ImportInput = z.object({
   payload: z.object({
     version: z.number().optional(),
     generated_at: z.string().optional(),
-    entities: z.record(z.string(), z.array(z.record(z.string(), z.unknown()))),
+    entities: z.record(z.string(), z.array(z.record(z.string(), z.any()))) as unknown as z.ZodType<Record<string, BackupRow[]>>,
   }),
 });
 
-type Rows = Record<string, unknown>[];
+type Rows = BackupRow[];
 
 async function logOperation(
   supabase: any,
@@ -256,5 +256,5 @@ export const listDataExports = createServerFn({ method: "GET" })
       .order("created_at", { ascending: false })
       .limit(25);
     if (error) throw new Error(error.message);
-    return (data ?? []) as Record<string, unknown>[];
+    return (data ?? []) as BackupRow[];
   });
