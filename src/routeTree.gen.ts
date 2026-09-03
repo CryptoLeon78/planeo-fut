@@ -16,6 +16,7 @@ import { Route as McpRouteImport } from './routes/mcp'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as AuthenticatedAnalyticsRouteImport } from './routes/_authenticated/analytics'
+import { Route as AuthenticatedBackupRouteImport } from './routes/_authenticated/backup'
 import { Route as AuthenticatedCalendarRouteImport } from './routes/_authenticated/calendar'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedExercisesRouteImport } from './routes/_authenticated/exercises'
@@ -79,6 +80,11 @@ const Char91DotwellKnownChar93OauthProtectedResourceRoute =
 const AuthenticatedAnalyticsRoute = AuthenticatedAnalyticsRouteImport.update({
   id: '/analytics',
   path: '/analytics',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedBackupRoute = AuthenticatedBackupRouteImport.update({
+  id: '/backup',
+  path: '/backup',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedCalendarRoute = AuthenticatedCalendarRouteImport.update({
@@ -242,6 +248,7 @@ export interface FileRoutesByFullPath {
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/analytics': typeof AuthenticatedAnalyticsRoute
+  '/backup': typeof AuthenticatedBackupRoute
   '/calendar': typeof AuthenticatedCalendarRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/exercises': typeof AuthenticatedExercisesRouteWithChildren
@@ -278,6 +285,7 @@ export interface FileRoutesByTo {
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/analytics': typeof AuthenticatedAnalyticsRoute
+  '/backup': typeof AuthenticatedBackupRoute
   '/calendar': typeof AuthenticatedCalendarRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/team': typeof AuthenticatedTeamRoute
@@ -311,6 +319,7 @@ export interface FileRoutesById {
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/analytics': typeof AuthenticatedAnalyticsRoute
+  '/_authenticated/backup': typeof AuthenticatedBackupRoute
   '/_authenticated/calendar': typeof AuthenticatedCalendarRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/exercises': typeof AuthenticatedExercisesRouteWithChildren
@@ -349,6 +358,7 @@ export interface FileRouteTypes {
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/analytics'
+    | '/backup'
     | '/calendar'
     | '/dashboard'
     | '/exercises'
@@ -385,6 +395,7 @@ export interface FileRouteTypes {
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/analytics'
+    | '/backup'
     | '/calendar'
     | '/dashboard'
     | '/team'
@@ -417,6 +428,7 @@ export interface FileRouteTypes {
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/_authenticated/analytics'
+    | '/_authenticated/backup'
     | '/_authenticated/calendar'
     | '/_authenticated/dashboard'
     | '/_authenticated/exercises'
@@ -512,6 +524,13 @@ declare module '@tanstack/react-router' {
       path: '/analytics'
       fullPath: '/analytics'
       preLoaderRoute: typeof AuthenticatedAnalyticsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/backup': {
+      id: '/_authenticated/backup'
+      path: '/backup'
+      fullPath: '/backup'
+      preLoaderRoute: typeof AuthenticatedBackupRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/calendar': {
@@ -795,6 +814,7 @@ const AuthenticatedSessionsRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAnalyticsRoute: typeof AuthenticatedAnalyticsRoute
+  AuthenticatedBackupRoute: typeof AuthenticatedBackupRoute
   AuthenticatedCalendarRoute: typeof AuthenticatedCalendarRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedExercisesRoute: typeof AuthenticatedExercisesRouteWithChildren
@@ -807,6 +827,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAnalyticsRoute: AuthenticatedAnalyticsRoute,
+  AuthenticatedBackupRoute: AuthenticatedBackupRoute,
   AuthenticatedCalendarRoute: AuthenticatedCalendarRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedExercisesRoute: AuthenticatedExercisesRouteWithChildren,
