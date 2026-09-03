@@ -1,5 +1,5 @@
 import { Link, useRouter, useRouterState } from "@tanstack/react-router";
-import { BarChart3, BookOpen, Calendar, ClipboardList, Dumbbell, LayoutDashboard, LogOut, Trophy, Users, CalendarRange, Sun, Medal } from "lucide-react";
+import { BarChart3, BookOpen, Calendar, ClipboardList, Dumbbell, HardDriveDownload, LayoutDashboard, LogOut, Trophy, Users, CalendarRange, Sun, Medal } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
@@ -20,6 +20,7 @@ const items = [
   { title: "Analytics", url: "/analytics", icon: BarChart3 },
   { title: "Equipo", url: "/team", icon: Users },
   { title: "Biblioteca pública", url: "/ejercicios/futbol-base", icon: BookOpen },
+  { title: "Copias de seguridad", url: "/backup", icon: HardDriveDownload },
 ] as const;
 
 export function AppSidebar() {
