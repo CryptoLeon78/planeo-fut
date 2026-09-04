@@ -16,6 +16,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { TEAM_CATEGORIES, labelOf } from "@/lib/constants";
 import { resolveStorageUrl, validateImageFile } from "@/lib/storage";
+import { useTeamRealtime } from "@/hooks/use-team-realtime";
+import { useNotificationPreferences } from "@/hooks/use-notification-preferences";
 
 export const Route = createFileRoute("/_authenticated/team")({
   component: TeamPage,
@@ -37,6 +39,9 @@ function TeamPage() {
   const [showTeamDetail, setShowTeamDetail] = useState(false);
   const [memberEmail, setMemberEmail] = useState("");
   const [memberRole, setMemberRole] = useState<"coach" | "physical_coach" | "analyst" | "viewer">("viewer");
+
+  useTeamRealtime(selectedTeam?.id);
+  const { preferences: notificationPreferences, permission: notificationPermission, requestPermission, save: saveNotificationPreferences } = useNotificationPreferences(user?.id);
 
   const { data: teams } = useQuery({
     queryKey: ["teams", user?.id],
@@ -292,6 +297,18 @@ function TeamPage() {
           <DialogContent className="max-w-2xl">
             <DialogHeader><DialogTitle>{selectedTeam.name}</DialogTitle></DialogHeader>
             <div className="space-y-6">
+              <div className="space-y-2 rounded-lg border border-border bg-muted/30 p-3">
+                <div className="flex items-center justify-between gap-3">
+                  <div><Label>Notificaciones</Label><p className="text-xs text-muted-foreground">Avisos de sesiones, lesiones y cambios del equipo.</p></div>
+                  {notificationPermission === "default" && <Button size="sm" variant="outline" onClick={() => void requestPermission()}>Activar avisos</Button>}
+                  {notificationPermission === "denied" && <span className="text-xs text-muted-foreground">Bloqueadas en el navegador</span>}
+                </div>
+                <div className="flex flex-wrap gap-4 text-xs">
+                  <label className="flex items-center gap-2"><input type="checkbox" checked={notificationPreferences.session_reminders} onChange={(e) => void saveNotificationPreferences({ session_reminders: e.target.checked })} /> Recordatorios</label>
+                  <label className="flex items-center gap-2"><input type="checkbox" checked={notificationPreferences.injury_alerts} onChange={(e) => void saveNotificationPreferences({ injury_alerts: e.target.checked })} /> Lesiones</label>
+                  <label className="flex items-center gap-2"><input type="checkbox" checked={notificationPreferences.team_updates} onChange={(e) => void saveNotificationPreferences({ team_updates: e.target.checked })} /> Equipo</label>
+                </div>
+              </div>
               {selectedTeam.owner_id === user?.id && (
                 <div className="space-y-2">
                   <Label>Invitar colaborador</Label>

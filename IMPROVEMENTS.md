@@ -75,7 +75,7 @@ Este documento detalla las mejoras recomendadas para **PlaneoFUT** en términos 
 
 ---
 
-### 1.4 Colaboración en Tiempo Real (Prioridad: Media) ⏳ Pendiente
+### 1.4 Colaboración en Tiempo Real (Prioridad: Media) ✅ Implementado
 
 **Descripción**: Permitir que múltiples entrenadores colaboren en la planificación.
 
@@ -86,13 +86,13 @@ Este documento detalla las mejoras recomendadas para **PlaneoFUT** en términos 
 - Permisos granulares (ver, editar, eliminar)
 
 **Implementación**:
-- Tabla `team_members` con roles ⏳ no creada.
+- Tabla `team_members` con roles ✅ creada con invitaciones por email y RLS.
 - Tabla `activity_log` para auditoría ✅ — Existe `mcp_audit_log` para herramientas MCP; falta auditoría general de cambios de usuario.
-- WebSockets para actualizaciones en tiempo real (Supabase Realtime) ⏳ no implementado.
+- Supabase Realtime ✅ hook `useTeamRealtime` invalida automáticamente equipos, jugadores, sesiones, microciclos y calendario.
 - Sistema de permisos RLS mejorado ✅ — `user_roles` y función `has_role` implementados.
 
 **Estimado original**: 2-3 semanas  
-**Estado actual**: Pendiente. Roles de usuario existen, pero permisos multi-equipo no están activos.
+**Estado actual**: Implementado. Los propietarios pueden invitar colaboradores por rol y las vistas de equipo se actualizan mediante Realtime.
 
 ---
 
@@ -115,7 +115,7 @@ Este documento detalla las mejoras recomendadas para **PlaneoFUT** en términos 
 
 ---
 
-### 1.6 Notificaciones y Recordatorios (Prioridad: Media) ⏳ Pendiente
+### 1.6 Notificaciones y Recordatorios (Prioridad: Media) 🔄 Parcial
 
 **Descripción**: Sistema de notificaciones para sesiones próximas, cambios en el equipo, etc.
 
@@ -123,15 +123,15 @@ Este documento detalla las mejoras recomendadas para **PlaneoFUT** en términos 
 - Notificaciones push (web) ⏳ no implementadas.
 - Email de recordatorio ⏳ no implementado.
 - SMS opcional ⏳ no implementado.
-- Configuración de preferencias ⏳ no implementada.
+- Configuración de preferencias ✅ tabla RLS y controles de recordatorios, lesiones y equipo.
 
 **Implementación**:
 - Service Workers para push ⏳ no configurados.
 - SendGrid/Twilio para email/SMS ⏳ no integrados.
-- Tabla `notifications_preferences` ⏳ no creada.
+- Tabla `notification_preferences` ✅ creada con preferencias por usuario.
 
 **Estimado original**: 1 semana  
-**Estado actual**: Pendiente. No hay infraestructura de notificaciones desplegada.
+**Estado actual**: Preferencias y permiso de navegador implementados. Push, email y SMS requieren configurar proveedores externos.
 
 ---
 
@@ -470,18 +470,18 @@ Este documento detalla las mejoras recomendadas para **PlaneoFUT** en términos 
 
 ---
 
-### 6.2 API Pública (Prioridad: Media) ✅ Implementado (MCP)
+### 6.2 API Pública (Prioridad: Media) ✅ Implementado (MCP + OpenAPI)
 
 **Descripción**: Exponer API para integraciones de terceros.
 
 **Endpoints/Tools**:
 - GET/POST/PUT/DELETE para entidades ✅ — 14 herramientas MCP (`list_*`, `create_*`, `update_*`, `delete_record`, `restore_*`, `duplicate_record`, `list_versions`, `restore_version`).
-- Documentación con Swagger ⏳ — No generada, pero existe `manifest.json` de MCP.
+- Documentación OpenAPI ✅ — `docs/openapi.yaml` describe autenticación, manifiesto y operación pública.
 - Rate limiting ⏸️ En pausa — A la espera de mecanismo estándar.
 - API keys ✅ — Autenticación OAuth mediante Supabase issuer.
 
 **Estimado original**: 2-3 semanas  
-**Estado actual**: Implementado. MCP server expuesto con autenticación, auditoría y soft delete. Documentación OpenAPI/Swagger pendiente.
+**Estado actual**: Implementado. MCP server expuesto con autenticación, auditoría, soft delete y especificación OpenAPI inicial.
 
 ---
 
@@ -516,12 +516,12 @@ Este documento detalla las mejoras recomendadas para **PlaneoFUT** en términos 
 1. Analytics y reportes ✅ Completado.
 2. Plantillas reutilizables ✅ Duplicación implementada; biblioteca compartida pendiente.
 3. Seguimiento de lesiones ✅ Implementado.
-4. Notificaciones ⏳ Pendientes.
+4. Notificaciones 🔄 Preferencias y permiso web implementados; proveedores externos pendientes.
 
 ### Fase 4 (Semanas 13-16): Sincronización y Colaboración 🔄 En progreso parcial
 1. Caché inteligente ✅ Implementado.
 2. Sincronización offline ✅ Implementado (reconexión automática + IndexedDB).
-3. Colaboración en tiempo real ⏳ Pendiente.
+3. Colaboración en tiempo real ✅ Implementado.
 4. Backup y recuperación ✅ Implementado.
 
 ### Fase 5 (Semanas 17+): Integraciones y Escalabilidad 🔄 En progreso parcial
@@ -536,7 +536,7 @@ Este documento detalla las mejoras recomendadas para **PlaneoFUT** en términos 
 
 **PlaneoFUT** ha avanzado significativamente desde la versión inicial. Las funcionalidades core y avanzadas de planificación deportiva están operativas, y la plataforma cuenta con una base sólida de seguridad, auditoría, internacionalización y MCP. Los próximos focos de inversión recomendados son:
 
-1. **Colaboración multi-equipo**: Permisos granulares y compartición de plantillas/equipos.
+1. **Biblioteca de plantillas**: Categorías curadas y compartición avanzada entre equipos.
 2. **Calendario externo**: OAuth y sincronización bidireccional con Google/Outlook.
 3. **Notificaciones**: Recordatorios de sesiones y alertas automáticas de lesiones/disponibilidad.
 4. **Offline y caché**: Mejorar la experiencia en campo con conexión limitada.

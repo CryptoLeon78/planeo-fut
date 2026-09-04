@@ -1,0 +1,48 @@
+openapi: 3.1.0
+info:
+  title: PlaneoFUT Public API
+  version: 1.0.0
+  description: API de planificación deportiva expuesta mediante las herramientas MCP autenticadas de PlaneoFUT.
+servers:
+  - url: https://planeofut.com
+security:
+  - bearerAuth: []
+paths:
+  /api/mcp/manifest.json:
+    get:
+      summary: Obtener el manifiesto de herramientas
+      responses:
+        '200':
+          description: Manifiesto MCP disponible
+  /api/mcp:
+    post:
+      summary: Ejecutar una operación autenticada de planificación
+      description: Usa el manifiesto para descubrir las operaciones disponibles de ejercicios, sesiones, microciclos, equipos, versiones y auditoría. No asumas nombres de campos; valida cada payload contra el esquema publicado.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200': { description: Operación ejecutada }
+        '401': { description: No autenticado }
+        '403': { description: Sin permisos }
+        '422': { description: Payload inválido }
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+x-planeofut:
+  capabilities:
+    - list_records
+    - create_records
+    - update_records
+    - delete_records
+    - duplicate_records
+    - list_versions
+    - restore_versions
+  note: El manifiesto MCP es la fuente de verdad para nombres exactos de herramientas y esquemas.
