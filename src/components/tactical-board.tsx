@@ -57,7 +57,15 @@ export function TacticalBoard({ value, onChange, readOnly = false }: { value?: T
       const patch: Partial<TacticalElement> = { x: Math.max(3, Math.min(97, ox + dx)), y: Math.max(5, Math.min(95, oy + dy)) };
       setElements((current) => current.map((e) => e.id === id ? { ...e, ...patch } : e));
     };
-    const onUp = () => { window.removeEventListener("pointermove", onMove); window.removeEventListener("pointerup", onUp); onChange?.({ version: 1, elements }); };
+    const onUp = (upEvent: PointerEvent) => {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+      const dx = (upEvent.clientX - startX) / rect.width * 100;
+      const dy = (upEvent.clientY - startY) / rect.height * 100;
+      const next = elements.map((e) => e.id === id ? { ...e, x: Math.max(3, Math.min(97, ox + dx)), y: Math.max(5, Math.min(95, oy + dy)) } : e);
+      setElements(next);
+      onChange?.({ version: 1, elements: next });
+    };
     window.addEventListener("pointermove", onMove); window.addEventListener("pointerup", onUp);
   }
 
