@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { TacticalBoard, type TacticalBoardData } from "@/components/tactical-board";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { resolveStorageUrl, storagePath, validateImageFile } from "@/lib/storage";
@@ -48,6 +49,7 @@ export function ExerciseForm({ initial, onSaved }: ExerciseFormProps) {
   const [imageUrl, setImageUrl] = useState<string>("");
   const [imagePath, setImagePath] = useState<string | null>(initial?.image_url ? storagePath(initial.image_url, "exercise-images") : null);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [tacticalBoard, setTacticalBoard] = useState<TacticalBoardData>(initial?.tactical_board ?? { version: 1, elements: [] });
 
   useEffect(() => {
     let active = true;
@@ -121,6 +123,7 @@ export function ExerciseForm({ initial, onSaved }: ExerciseFormProps) {
       observations: parsed.data.observations || null,
       tags,
       image_url: imagePath || null,
+      tactical_board: tacticalBoard,
     };
 
     setBusy(true);
@@ -197,6 +200,8 @@ export function ExerciseForm({ initial, onSaved }: ExerciseFormProps) {
         <Label htmlFor="observations">Observaciones</Label>
         <Textarea id="observations" name="observations" defaultValue={initial?.observations ?? ""} rows={2} />
       </div>
+
+      <TacticalBoard value={tacticalBoard} onChange={setTacticalBoard} />
 
       <div className="space-y-1.5">
         <Label>Foto/Captura del ejercicio</Label>

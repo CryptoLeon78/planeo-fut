@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { TacticalBoard } from "@/components/tactical-board";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { BLOCK_TYPES, INTENSITIES, labelOf } from "@/lib/constants";
@@ -83,7 +84,7 @@ function NewSessionPage() {
     queryKey: ["exercises", user?.id],
     enabled: !!user,
     queryFn: async () => {
-      const { data } = await supabase.from("exercises").select("id,name,game_phase,intensity,duration_min");
+      const { data } = await (supabase.from("exercises") as any).select("id,name,game_phase,intensity,duration_min,tactical_board");
       return data ?? [];
     },
   });
@@ -188,11 +189,13 @@ function NewSessionPage() {
                   {b.exercise_ids.map((exId) => {
                     const ex = allExercises?.find((e: any) => e.id === exId);
                     return (
-                      <li key={exId} className="flex items-center justify-between rounded-md border border-border/60 bg-secondary/40 px-2 py-1.5 text-sm">
-                        <span>{ex?.name ?? "Ejercicio"}</span>
+                      <li key={exId} className="space-y-2 rounded-md border border-border/60 bg-secondary/40 px-2 py-1.5 text-sm">
+                        <div className="flex items-center justify-between"><span>{ex?.name ?? "Ejercicio"}</span>
                         <button type="button" onClick={() => removeExerciseFromBlock(i, exId)} className="text-muted-foreground hover:text-destructive">
                           <Trash2 className="h-4 w-4" />
                         </button>
+                        </div>
+                        {(ex as any)?.tactical_board?.elements?.length > 0 && <TacticalBoard value={(ex as any).tactical_board} readOnly />}
                       </li>
                     );
                   })}
