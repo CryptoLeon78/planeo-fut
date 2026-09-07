@@ -16,7 +16,7 @@
 | Salud clínica | Fuera de alcance inicial |
 | Estado | Fases 0–4 núcleo ejecutadas; colaboración, auditoría, RPC transaccionales y PDF reproducible incorporados; cutover remoto pendiente |
 | Última revisión | 2026-08-29 |
-| Último commit validado | `1abe4fc` — feat: harden PlaneoFUT independence and collaboration |
+| Último commit validado | `3136e6f` — feat: complete offline templates and component tooling |
 | Siguiente acción | Confirmar proyecto Supabase propietario, hacer backup, enlazarlo y validar allí el mismo conjunto de migraciones |
 
 ### Protocolo de cada sesión
@@ -36,7 +36,7 @@
 | 2026-08-29 | Fases 0–3 | Eliminados runtime/Auth/errores/IA/URLs de Lovable; Cloudflare y OpenAI server-only preparados; lockfile npm regenerado | `npm run verify` verde; 10/10 tests; build cliente+SSR verde; independencia sin referencias fuera del plan | `npm audit` mantiene 4 vulnerabilidades de producción/transitivas; `supabase db lint --local` bloqueado porque no hay Postgres en `127.0.0.1:54322` | Pendiente | Instalar Docker/Supabase local y validar SQL/RLS |
 | 2026-08-29 | Implementación inicial | Se sustituyó Bun por npm, se añadió configuración Cloudflare/Wrangler, proveedor OpenAI server-only, logger neutral, gate de independencia y migración de Storage; cliente preparado para rutas y URLs firmadas | `verify:independence`, `typecheck`, `test` (10/10) y `build` verdes; `wrangler deploy --dry-run` correcto | No se ha desplegado remoto ni se han aplicado migraciones; falta validar SQL contra Supabase local/propio | `1abe4fc` | Aplicar migración de Storage y regenerar tipos Supabase |
 | 2026-08-29 | Fase 4 núcleo | RPC atómicos para sesión/microciclo/asignación, RLS por equipo con roles, invitaciones, auditoría, Storage privado y PDF reproducible | Supabase local arrancado en puertos aislados; `db reset`, `db lint` y `migration list` correctos; pruebas SQL de RPC, auditoría y aislamiento RLS correctas; `npm audit --omit=dev` sin vulnerabilidades | El esquema local reproduce migraciones; falta enlazar y verificar el proyecto Supabase propietario antes de cualquier despliegue | `1abe4fc` | Backup + link del proyecto propietario y validación de cutover |
-| 2026-08-29 | Cierre de pendientes críticos locales | Tipos regenerados tras la migración de colaboración; overrides de `esbuild`; exportación PDF con carga diferida; formulario de invitación por correo | `npm run verify` verde (138 warnings, 0 errores); 6 suites/10 tests; `npm audit --omit=dev` = 0; `supabase db lint --local` = 0 errores; pruebas RLS/RPC/auditoría en PostgreSQL local | No se ha enlazado ningún proyecto remoto por falta de referencia/credenciales propietarias | `1abe4fc` | Recibir `project ref`, verificar titularidad y ejecutar backup + `supabase link` |
+| 2026-09-07 | Cierre de pendientes de `IMPROVEMENTS.md` | Biblioteca de plantillas curadas/compartidas, rate limiting SQL atómico, cola IndexedDB de mutaciones RPC, service worker/PWA, Storybook 10 y tipos Supabase regenerados | `npm run verify` verde; `npm audit --omit=dev` = 0; `npm audit` = 0; `supabase db reset --local`, `db lint` = 0 errores; `build:storybook` y `wrangler deploy --dry-run` correctos | OAuth calendario, proveedores push/email/SMS, wearables y LMS requieren credenciales/contratos externos; no se desplegó remoto | `3136e6f` | Recibir `project ref`, verificar titularidad y ejecutar backup + `supabase link` |
 
 ## 1. Estado real de la base
 
