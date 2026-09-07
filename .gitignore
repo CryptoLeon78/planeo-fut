@@ -41,3 +41,4 @@ supabase/.branches/
 *.njsproj
 *.sln
 *.sw?
+storybook-static/

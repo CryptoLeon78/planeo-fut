@@ -15,6 +15,7 @@ import { reportError } from "../lib/error-reporting";
 import { AuthProvider } from "@/hooks/use-auth";
 import { Toaster } from "@/components/ui/sonner";
 import { initQueryPersistence } from "@/lib/query-persister";
+import { registerServiceWorker } from "@/lib/service-worker";
 
 function NotFoundComponent() {
   return (
@@ -120,12 +121,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { name: "theme-color", content: "#0f172a" },
       { name: "author", content: "PlaneoFUT" },
       { property: "og:site_name", content: "PlaneoFUT" },
       { property: "og:type", content: "website" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
+      { rel: "manifest", href: "/manifest.webmanifest" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" },
@@ -142,7 +145,11 @@ function RootComponent() {
 
   useEffect(() => {
     const cleanup = initQueryPersistence(queryClient);
-    return cleanup;
+    const cleanupServiceWorker = registerServiceWorker();
+    return () => {
+      cleanup();
+      cleanupServiceWorker?.();
+    };
   }, [queryClient]);
 
   return (

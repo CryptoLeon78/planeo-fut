@@ -13,6 +13,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as EjerciciosFutbolBaseRouteImport } from './routes/ejercicios.futbol-base'
+import { Route as AuthenticatedTemplatesRouteImport } from './routes/_authenticated/templates'
 import { Route as AuthenticatedTeamRouteImport } from './routes/_authenticated/team'
 import { Route as AuthenticatedSessionsRouteImport } from './routes/_authenticated/sessions'
 import { Route as AuthenticatedSeasonRouteImport } from './routes/_authenticated/season'
@@ -54,6 +55,11 @@ const EjerciciosFutbolBaseRoute = EjerciciosFutbolBaseRouteImport.update({
   id: '/ejercicios/futbol-base',
   path: '/ejercicios/futbol-base',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedTemplatesRoute = AuthenticatedTemplatesRouteImport.update({
+  id: '/templates',
+  path: '/templates',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedTeamRoute = AuthenticatedTeamRouteImport.update({
   id: '/team',
@@ -190,6 +196,7 @@ export interface FileRoutesByFullPath {
   '/season': typeof AuthenticatedSeasonRouteWithChildren
   '/sessions': typeof AuthenticatedSessionsRouteWithChildren
   '/team': typeof AuthenticatedTeamRoute
+  '/templates': typeof AuthenticatedTemplatesRoute
   '/ejercicios/futbol-base': typeof EjerciciosFutbolBaseRoute
   '/exercises/$id': typeof AuthenticatedExercisesIdRoute
   '/microcycles/$id': typeof AuthenticatedMicrocyclesIdRoute
@@ -212,6 +219,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/docs': typeof AuthenticatedDocsRoute
   '/team': typeof AuthenticatedTeamRoute
+  '/templates': typeof AuthenticatedTemplatesRoute
   '/ejercicios/futbol-base': typeof EjerciciosFutbolBaseRoute
   '/exercises/$id': typeof AuthenticatedExercisesIdRoute
   '/microcycles/$id': typeof AuthenticatedMicrocyclesIdRoute
@@ -241,6 +249,7 @@ export interface FileRoutesById {
   '/_authenticated/season': typeof AuthenticatedSeasonRouteWithChildren
   '/_authenticated/sessions': typeof AuthenticatedSessionsRouteWithChildren
   '/_authenticated/team': typeof AuthenticatedTeamRoute
+  '/_authenticated/templates': typeof AuthenticatedTemplatesRoute
   '/ejercicios/futbol-base': typeof EjerciciosFutbolBaseRoute
   '/_authenticated/exercises/$id': typeof AuthenticatedExercisesIdRoute
   '/_authenticated/microcycles/$id': typeof AuthenticatedMicrocyclesIdRoute
@@ -270,6 +279,7 @@ export interface FileRouteTypes {
     | '/season'
     | '/sessions'
     | '/team'
+    | '/templates'
     | '/ejercicios/futbol-base'
     | '/exercises/$id'
     | '/microcycles/$id'
@@ -292,6 +302,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/docs'
     | '/team'
+    | '/templates'
     | '/ejercicios/futbol-base'
     | '/exercises/$id'
     | '/microcycles/$id'
@@ -320,6 +331,7 @@ export interface FileRouteTypes {
     | '/_authenticated/season'
     | '/_authenticated/sessions'
     | '/_authenticated/team'
+    | '/_authenticated/templates'
     | '/ejercicios/futbol-base'
     | '/_authenticated/exercises/$id'
     | '/_authenticated/microcycles/$id'
@@ -371,6 +383,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/ejercicios/futbol-base'
       preLoaderRoute: typeof EjerciciosFutbolBaseRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/templates': {
+      id: '/_authenticated/templates'
+      path: '/templates'
+      fullPath: '/templates'
+      preLoaderRoute: typeof AuthenticatedTemplatesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/team': {
       id: '/_authenticated/team'
@@ -620,6 +639,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSeasonRoute: typeof AuthenticatedSeasonRouteWithChildren
   AuthenticatedSessionsRoute: typeof AuthenticatedSessionsRouteWithChildren
   AuthenticatedTeamRoute: typeof AuthenticatedTeamRoute
+  AuthenticatedTemplatesRoute: typeof AuthenticatedTemplatesRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -633,6 +653,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSeasonRoute: AuthenticatedSeasonRouteWithChildren,
   AuthenticatedSessionsRoute: AuthenticatedSessionsRouteWithChildren,
   AuthenticatedTeamRoute: AuthenticatedTeamRoute,
+  AuthenticatedTemplatesRoute: AuthenticatedTemplatesRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

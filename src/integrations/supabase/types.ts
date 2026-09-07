@@ -34,6 +34,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      api_rate_limits: {
+        Row: {
+          bucket: string
+          request_count: number
+          user_id: string
+          window_started_at: string
+        }
+        Insert: {
+          bucket: string
+          request_count?: number
+          user_id: string
+          window_started_at: string
+        }
+        Update: {
+          bucket?: string
+          request_count?: number
+          user_id?: string
+          window_started_at?: string
+        }
+        Relationships: []
+      }
       audit_log: {
         Row: {
           action: string
@@ -89,6 +110,7 @@ export type Database = {
           owner_id: string
           players_count: number | null
           space: string | null
+          tactical_board: Json
           tags: string[]
           task_type: Database["public"]["Enums"]["task_type"] | null
           team_id: string | null
@@ -113,6 +135,7 @@ export type Database = {
           owner_id: string
           players_count?: number | null
           space?: string | null
+          tactical_board?: Json
           tags?: string[]
           task_type?: Database["public"]["Enums"]["task_type"] | null
           team_id?: string | null
@@ -137,6 +160,7 @@ export type Database = {
           owner_id?: string
           players_count?: number | null
           space?: string | null
+          tactical_board?: Json
           tags?: string[]
           task_type?: Database["public"]["Enums"]["task_type"] | null
           team_id?: string | null
@@ -305,6 +329,93 @@ export type Database = {
           },
         ]
       }
+      notification_preferences: {
+        Row: {
+          injury_alerts: boolean
+          reminder_minutes: number
+          session_reminders: boolean
+          team_updates: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          injury_alerts?: boolean
+          reminder_minutes?: number
+          session_reminders?: boolean
+          team_updates?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          injury_alerts?: boolean
+          reminder_minutes?: number
+          session_reminders?: boolean
+          team_updates?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      player_injuries: {
+        Row: {
+          created_at: string
+          description: string | null
+          expected_return: string | null
+          id: string
+          injury_type: string
+          occurred_on: string
+          owner_id: string
+          player_id: string
+          recovered_on: string | null
+          status: string
+          team_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          expected_return?: string | null
+          id?: string
+          injury_type: string
+          occurred_on?: string
+          owner_id: string
+          player_id: string
+          recovered_on?: string | null
+          status?: string
+          team_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          expected_return?: string | null
+          id?: string
+          injury_type?: string
+          occurred_on?: string
+          owner_id?: string
+          player_id?: string
+          recovered_on?: string | null
+          status?: string
+          team_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "player_injuries_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "player_injuries_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       players: {
         Row: {
           created_at: string
@@ -314,6 +425,7 @@ export type Database = {
           owner_id: string
           photo_url: string | null
           position: string | null
+          status: string
           team_id: string
           updated_at: string
         }
@@ -325,6 +437,7 @@ export type Database = {
           owner_id: string
           photo_url?: string | null
           position?: string | null
+          status?: string
           team_id: string
           updated_at?: string
         }
@@ -336,6 +449,7 @@ export type Database = {
           owner_id?: string
           photo_url?: string | null
           position?: string | null
+          status?: string
           team_id?: string
           updated_at?: string
         }
@@ -754,6 +868,96 @@ export type Database = {
         }
         Relationships: []
       }
+      template_categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          slug: string
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          slug: string
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          slug?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
+      template_library: {
+        Row: {
+          category_id: string
+          created_at: string
+          description: string | null
+          id: string
+          is_curated: boolean
+          is_published: boolean
+          kind: string
+          name: string
+          owner_id: string | null
+          payload: Json
+          team_id: string | null
+          updated_at: string
+          version: number
+        }
+        Insert: {
+          category_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_curated?: boolean
+          is_published?: boolean
+          kind: string
+          name: string
+          owner_id?: string | null
+          payload?: Json
+          team_id?: string | null
+          updated_at?: string
+          version?: number
+        }
+        Update: {
+          category_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_curated?: boolean
+          is_published?: boolean
+          kind?: string
+          name?: string
+          owner_id?: string | null
+          payload?: Json
+          team_id?: string | null
+          updated_at?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "template_library_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "template_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "template_library_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -798,6 +1002,10 @@ export type Database = {
       }
       can_edit_team: {
         Args: { p_team_id: string; p_user_id?: string }
+        Returns: boolean
+      }
+      consume_rate_limit: {
+        Args: { p_bucket: string; p_limit?: number; p_window_seconds?: number }
         Returns: boolean
       }
       create_microcycle_with_slots: {
@@ -888,7 +1096,6 @@ export type Database = {
     }
   }
 }
-
 type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
 
 type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
@@ -1060,3 +1267,4 @@ export const Constants = {
     },
   },
 } as const
+

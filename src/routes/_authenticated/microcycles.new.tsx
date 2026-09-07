@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { startOfWeek, ymd, MICROCYCLE_SLOT_TYPES } from "@/lib/constants";
+import { enqueueMutation } from "@/lib/offline-queue";
 
 export const Route = createFileRoute("/_authenticated/microcycles/new")({
   component: NewMicrocyclePage,
@@ -28,18 +29,24 @@ function NewMicrocyclePage() {
   async function onCreate() {
     if (!user) return;
     setBusy(true);
+    const rpcPayload = {
+      p_name: name,
+      p_week_start: weekStart,
+      p_match_day: matchDay,
+      p_weekly_objective: objective || null,
+    };
     try {
-      const { data: microcycleId, error } = await (supabase.rpc as any)("create_microcycle_with_slots", {
-        p_name: name,
-        p_week_start: weekStart,
-        p_match_day: matchDay,
-        p_weekly_objective: objective || null,
-      });
+      const { data: microcycleId, error } = await (supabase.rpc as any)("create_microcycle_with_slots", rpcPayload);
       if (error) throw error;
 
       toast.success("Microciclo creado");
       navigate({ to: "/microcycles/$id", params: { id: microcycleId } });
     } catch (e: any) {
+      if (typeof navigator !== "undefined" && !navigator.onLine) {
+        await enqueueMutation({ kind: "create_microcycle_with_slots", payload: rpcPayload });
+        toast.info("Sin conexión: el microciclo se guardará automáticamente al recuperar la red.");
+        return;
+      }
       toast.error(e?.message ?? "Error");
     } finally {
       setBusy(false);

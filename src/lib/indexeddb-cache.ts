@@ -3,12 +3,13 @@
  */
 
 const DB_NAME = "planeofut_db";
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 export const STORES = {
   QUERY_CACHE: "query_cache",
   ENTITY_CACHE: "entity_cache",
   SYNC_METADATA: "sync_metadata",
+  MUTATION_QUEUE: "mutation_queue",
 } as const;
 
 export type StoreName = (typeof STORES)[keyof typeof STORES];
@@ -58,6 +59,10 @@ class IndexedDbCache {
         }
         if (!db.objectStoreNames.contains(STORES.SYNC_METADATA)) {
           db.createObjectStore(STORES.SYNC_METADATA, { keyPath: "key" });
+        }
+        if (!db.objectStoreNames.contains(STORES.MUTATION_QUEUE)) {
+          const store = db.createObjectStore(STORES.MUTATION_QUEUE, { keyPath: "key" });
+          store.createIndex("by_created", "value.createdAt", { unique: false });
         }
       };
 

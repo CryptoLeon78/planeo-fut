@@ -35,7 +35,7 @@ Este documento detalla las mejoras recomendadas para **PlaneoFUT** en términos 
 
 ---
 
-### 1.2 Sistema de Plantillas Reutilizables (Prioridad: Alta) ✅ Implementado (vía duplicación)
+### 1.2 Sistema de Plantillas Reutilizables (Prioridad: Alta) ✅ Implementado
 
 **Descripción**: Permitir guardar y reutilizar sesiones, microciclos y bloques como plantillas.
 
@@ -43,15 +43,15 @@ Este documento detalla las mejoras recomendadas para **PlaneoFUT** en términos 
 - Marcar sesiones como "plantilla" ✅ — Se puede duplicar cualquier sesión/microciclo.
 - Duplicar plantillas con un clic ✅ — Botón "Duplicar" en microciclos que copia la estructura completa y desplaza fechas +7 días.
 - Compartir plantillas entre equipos ✅ — Permisos multi-equipo y miembros por rol disponibles en `team_members`.
-- Biblioteca de plantillas predefinidas por categoría ⏳ — Pendiente de contenido curado.
+- Biblioteca de plantillas predefinidas por categoría ✅ — Categorías y cinco plantillas curadas versionadas en Supabase.
 
 **Implementación**:
 - Campos `is_template` / duplicación existentes en la UI.
 - `duplicate_record` disponible como herramienta MCP.
-- Tabla `template_categories` ⏳ no creada aún.
+- Tablas `template_categories` y `template_library` ✅ con RLS, versionado, contenido curado y pantalla `/templates`.
 
 **Estimado original**: 1-2 semanas  
-**Estado actual**: Clonación/duplicación implementada. Biblioteca compartida pendiente.
+**Estado actual**: Clonación, biblioteca curada y biblioteca compartida por propietario/equipo implementadas.
 
 ---
 
@@ -126,12 +126,12 @@ Este documento detalla las mejoras recomendadas para **PlaneoFUT** en términos 
 - Configuración de preferencias ✅ tabla RLS y controles de recordatorios, lesiones y equipo.
 
 **Implementación**:
-- Service Workers para push ⏳ no configurados.
+- Service Worker de shell/offline ✅ configurado; push requiere VAPID y proveedor externo.
 - SendGrid/Twilio para email/SMS ⏳ no integrados.
 - Tabla `notification_preferences` ✅ creada con preferencias por usuario.
 
 **Estimado original**: 1 semana  
-**Estado actual**: Preferencias y permiso de navegador implementados. Push, email y SMS requieren configurar proveedores externos.
+**Estado actual**: Preferencias, permisos y cache de shell implementados. Push, email y SMS requieren configurar proveedores externos.
 
 ---
 
@@ -188,7 +188,7 @@ Este documento detalla las mejoras recomendadas para **PlaneoFUT** en términos 
 
 ---
 
-### 2.4 Documentación de Componentes (Prioridad: Media) ⏳ Pendiente
+### 2.4 Documentación de Componentes (Prioridad: Media) ✅ Implementado
 
 **Descripción**: Storybook para documentar componentes UI.
 
@@ -198,11 +198,11 @@ Este documento detalla las mejoras recomendadas para **PlaneoFUT** en términos 
 - Pruebas visuales
 
 **Implementación**:
-- Instalar Storybook ⏳ no instalado.
-- Crear stories para componentes principales ⏳ no creadas.
+- Storybook 10 configurado con Vite ✅.
+- Stories de Button y Card con autodocs ✅.
 
 **Estimado original**: 1 semana  
-**Estado actual**: Pendiente. No hay catálogo de componentes.
+**Estado actual**: Catálogo ejecutable con `npm run storybook` y build reproducible con `npm run build:storybook`.
 
 ---
 
@@ -334,7 +334,7 @@ Este documento detalla las mejoras recomendadas para **PlaneoFUT** en términos 
 
 ---
 
-### 4.3 Sincronización Offline (Prioridad: Media) ⏳ Pendiente
+### 4.3 Sincronización Offline (Prioridad: Media) ✅ Implementado
 
 **Descripción**: Funcionar sin conexión y sincronizar cuando vuelva.
 
@@ -345,12 +345,12 @@ Este documento detalla las mejoras recomendadas para **PlaneoFUT** en términos 
 - Conflictos de merge
 
 **Implementación**:
-- Service Workers ⏳ no configurados para offline.
-- IndexedDB para cola ⏳ no implementado.
-- Supabase Realtime para sync ⏳ no activado.
+- Service Worker de shell y fallback de navegación ✅.
+- Cola IndexedDB de mutaciones RPC idempotentes ✅ para sesiones y microciclos.
+- Replay automático al recuperar red y resolución ordenada de errores ✅.
 
 **Estimado original**: 2-3 semanas  
-**Estado actual**: Pendiente. Requiere Service Workers y caché local.
+**Estado actual**: Caché, shell offline y cola de mutaciones implementados. La sincronización Realtime sigue siendo complementaria para colaboración.
 
 ---
 
@@ -359,16 +359,16 @@ Este documento detalla las mejoras recomendadas para **PlaneoFUT** en términos 
 **Descripción**: Registrar todos los cambios para auditoría.
 
 **Funcionalidades**:
-- Tabla `audit_logs` con quién, qué, cuándo ✅ — `mcp_audit_log` implementada para herramientas MCP; `entity_versions` para versionado de entidades.
+- Tabla `audit_log` con quién, qué, cuándo ✅ — Triggers generales en tablas de dominio y auditoría MCP separada.
 - Historial de cambios por entity ✅ — Disponible en `entity_versions`.
 - Restauración de versiones anteriores ✅ — `restore_version` y `restore_deleted_record` implementados como herramientas MCP.
 
 **Implementación**:
-- Triggers en Supabase ⏳ no añadidos (evitamos triggers en esquemas protegidos).
+- Triggers en Supabase ✅ — Auditoría append-only con actor, equipo, operación y snapshots JSON.
 - API de historial ✅ — Endpoints MCP y de auditoría disponibles (`/api/rpc/mcp-audit.ts`).
 
 **Estimado original**: 1-2 semanas  
-**Estado actual**: Implementado. Audit trail completo para MCP y versionado de entidades. Auditoría general de cambios de usuario aún parcial.
+**Estado actual**: Auditoría general y MCP separadas, con RLS de lectura por equipo y registro append-only.
 
 ---
 
@@ -392,7 +392,7 @@ Este documento detalla las mejoras recomendadas para **PlaneoFUT** en términos 
 **Mejoras**:
 - Encriptación de datos sensibles ✅ — Uso de `crypto` nativo para firmas de webhooks; no se almacenan secretos en cliente.
 - Validación de entrada mejorada ✅ — Zod en todas las herramientas MCP, endpoints de servidor y formularios.
-- Rate limiting ⏸️ En pausa — A la espera del mecanismo estándar de la plataforma; se rechazó implementación ad-hoc.
+- Rate limiting ✅ — Función atómica `consume_rate_limit` y tabla `api_rate_limits` con ventana configurable.
 - CORS configurado correctamente ✅ — Cabeceras centralizadas en `src/lib/security-headers.ts`.
 - RLS policies más estrictas ✅ — Políticas RLS por `owner_id`, roles (`user_roles`), `has_role` y `deleted_at`.
 
@@ -403,7 +403,7 @@ Este documento detalla las mejoras recomendadas para **PlaneoFUT** en términos 
 - CSP, HSTS, X-Frame-Options, etc. ✅ Centralizados.
 
 **Estimado original**: 1-2 semanas  
-**Estado actual**: Implementado. Cabeceras de seguridad, RLS, validación y auditoría activas. Rate limiting pendiente de mecanismo estándar.
+**Estado actual**: Cabeceras, RLS, validación, auditoría y rate limiting duradero activos.
 
 ---
 
@@ -456,7 +456,7 @@ Este documento detalla las mejoras recomendadas para **PlaneoFUT** en términos 
 
 ## 6. INTEGRACIONES EXTERNAS
 
-### 6.1 Integración con Wearables (Prioridad: Baja) ⏳ Pendiente
+### 6.1 Integración con Wearables (Prioridad: Baja) ⏸️ Bloqueada por credenciales externas
 
 **Descripción**: Conectar con dispositivos de fitness (Garmin, Apple Watch, etc.).
 
@@ -466,7 +466,7 @@ Este documento detalla las mejoras recomendadas para **PlaneoFUT** en términos 
 - Análisis de recuperación
 
 **Estimado original**: 2-3 semanas  
-**Estado actual**: Pendiente. No hay integraciones con wearables.
+**Estado actual**: Requiere credenciales y acuerdos de API de Garmin/Apple/Google. No se simulan datos ni se marca como integrado sin proveedor validado.
 
 ---
 
@@ -485,7 +485,7 @@ Este documento detalla las mejoras recomendadas para **PlaneoFUT** en términos 
 
 ---
 
-### 6.3 Integración con LMS (Prioridad: Baja) ⏳ Pendiente
+### 6.3 Integración con LMS (Prioridad: Baja) ⏸️ Bloqueada por configuración externa
 
 **Descripción**: Conectar con plataformas de aprendizaje (Moodle, etc.).
 
@@ -494,7 +494,7 @@ Este documento detalla las mejoras recomendadas para **PlaneoFUT** en términos 
 - Seguimiento de progreso
 
 **Estimado original**: 1-2 semanas  
-**Estado actual**: Pendiente.
+**Estado actual**: Requiere endpoint, credenciales y contrato de Moodle/LMS objetivo; queda preparado como integración posterior sin inventar conectividad.
 
 ---
 
@@ -514,19 +514,19 @@ Este documento detalla las mejoras recomendadas para **PlaneoFUT** en términos 
 
 ### Fase 3 (Semanas 9-12): Funcionalidades Avanzadas ✅ Completada en gran parte
 1. Analytics y reportes ✅ Completado.
-2. Plantillas reutilizables ✅ Duplicación implementada; biblioteca compartida pendiente.
+2. Plantillas reutilizables ✅ Duplicación y biblioteca curada/compartida implementadas.
 3. Seguimiento de lesiones ✅ Implementado.
-4. Notificaciones 🔄 Preferencias y permiso web implementados; proveedores externos pendientes.
+4. Notificaciones 🔄 Preferencias, permisos y service worker implementados; proveedores externos pendientes.
 
 ### Fase 4 (Semanas 13-16): Sincronización y Colaboración 🔄 En progreso parcial
 1. Caché inteligente ✅ Implementado.
-2. Sincronización offline ✅ Implementado (reconexión automática + IndexedDB).
+2. Sincronización offline ✅ Implementado (service worker + caché + cola IndexedDB + replay).
 3. Colaboración en tiempo real ✅ Implementado.
 4. Backup y recuperación ✅ Implementado.
 
 ### Fase 5 (Semanas 17+): Integraciones y Escalabilidad 🔄 En progreso parcial
 1. API pública ✅ Completada vía MCP.
-2. Integraciones externas 🔄 Parcial (exportación iCalendar disponible; OAuth, wearables y LMS pendientes).
+2. Integraciones externas 🔄 Parcial (iCalendar disponible; OAuth, wearables y LMS requieren credenciales/contratos externos).
 3. Monitoreo avanzado ✅ Implementado.
 4. Optimización de rendimiento ✅ Implementado.
 
@@ -536,11 +536,11 @@ Este documento detalla las mejoras recomendadas para **PlaneoFUT** en términos 
 
 **PlaneoFUT** ha avanzado significativamente desde la versión inicial. Las funcionalidades core y avanzadas de planificación deportiva están operativas, y la plataforma cuenta con una base sólida de seguridad, auditoría, internacionalización y MCP. Los próximos focos de inversión recomendados son:
 
-1. **Biblioteca de plantillas**: Categorías curadas y compartición avanzada entre equipos.
+1. **Biblioteca de plantillas**: Categorías curadas, versionado y compartición por equipo ya operativos.
 2. **Calendario externo**: OAuth y sincronización bidireccional con Google/Outlook.
 3. **Notificaciones**: Recordatorios de sesiones y alertas automáticas de lesiones/disponibilidad.
-4. **Offline y caché**: Mejorar la experiencia en campo con conexión limitada.
-5. **Testing y CI/CD**: Completar la automatización de tests en cada PR.
+4. **Offline y caché**: Shell offline y cola de mutaciones operativos; ampliar cobertura de conflictos por entidad.
+5. **Testing y CI/CD**: Storybook y build reproducible añadidos; ampliar pruebas visuales en CI.
 
 Implementando estas mejoras en fases, se logrará una plataforma profesional, escalable y competitiva en el mercado de planificación deportiva.
 
@@ -548,4 +548,4 @@ Implementando estas mejoras en fases, se logrará una plataforma profesional, es
 
 **Documento preparado por**: Manus AI / PlaneoFUT Team  
 **Fecha**: Agosto 2026  
-**Versión**: 1.1
+**Versión**: 1.2

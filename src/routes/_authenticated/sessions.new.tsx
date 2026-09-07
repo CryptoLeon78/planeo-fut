@@ -13,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { TacticalBoard } from "@/components/tactical-board";
+import { enqueueMutation } from "@/lib/offline-queue";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { BLOCK_TYPES, INTENSITIES, labelOf } from "@/lib/constants";
@@ -116,27 +117,33 @@ function NewSessionPage() {
     if (!user) return toast.error("Sesión expirada");
 
     setBusy(true);
+    const rpcPayload = {
+      p_session_id: editId ?? null,
+      p_name: parsed.data.name,
+      p_objective: parsed.data.objective || "",
+      p_intensity: (parsed.data.intensity || "media") as "alta" | "baja" | "media" | "muy_alta",
+      p_session_date: parsed.data.session_date || null,
+      p_duration_min: parsed.data.duration_min === "" ? null : parsed.data.duration_min,
+      p_blocks: blocks.map((b, position) => ({
+        block_type: b.block_type,
+        name: b.name,
+        position,
+        duration_min: b.duration_min === "" ? null : b.duration_min,
+        notes: b.notes,
+        exercise_ids: b.exercise_ids,
+      })),
+    };
     try {
-      const { data: sessionId, error } = await (supabase.rpc as any)("save_session_graph", {
-        p_session_id: editId ?? null,
-        p_name: parsed.data.name,
-        p_objective: parsed.data.objective || "",
-        p_intensity: (parsed.data.intensity || "media") as "alta" | "baja" | "media" | "muy_alta",
-        p_session_date: parsed.data.session_date || null,
-        p_duration_min: parsed.data.duration_min === "" ? null : parsed.data.duration_min,
-        p_blocks: blocks.map((b, position) => ({
-          block_type: b.block_type,
-          name: b.name,
-          position,
-          duration_min: b.duration_min === "" ? null : b.duration_min,
-          notes: b.notes,
-          exercise_ids: b.exercise_ids,
-        })),
-      });
+      const { data: sessionId, error } = await (supabase.rpc as any)("save_session_graph", rpcPayload);
       if (error) throw error;
       toast.success(editId ? "Sesión actualizada" : "Sesión creada");
       navigate({ to: "/sessions/$id", params: { id: sessionId! } });
     } catch (err: any) {
+      if (typeof navigator !== "undefined" && !navigator.onLine) {
+        await enqueueMutation({ kind: "save_session_graph", payload: rpcPayload });
+        toast.info("Sin conexión: la sesión se guardará automáticamente al recuperar la red.");
+        return;
+      }
       toast.error(err?.message ?? "No se pudo guardar");
     } finally {
       setBusy(false);
