@@ -44,7 +44,6 @@ import { Route as ApiPublicHealthRouteImport } from './routes/api/public/health'
 import { Route as ApiRpcMcpAuditRouteImport } from './routes/api/rpc/mcp-audit'
 import { Route as ApiRpcSecurityProbeRouteImport } from './routes/api/rpc/security-probe'
 import { Route as EjerciciosFutbolBaseSlugRouteImport } from './routes/ejercicios.futbol-base.$slug'
-import { Route as ApiPublicSecurityCspRouteImport } from './routes/api/public/security/csp'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -235,11 +234,6 @@ const EjerciciosFutbolBaseSlugRoute =
     path: '/$slug',
     getParentRoute: () => EjerciciosFutbolBaseRoute,
   } as any)
-const ApiPublicSecurityCspRoute = ApiPublicSecurityCspRouteImport.update({
-  id: '/api/public/security/csp',
-  path: '/api/public/security/csp',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -276,7 +270,6 @@ export interface FileRoutesByFullPath {
   '/preseason/': typeof AuthenticatedPreseasonIndexRoute
   '/season/': typeof AuthenticatedSeasonIndexRoute
   '/sessions/': typeof AuthenticatedSessionsIndexRoute
-  '/api/public/security/csp': typeof ApiPublicSecurityCspRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -308,7 +301,6 @@ export interface FileRoutesByTo {
   '/preseason': typeof AuthenticatedPreseasonIndexRoute
   '/season': typeof AuthenticatedSeasonIndexRoute
   '/sessions': typeof AuthenticatedSessionsIndexRoute
-  '/api/public/security/csp': typeof ApiPublicSecurityCspRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -347,7 +339,6 @@ export interface FileRoutesById {
   '/_authenticated/preseason/': typeof AuthenticatedPreseasonIndexRoute
   '/_authenticated/season/': typeof AuthenticatedSeasonIndexRoute
   '/_authenticated/sessions/': typeof AuthenticatedSessionsIndexRoute
-  '/api/public/security/csp': typeof ApiPublicSecurityCspRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -386,7 +377,6 @@ export interface FileRouteTypes {
     | '/preseason/'
     | '/season/'
     | '/sessions/'
-    | '/api/public/security/csp'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -418,7 +408,6 @@ export interface FileRouteTypes {
     | '/preseason'
     | '/season'
     | '/sessions'
-    | '/api/public/security/csp'
   id:
     | '__root__'
     | '/'
@@ -456,7 +445,6 @@ export interface FileRouteTypes {
     | '/_authenticated/preseason/'
     | '/_authenticated/season/'
     | '/_authenticated/sessions/'
-    | '/api/public/security/csp'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -472,7 +460,6 @@ export interface RootRouteChildren {
   ApiPublicHealthRoute: typeof ApiPublicHealthRoute
   ApiRpcMcpAuditRoute: typeof ApiRpcMcpAuditRoute
   ApiRpcSecurityProbeRoute: typeof ApiRpcSecurityProbeRoute
-  ApiPublicSecurityCspRoute: typeof ApiPublicSecurityCspRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -722,13 +709,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EjerciciosFutbolBaseSlugRouteImport
       parentRoute: typeof EjerciciosFutbolBaseRoute
     }
-    '/api/public/security/csp': {
-      id: '/api/public/security/csp'
-      path: '/api/public/security/csp'
-      fullPath: '/api/public/security/csp'
-      preLoaderRoute: typeof ApiPublicSecurityCspRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
@@ -866,7 +846,6 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHealthRoute: ApiPublicHealthRoute,
   ApiRpcMcpAuditRoute: ApiRpcMcpAuditRoute,
   ApiRpcSecurityProbeRoute: ApiRpcSecurityProbeRoute,
-  ApiPublicSecurityCspRoute: ApiPublicSecurityCspRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -1,22 +1,30 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { lazy, Suspense } from "react";
 import { BarChart3, TrendingUp, Target, Activity } from "lucide-react";
-import {
-  ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid,
-  BarChart, Bar, PieChart, Pie, Cell, Legend,
-} from "recharts";
 import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 
+const AnalyticsCharts = lazy(() => import("@/components/analytics-charts"));
+
 export const Route = createFileRoute("/_authenticated/analytics")({
+  head: () => ({
+    meta: [
+      { title: "Analytics de sesiones · PlaneoFUT" },
+      { name: "description", content: "Evolución del rating, la intensidad percibida y el cumplimiento de objetivos de tus sesiones." },
+      { property: "og:title", content: "Analytics de sesiones · PlaneoFUT" },
+      { property: "og:description", content: "Evolución del rating, la intensidad percibida y el cumplimiento de objetivos de tus sesiones." },
+    ],
+  }),
   component: AnalyticsPage,
 });
 
-const INTENSITY_COLORS: Record<string, string> = {
-  baja: "hsl(145 60% 55%)",
-  media: "hsl(45 90% 55%)",
-  alta: "hsl(15 80% 60%)",
+type EvaluationRow = {
+  rating: number | null;
+  intensity_perceived: string | null;
+  objectives_met: boolean | null;
+  evaluated_at: string;
 };
 
 function AnalyticsPage() {
@@ -25,13 +33,13 @@ function AnalyticsPage() {
   const { data, isLoading } = useQuery({
     queryKey: ["analytics", user?.id],
     enabled: !!user,
-    queryFn: async () => {
+    queryFn: async (): Promise<EvaluationRow[]> => {
       const { data: evals } = await supabase
         .from("session_evaluations")
-        .select("rating,intensity_perceived,objectives_met,evaluated_at,session_id,sessions(name,session_date)")
+        .select("rating,intensity_perceived,objectives_met,evaluated_at")
         .order("evaluated_at", { ascending: true })
         .limit(200);
-      return evals ?? [];
+      return (evals ?? []) as EvaluationRow[];
     },
   });
 
@@ -39,26 +47,22 @@ function AnalyticsPage() {
 
   const evals = data ?? [];
   const total = evals.length;
-  const avgRating = total ? (evals.reduce((a, e: any) => a + (e.rating ?? 0), 0) / total).toFixed(1) : "—";
-  const metPct = total ? Math.round((evals.filter((e: any) => e.objectives_met).length / total) * 100) : 0;
+  const avgRating = total ? (evals.reduce((a, e) => a + (e.rating ?? 0), 0) / total).toFixed(1) : "—";
+  const metPct = total ? Math.round((evals.filter((e) => e.objectives_met).length / total) * 100) : 0;
 
-  // Timeline: rating per evaluation
-  const timeline = evals.map((e: any, idx: number) => ({
-    idx: idx + 1,
+  const timeline = evals.map((e) => ({
     fecha: new Date(e.evaluated_at).toLocaleDateString("es-ES", { day: "numeric", month: "short" }),
     rating: e.rating ?? 0,
   }));
 
-  // Intensity distribution
-  const intensityCounts = evals.reduce((acc: Record<string, number>, e: any) => {
+  const intensityCounts = evals.reduce<Record<string, number>>((acc, e) => {
     const k = e.intensity_perceived ?? "sin dato";
     acc[k] = (acc[k] ?? 0) + 1;
     return acc;
   }, {});
   const intensityData = Object.entries(intensityCounts).map(([name, value]) => ({ name, value }));
 
-  // Objectives met (last 8)
-  const lastEight = evals.slice(-8).map((e: any, i: number) => ({
+  const lastEight = evals.slice(-8).map((e, i) => ({
     name: `#${i + 1}`,
     cumplido: e.objectives_met ? 1 : 0,
     no: e.objectives_met ? 0 : 1,
@@ -86,54 +90,9 @@ function AnalyticsPage() {
           <p className="mt-1 text-sm text-muted-foreground">Evalúa tus sesiones desde el detalle de cada sesión para ver tu evolución aquí.</p>
         </Card>
       ) : (
-        <div className="grid gap-4 lg:grid-cols-2">
-          <Card className="p-5">
-            <h3 className="mb-3 font-semibold">Rating por sesión</h3>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={timeline}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
-                  <XAxis dataKey="fecha" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
-                  <YAxis domain={[0, 5]} tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
-                  <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))" }} />
-                  <Line type="monotone" dataKey="rating" stroke="hsl(var(--primary))" strokeWidth={2} dot={{ r: 3 }} />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-          </Card>
-
-          <Card className="p-5">
-            <h3 className="mb-3 font-semibold">Distribución de intensidad percibida</h3>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie data={intensityData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label>
-                    {intensityData.map((d, i) => (
-                      <Cell key={i} fill={INTENSITY_COLORS[d.name] ?? "hsl(var(--muted))"} />
-                    ))}
-                  </Pie>
-                  <Legend />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-          </Card>
-
-          <Card className="p-5 lg:col-span-2">
-            <h3 className="mb-3 font-semibold">Últimas 8 sesiones · objetivos</h3>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={lastEight}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
-                  <XAxis dataKey="name" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
-                  <YAxis tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
-                  <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))" }} />
-                  <Bar dataKey="cumplido" stackId="a" fill="hsl(145 60% 55%)" />
-                  <Bar dataKey="no" stackId="a" fill="hsl(15 80% 60%)" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </Card>
-        </div>
+        <Suspense fallback={<p className="text-sm text-muted-foreground">Cargando gráficos…</p>}>
+          <AnalyticsCharts timeline={timeline} intensityData={intensityData} lastEight={lastEight} />
+        </Suspense>
       )}
     </div>
   );
@@ -142,8 +101,11 @@ function AnalyticsPage() {
 function StatCard({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
     <Card className="p-4">
-      <div className="flex items-center gap-2 text-xs uppercase text-muted-foreground">{icon} {label}</div>
-      <p className="mt-2 text-3xl font-bold">{value}</p>
+      <div className="flex items-center gap-2 text-muted-foreground">
+        {icon}
+        <span className="text-xs uppercase tracking-wide">{label}</span>
+      </div>
+      <p className="mt-2 text-2xl font-bold">{value}</p>
     </Card>
   );
 }
