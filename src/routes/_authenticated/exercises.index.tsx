@@ -78,23 +78,41 @@ function ExercisesPage() {
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Buscar por nombre, objetivo o etiqueta…" className="pl-9" />
           </div>
-          <Select value={phase} onValueChange={setPhase}>
+          <Select value={phase} onValueChange={(v) => setExerciseFilters({ phase: v })}>
             <SelectTrigger><SelectValue placeholder="Fase del juego" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todas las fases</SelectItem>
               {GAME_PHASES.map((p) => <SelectItem key={p.value} value={p.value}>{p.label}</SelectItem>)}
             </SelectContent>
           </Select>
-          <Select value={intensity} onValueChange={setIntensity}>
+          <Select value={intensity} onValueChange={(v) => setExerciseFilters({ intensity: v })}>
             <SelectTrigger><SelectValue placeholder="Intensidad" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Cualquier intensidad</SelectItem>
               {INTENSITIES.map((i) => <SelectItem key={i.value} value={i.value}>{i.label}</SelectItem>)}
             </SelectContent>
           </Select>
-          <Button variant={onlyFav ? "default" : "outline"} onClick={() => setOnlyFav((v) => !v)}>
+          <Button
+            variant={onlyFav ? "default" : "outline"}
+            aria-pressed={onlyFav}
+            onClick={() => setExerciseFilters({ onlyFavorites: !onlyFav })}
+          >
             <Star className={`mr-1 h-4 w-4 ${onlyFav ? "fill-current" : ""}`} /> Favoritos
           </Button>
+        </div>
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-border/60 pt-3">
+          <p className="text-xs text-muted-foreground" aria-live="polite">
+            {filtered.length} ejercicio{filtered.length === 1 ? "" : "s"} · mostrando {Math.min(visible, filtered.length)}
+          </p>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground">Por página</span>
+            <Select value={String(pageSize)} onValueChange={(v) => setPageSize(Number(v))}>
+              <SelectTrigger className="h-9 w-[84px]" aria-label="Ejercicios por página"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {PAGE_SIZE_OPTIONS.map((n) => <SelectItem key={n} value={String(n)}>{n}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       </Card>
 
