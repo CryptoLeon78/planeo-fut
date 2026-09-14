@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Dumbbell, Filter, Plus, Search, Star } from "lucide-react";
 import { toast } from "sonner";
@@ -15,6 +15,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { GAME_PHASES, INTENSITIES, labelOf } from "@/lib/constants";
 import { exercisesService, filterExercises } from "@/services/exercises.service";
 import { queryKeys } from "@/services/query-keys";
+import { PAGE_SIZE_OPTIONS, usePreferences } from "@/stores/preferences";
 
 export const Route = createFileRoute("/_authenticated/exercises/")({
   component: ExercisesPage,
