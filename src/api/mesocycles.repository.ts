@@ -6,7 +6,11 @@ export type MesocycleRow = Record<string, any>;
 export const mesocyclesRepository = {
   async listByType(type: MesocycleType): Promise<MesocycleRow[]> {
     const data = await unwrap(
-      await table("mesocycles").select("*").eq("type", type).order("start_date", { ascending: false }),
+      await table("mesocycles")
+        .select("id,name,type,start_date,end_date,goals,phases")
+        .eq("type", type)
+        .order("start_date", { ascending: false })
+        .limit(200),
     );
     return data ?? [];
   },

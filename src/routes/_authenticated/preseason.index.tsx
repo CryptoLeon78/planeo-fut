@@ -109,7 +109,7 @@ function PreseasonPage() {
               <Card key={m.id} className="flex flex-col p-5">
                 <div className="flex items-start justify-between">
                   <Link to="/preseason/$id" params={{ id: m.id }} className="font-semibold hover:text-primary">{m.name}</Link>
-                  <Button variant="ghost" size="icon" onClick={() => remove(m.id)}><Trash2 className="h-4 w-4" /></Button>
+                  <Button variant="ghost" size="icon" aria-label="Eliminar bloque de pretemporada" onClick={() => remove(m.id)}><Trash2 className="h-4 w-4" /></Button>
                 </div>
                 <p className="text-xs text-muted-foreground">
                   {formatDate(m.start_date)} → {formatDate(m.end_date)}

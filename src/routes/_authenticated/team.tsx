@@ -39,7 +39,7 @@ function TeamPage() {
     queryKey: ["teams", user?.id],
     enabled: !!user,
     queryFn: async () => {
-      const { data } = await supabase.from("teams").select("*").order("created_at", { ascending: false });
+      const { data } = await supabase.from("teams").select("*").order("created_at", { ascending: false }).limit(100);
       return data ?? [];
     },
   });
@@ -48,7 +48,7 @@ function TeamPage() {
     queryKey: ["players", selectedTeam?.id],
     enabled: !!selectedTeam?.id && !!user,
     queryFn: async () => {
-      const { data } = await (supabase as any).from("players").select("*").eq("team_id", selectedTeam.id).order("number");
+      const { data } = await (supabase as any).from("players").select("*").eq("team_id", selectedTeam.id).order("number").limit(200);
       return data ?? [];
     },
   });

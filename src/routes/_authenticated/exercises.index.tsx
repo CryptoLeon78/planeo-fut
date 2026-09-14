@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Dumbbell, Filter, Plus, Search, Star } from "lucide-react";
 import { toast } from "sonner";
@@ -15,6 +15,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { GAME_PHASES, INTENSITIES, labelOf } from "@/lib/constants";
 import { exercisesService, filterExercises } from "@/services/exercises.service";
 import { queryKeys } from "@/services/query-keys";
+import { PAGE_SIZE_OPTIONS, usePreferences } from "@/stores/preferences";
 
 export const Route = createFileRoute("/_authenticated/exercises/")({
   component: ExercisesPage,
@@ -25,9 +26,13 @@ function ExercisesPage() {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
-  const [phase, setPhase] = useState<string>("all");
-  const [intensity, setIntensity] = useState<string>("all");
-  const [onlyFav, setOnlyFav] = useState(false);
+  const { exerciseFilters, setExerciseFilters, pageSize, setPageSize } = usePreferences();
+  const { phase, intensity, onlyFavorites: onlyFav } = exerciseFilters;
+  const [visible, setVisible] = useState(pageSize);
+
+  useEffect(() => {
+    setVisible(pageSize);
+  }, [pageSize, q, phase, intensity, onlyFav]);
 
   const { data: exercises, isLoading } = useQuery({
     queryKey: queryKeys.exercises(user?.id),
@@ -73,23 +78,41 @@ function ExercisesPage() {
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Buscar por nombre, objetivo o etiqueta…" className="pl-9" />
           </div>
-          <Select value={phase} onValueChange={setPhase}>
+          <Select value={phase} onValueChange={(v) => setExerciseFilters({ phase: v })}>
             <SelectTrigger><SelectValue placeholder="Fase del juego" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todas las fases</SelectItem>
               {GAME_PHASES.map((p) => <SelectItem key={p.value} value={p.value}>{p.label}</SelectItem>)}
             </SelectContent>
           </Select>
-          <Select value={intensity} onValueChange={setIntensity}>
+          <Select value={intensity} onValueChange={(v) => setExerciseFilters({ intensity: v })}>
             <SelectTrigger><SelectValue placeholder="Intensidad" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Cualquier intensidad</SelectItem>
               {INTENSITIES.map((i) => <SelectItem key={i.value} value={i.value}>{i.label}</SelectItem>)}
             </SelectContent>
           </Select>
-          <Button variant={onlyFav ? "default" : "outline"} onClick={() => setOnlyFav((v) => !v)}>
+          <Button
+            variant={onlyFav ? "default" : "outline"}
+            aria-pressed={onlyFav}
+            onClick={() => setExerciseFilters({ onlyFavorites: !onlyFav })}
+          >
             <Star className={`mr-1 h-4 w-4 ${onlyFav ? "fill-current" : ""}`} /> Favoritos
           </Button>
+        </div>
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-border/60 pt-3">
+          <p className="text-xs text-muted-foreground" aria-live="polite">
+            {filtered.length} ejercicio{filtered.length === 1 ? "" : "s"} · mostrando {Math.min(visible, filtered.length)}
+          </p>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground">Por página</span>
+            <Select value={String(pageSize)} onValueChange={(v) => setPageSize(Number(v))}>
+              <SelectTrigger className="h-9 w-[84px]" aria-label="Ejercicios por página"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {PAGE_SIZE_OPTIONS.map((n) => <SelectItem key={n} value={String(n)}>{n}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       </Card>
 
@@ -110,7 +133,7 @@ function ExercisesPage() {
         </Card>
       ) : (
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((e: any) => (
+          {filtered.slice(0, visible).map((e: any) => (
             <Card key={e.id} className="group flex flex-col p-4 transition hover:border-primary/40">
               <div className="flex items-start justify-between gap-2">
                 <Link to="/exercises/$id" params={{ id: e.id }} className="font-semibold leading-tight group-hover:text-primary">
@@ -134,6 +157,14 @@ function ExercisesPage() {
               )}
             </Card>
           ))}
+        </div>
+      )}
+
+      {filtered.length > visible && (
+        <div className="flex justify-center">
+          <Button variant="outline" onClick={() => setVisible((v) => v + pageSize)}>
+            Cargar más ({filtered.length - visible} restantes)
+          </Button>
         </div>
       )}
     </div>
