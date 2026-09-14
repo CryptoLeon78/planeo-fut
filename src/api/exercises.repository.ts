@@ -2,13 +2,19 @@ import { table, unwrap } from "./client";
 
 export type ExerciseRow = Record<string, any>;
 
+/** Columnas necesarias para las tarjetas y filtros del listado. */
+const LIST_COLUMNS =
+  "id,name,objective,game_phase,intensity,duration_min,players_count,tags,is_favorite,image_url,created_at";
+const LIST_LIMIT = 500;
+
 export const exercisesRepository = {
   async list(): Promise<ExerciseRow[]> {
     const data = await unwrap(
       await table("exercises")
-        .select("*")
+        .select(LIST_COLUMNS)
         .is("deleted_at", null)
-        .order("created_at", { ascending: false }),
+        .order("created_at", { ascending: false })
+        .limit(LIST_LIMIT),
     );
     return data ?? [];
   },

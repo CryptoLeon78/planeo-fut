@@ -5,7 +5,11 @@ export type SessionRow = Record<string, any>;
 export const sessionsRepository = {
   async list(): Promise<SessionRow[]> {
     const data = await unwrap(
-      await table("sessions").select("*").is("deleted_at", null).order("created_at", { ascending: false }),
+      await table("sessions")
+        .select("id,name,objective,intensity,duration_min,session_date,is_template,created_at")
+        .is("deleted_at", null)
+        .order("created_at", { ascending: false })
+        .limit(500),
     );
     return data ?? [];
   },
