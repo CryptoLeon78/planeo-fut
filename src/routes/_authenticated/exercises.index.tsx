@@ -26,9 +26,13 @@ function ExercisesPage() {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
-  const [phase, setPhase] = useState<string>("all");
-  const [intensity, setIntensity] = useState<string>("all");
-  const [onlyFav, setOnlyFav] = useState(false);
+  const { exerciseFilters, setExerciseFilters, pageSize, setPageSize } = usePreferences();
+  const { phase, intensity, onlyFavorites: onlyFav } = exerciseFilters;
+  const [visible, setVisible] = useState(pageSize);
+
+  useEffect(() => {
+    setVisible(pageSize);
+  }, [pageSize, q, phase, intensity, onlyFav]);
 
   const { data: exercises, isLoading } = useQuery({
     queryKey: queryKeys.exercises(user?.id),
