@@ -75,6 +75,8 @@ export const Route = createFileRoute("/ejercicios/futbol-base/$slug")({
         { name: "twitter:card", content: "summary_large_image" },
         { name: "twitter:title", content: title },
         { name: "twitter:description", content: desc },
+        { property: "og:image", content: `${SITE_URL}/og-planeofut.jpg` },
+        { name: "twitter:image", content: `${SITE_URL}/og-planeofut.jpg` },
       ],
       links: [{ rel: "canonical", href: url }],
       scripts: [
