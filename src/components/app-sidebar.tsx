@@ -1,5 +1,5 @@
 import { Link, useRouter, useRouterState } from "@tanstack/react-router";
-import { BarChart3, Calendar, ClipboardList, Dumbbell, LayoutDashboard, LogOut, Trophy, Users, CalendarRange, Sun, Medal, CircleHelp, Library } from "lucide-react";
+import { BarChart3, Calendar, ClipboardList, Dumbbell, LayoutDashboard, LogOut, Trophy, Users, CalendarRange, Sun, Medal, CircleHelp, Library, BookOpen } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
@@ -21,7 +21,7 @@ const items = [
   { title: "Analytics", url: "/analytics", icon: BarChart3 },
   { title: "Plantillas", url: "/templates", icon: Library },
   { title: "Equipo", url: "/team", icon: Users },
-
+  { title: "Componentes", url: "/docs", icon: BookOpen },
 ] as const;
 
 export function AppSidebar() {
@@ -77,13 +77,13 @@ export function AppSidebar() {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Abrir tutorial" onClick={() => onboardingStore.start()}>
+            <SidebarMenuButton tooltip="Abrir tutorial" onClick={() => onboardingStore.start()} aria-label="Abrir tutorial de PlaneoFUT">
               <CircleHelp className="h-4 w-4" />
               <span>Tutorial de PlaneoFUT</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Cerrar sesión" onClick={handleLogout}>
+            <SidebarMenuButton tooltip="Cerrar sesión" onClick={handleLogout} aria-label="Cerrar sesión">
               <LogOut className="h-4 w-4" />
               <span className="truncate">{user?.email ?? "Cerrar sesión"}</span>
             </SidebarMenuButton>

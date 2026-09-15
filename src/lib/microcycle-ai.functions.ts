@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import OpenAI from "openai";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { OSO_EXERCISES } from "@/data/oso-exercises";
 
 const InputSchema = z.object({
   weekStart: z.string().min(8).max(10),
@@ -43,23 +44,35 @@ export const suggestMicrocycle = createServerFn({ method: "POST" })
       mesocycle = m?.[0] ?? null;
     }
 
-    const { data: exercises } = await supabase
+    const { data: dbExercises } = await supabase
       .from("exercises")
       .select("id,name,objective,game_phase,intensity,task_type,duration_min")
       .order("created_at", { ascending: false })
       .limit(60);
 
-    const catalog = (exercises ?? []).map((e: any) =>
+    const allExercises = [
+      ...(dbExercises ?? []),
+      ...OSO_EXERCISES.map((o) => ({
+        id: o.id,
+        name: o.name,
+        objective: `${o.objectiveAttack} / ${o.objectiveDefense}`,
+        game_phase: o.gamePhase,
+        intensity: o.intensity,
+        task_type: o.category,
+        duration_min: o.durationMinutes,
+      })),
+    ];
+
+    const catalog = allExercises.map((e: any) =>
       `- ${e.id} | ${e.name} | obj: ${e.objective ?? "-"} | fase: ${e.game_phase ?? "-"} | int: ${e.intensity ?? "-"} | tipo: ${e.task_type ?? "-"} | ${e.duration_min ?? "-"}min`
     ).join("\n");
 
-    const system = `Eres un asistente experto en planificación de microciclos de fútbol (modelo MD-4, MD-3, MD-2, MD-1, MD).
-Reglas de carga:
-- MD-4: baja, recuperación/activación.
-- MD-3: alta, fuerza y duelos.
-- MD-2: media, táctico colectivo y resistencia.
-- MD-1: baja, activación pre-partido y ABP.
-- MD: día de partido (recommended_exercise_ids vacío).
+    const system = `Eres un asistente experto en planificación de microciclos de fútbol basado en la metodología OSO (Olympic Desde el Oso-CF) y estructuración MD-4 a MD.
+Principios pedagógico-tácticos OSO:
+- ODILO: Organización clara, Decisión autónoma del jugador, Incertidumbre real, Libertad de solución, Oposición activa.
+- Fases de estación: Primavera (explorar), Verano (experimentar), Otoño (comprender), Invierno (integrar).
+- Reglas de Provocación (hacer visible una ventaja sin imponer respuesta rígida) y Continuidad (reanudación rápida tras interrupciones).
+- Criterios de carga: MD-4 (recuperación/activación), MD-3 (fuerza y duelos), MD-2 (táctico colectivo), MD-1 (activación/ABP), MD (día de partido).
 Selecciona ejercicios SOLO del catálogo usando sus IDs exactos. 2-4 ejercicios por slot (excepto MD).`;
 
     const prompt = `Diseña un microciclo para la semana del ${weekStart} con partido en ${matchDay}.

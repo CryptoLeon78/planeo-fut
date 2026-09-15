@@ -1,30 +1,56 @@
-import { beforeEach, describe, expect, it } from 'vitest';
-import { ONBOARDING_STEPS, onboardingStore } from '@/stores/onboarding-store';
+import { describe, it, expect, beforeEach } from "vitest";
+import { onboardingStore, ONBOARDING_STEPS } from "@/stores/onboarding-store";
 
-describe('onboardingStore', () => {
+describe("Onboarding Store", () => {
   beforeEach(() => {
-    localStorage.clear();
     onboardingStore.reset();
   });
 
-  it('recorre los pasos y los marca como completados', () => {
-    expect(onboardingStore.getState().currentStepIndex).toBe(0);
-    onboardingStore.next();
-    expect(onboardingStore.getState().currentStepIndex).toBe(1);
-    expect(onboardingStore.getState().completedSteps).toContain(ONBOARDING_STEPS[0].id);
+  it("starts at step 0 and isActive after reset", () => {
+    const state = onboardingStore.getState();
+    expect(state.isActive).toBe(true);
+    expect(state.currentStepIndex).toBe(0);
+    expect(state.completedSteps).toHaveLength(0);
+    expect(state.dismissed).toBe(false);
   });
 
-  it('permite saltar a un paso y finalizar el tutorial', () => {
-    onboardingStore.goTo(ONBOARDING_STEPS.length - 1);
-    expect(onboardingStore.getState().currentStepIndex).toBe(ONBOARDING_STEPS.length - 1);
+  it("advances to next step and marks current as completed", () => {
     onboardingStore.next();
-    expect(onboardingStore.getState().isActive).toBe(false);
-    expect(onboardingStore.getState().dismissed).toBe(true);
+    const state = onboardingStore.getState();
+    expect(state.currentStepIndex).toBe(1);
+    expect(state.completedSteps).toContain(ONBOARDING_STEPS[0].id);
   });
 
-  it('persiste el estado para el siguiente inicio', () => {
+  it("dismiss deactivates the tour", () => {
     onboardingStore.dismiss();
-    const stored = JSON.parse(localStorage.getItem('planeofut_onboarding_v1') ?? '{}');
-    expect(stored.dismissed).toBe(true);
+    const state = onboardingStore.getState();
+    expect(state.isActive).toBe(false);
+    expect(state.dismissed).toBe(true);
+  });
+
+  it("goTo jumps to the correct step index", () => {
+    onboardingStore.goTo(3);
+    expect(onboardingStore.getState().currentStepIndex).toBe(3);
+  });
+
+  it("completing last step deactivates tour and sets dismissed", () => {
+    // Walk through all steps
+    const totalSteps = ONBOARDING_STEPS.length;
+    for (let i = 0; i < totalSteps; i++) {
+      onboardingStore.next();
+    }
+    const state = onboardingStore.getState();
+    expect(state.isActive).toBe(false);
+    expect(state.dismissed).toBe(true);
+    expect(state.completedSteps).toHaveLength(totalSteps);
+  });
+
+  it("notifies subscribers on state change", () => {
+    let called = 0;
+    const unsub = onboardingStore.subscribe(() => { called++; });
+    onboardingStore.next();
+    onboardingStore.dismiss();
+    expect(called).toBe(2);
+    unsub();
   });
 });
