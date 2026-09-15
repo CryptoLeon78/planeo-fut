@@ -136,25 +136,27 @@ export const Route = createFileRoute("/ejercicios/futbol-base/$slug")({
       </Button>
     </div>
   ),
-  errorComponent: ({ reset }) => {
-    const router = useRouter();
-    return (
-      <div className="mx-auto max-w-2xl px-6 py-20 text-center">
-        <h1 className="text-2xl font-bold">No se pudo cargar el ejercicio</h1>
-        <Button
-          className="mt-6"
-          onClick={() => {
-            router.invalidate();
-            reset();
-          }}
-        >
-          Reintentar
-        </Button>
-      </div>
-    );
-  },
+  errorComponent: ExerciseLoadError,
   component: ExerciseDetail,
 });
+
+function ExerciseLoadError({ reset }: { reset: () => void }) {
+  const router = useRouter();
+  return (
+    <div className="mx-auto max-w-2xl px-6 py-20 text-center">
+      <h1 className="text-2xl font-bold">No se pudo cargar el ejercicio</h1>
+      <Button
+        className="mt-6"
+        onClick={() => {
+          router.invalidate();
+          reset();
+        }}
+      >
+        Reintentar
+      </Button>
+    </div>
+  );
+}
 
 function ExerciseDetail() {
   const { exercise: ex } = Route.useLoaderData();
