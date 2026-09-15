@@ -9,21 +9,45 @@ const nullableText = (max: number) => longText(max).nullable().optional();
 export default defineAuthedTool({
   name: "update_exercise",
   title: "Update exercise",
-  description: "Update fields of an existing practice in the coach's library, storing a version snapshot before the change.",
+  description:
+    "Update fields of an existing practice in the coach's library, storing a version snapshot before the change.",
   inputSchema: {
     exerciseId: uuid.describe("Identifier of the exercise to update."),
     name: shortText(120).optional().describe("New practice name."),
     objective: nullableText(600).describe("New coaching objective; pass null to clear."),
-    durationMinutes: z.number().int().min(1).max(240).nullable().optional().describe("New duration in minutes."),
-    playersCount: z.number().int().min(1).max(40).nullable().optional().describe("New recommended player count."),
+    durationMinutes: z
+      .number()
+      .int()
+      .min(1)
+      .max(240)
+      .nullable()
+      .optional()
+      .describe("New duration in minutes."),
+    playersCount: z
+      .number()
+      .int()
+      .min(1)
+      .max(40)
+      .nullable()
+      .optional()
+      .describe("New recommended player count."),
     space: nullableText(120).describe("New working area."),
     materials: nullableText(600).describe("New equipment list."),
     observations: nullableText(2000).describe("New coaching points."),
     intensity: intensityEnum.optional().describe("New intensity: baja, media, alta or muy_alta."),
-    tags: z.array(z.string().trim().min(1).max(30)).max(20).optional().describe("Replacement list of labels."),
+    tags: z
+      .array(z.string().trim().min(1).max(30))
+      .max(20)
+      .optional()
+      .describe("Replacement list of labels."),
     favourite: z.boolean().optional().describe("Mark or unmark as favourite."),
   },
-  annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+  annotations: {
+    readOnlyHint: false,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false,
+  },
   handler: async (input, ctx, userId) => {
     const supabase = supabaseForUser(ctx);
     const current = await fetchOwnedRow(supabase, "exercise", input.exerciseId, userId);
@@ -60,9 +84,12 @@ export default defineAuthedTool({
       .select("*")
       .single();
     if (error) return toolError("backend_error", error.message);
-    return toolSuccess(`Updated exercise “${data.name}”; previous state saved as version ${version}.`, {
-      exercise: data,
-      previousVersion: version,
-    });
+    return toolSuccess(
+      `Updated exercise “${data.name}”; previous state saved as version ${version}.`,
+      {
+        exercise: data,
+        previousVersion: version,
+      },
+    );
   },
 });

@@ -4,7 +4,9 @@ export type SessionEvaluationRow = Record<string, any>;
 
 export const sessionEvaluationsRepository = {
   async getBySession(sessionId: string): Promise<SessionEvaluationRow | null> {
-    return unwrap(await table("session_evaluations").select("*").eq("session_id", sessionId).maybeSingle());
+    return unwrap(
+      await table("session_evaluations").select("*").eq("session_id", sessionId).maybeSingle(),
+    );
   },
 
   async save(payload: SessionEvaluationRow): Promise<void> {

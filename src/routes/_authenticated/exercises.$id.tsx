@@ -7,6 +7,21 @@ import { ExerciseForm } from "@/components/exercise-form";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/exercises/$id")({
+  head: () => ({
+    meta: [
+      { title: "Detalle del ejercicio · PlaneoFUT" },
+      {
+        name: "description",
+        content: "Consulta y edita los detalles de un ejercicio de tu biblioteca.",
+      },
+      { property: "og:title", content: "Detalle del ejercicio · PlaneoFUT" },
+      {
+        property: "og:description",
+        content: "Consulta y edita los detalles de un ejercicio de tu biblioteca.",
+      },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   component: ExerciseDetail,
 });
 
@@ -28,10 +43,10 @@ function ExerciseDetail() {
   return (
     <div className="mx-auto max-w-2xl space-y-6">
       <div className="flex items-center justify-between gap-2">
-        <Button variant="ghost" onClick={() => navigate({ to: "/exercises" })}><ArrowLeft className="mr-1 h-4 w-4" /> Volver</Button>
-        <Button
-          onClick={() => navigate({ to: "/sessions/new", search: { fromExercise: id } })}
-        >
+        <Button variant="ghost" onClick={() => navigate({ to: "/exercises" })}>
+          <ArrowLeft className="mr-1 h-4 w-4" /> Volver
+        </Button>
+        <Button onClick={() => navigate({ to: "/sessions/new", search: { fromExercise: id } })}>
           <ClipboardPlus className="mr-1 h-4 w-4" /> Crear sesión con este ejercicio
         </Button>
       </div>
@@ -42,4 +57,3 @@ function ExerciseDetail() {
     </div>
   );
 }
-

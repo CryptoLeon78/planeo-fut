@@ -19,7 +19,11 @@ export const emptyEvaluation: SessionEvaluation = {
   player_notes: "",
 };
 
-export function toEvaluationPayload(sessionId: string, ownerId: string, evaluation: SessionEvaluation) {
+export function toEvaluationPayload(
+  sessionId: string,
+  ownerId: string,
+  evaluation: SessionEvaluation,
+) {
   return {
     session_id: sessionId,
     owner_id: ownerId,

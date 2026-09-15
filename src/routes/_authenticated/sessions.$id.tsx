@@ -11,6 +11,21 @@ import { BLOCK_TYPES, INTENSITIES, labelOf } from "@/lib/constants";
 import { SessionEvaluationCard } from "@/components/session-evaluation-card";
 
 export const Route = createFileRoute("/_authenticated/sessions/$id")({
+  head: () => ({
+    meta: [
+      { title: "Detalle de la sesión · PlaneoFUT" },
+      {
+        name: "description",
+        content: "Consulta bloques, ejercicios y evaluación de una sesión de entrenamiento.",
+      },
+      { property: "og:title", content: "Detalle de la sesión · PlaneoFUT" },
+      {
+        property: "og:description",
+        content: "Consulta bloques, ejercicios y evaluación de una sesión de entrenamiento.",
+      },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   component: SessionDetail,
 });
 
@@ -23,22 +38,29 @@ function SessionDetail() {
     queryFn: () => sessionsService.getDetail(id),
   });
 
-  if (isLoading || !data?.session) return <p className="text-sm text-muted-foreground">Cargando…</p>;
+  if (isLoading || !data?.session)
+    return <p className="text-sm text-muted-foreground">Cargando…</p>;
   const { session, blocks, items } = data;
 
-  function exportPDF() { exportToPdf(session.name); }
+  function exportPDF() {
+    exportToPdf(session.name);
+  }
 
   return (
     <div className="mx-auto max-w-4xl space-y-6 print-area">
       <div className="flex items-center justify-between print:hidden">
-        <Button variant="ghost" onClick={() => navigate({ to: "/sessions" })}><ArrowLeft className="mr-1 h-4 w-4" /> Volver</Button>
+        <Button variant="ghost" onClick={() => navigate({ to: "/sessions" })}>
+          <ArrowLeft className="mr-1 h-4 w-4" /> Volver
+        </Button>
         <div className="flex gap-2">
           <Button variant="outline" asChild>
             <Link to="/sessions/new" search={{ edit: id }}>
               <Pencil className="mr-1 h-4 w-4" /> Editar
             </Link>
           </Button>
-          <Button variant="outline" onClick={exportPDF}><FileDown className="mr-1 h-4 w-4" /> Exportar PDF</Button>
+          <Button variant="outline" onClick={exportPDF}>
+            <FileDown className="mr-1 h-4 w-4" /> Exportar PDF
+          </Button>
         </div>
       </div>
 
@@ -46,36 +68,57 @@ function SessionDetail() {
         <h1 className="text-3xl font-bold tracking-tight">{session.name}</h1>
         {session.objective && <p className="mt-1 text-muted-foreground">{session.objective}</p>}
         <div className="mt-3 flex flex-wrap gap-2">
-          {session.session_date && <Badge variant="outline">{new Date(session.session_date).toLocaleDateString("es-ES")}</Badge>}
-          {session.intensity && <Badge variant="secondary">{labelOf(INTENSITIES, session.intensity)}</Badge>}
+          {session.session_date && (
+            <Badge variant="outline">
+              {new Date(session.session_date).toLocaleDateString("es-ES")}
+            </Badge>
+          )}
+          {session.intensity && (
+            <Badge variant="secondary">{labelOf(INTENSITIES, session.intensity)}</Badge>
+          )}
           {session.duration_min && <Badge variant="outline">{session.duration_min} min</Badge>}
         </div>
       </header>
 
       <div className="space-y-3">
-        {blocks.map((b: any) => {
-          const blockItems = items.filter((it: any) => it.block_id === b.id);
+        {blocks.map((b) => {
+          const blockItems = items.filter((it) => it.block_id === b.id);
           return (
             <Card key={b.id} className="p-5">
               <div className="mb-3 flex items-center justify-between">
                 <div>
                   <Badge variant="secondary">{labelOf(BLOCK_TYPES, b.block_type)}</Badge>
-                  <h3 className="mt-2 text-lg font-semibold">{b.name ?? labelOf(BLOCK_TYPES, b.block_type)}</h3>
+                  <h3 className="mt-2 text-lg font-semibold">
+                    {b.name ?? labelOf(BLOCK_TYPES, b.block_type)}
+                  </h3>
                 </div>
                 {b.duration_min && <Badge variant="outline">{b.duration_min}′</Badge>}
               </div>
               {blockItems.length > 0 ? (
                 <ol className="space-y-2">
                   {blockItems.map((it: any, idx: number) => (
-                    <li key={it.id} className="flex items-start gap-3 rounded-md border border-border/60 bg-secondary/30 p-3">
+                    <li
+                      key={it.id}
+                      className="flex items-start gap-3 rounded-md border border-border/60 bg-secondary/30 p-3"
+                    >
                       <div className="flex-1">
-                        <p className="text-sm font-medium">{idx + 1}. {it.exercises?.name}</p>
+                        <p className="text-sm font-medium">
+                          {idx + 1}. {it.exercises?.name}
+                        </p>
                         {it.notes && <p className="text-xs text-muted-foreground">{it.notes}</p>}
                         {it.exercises?.image_url && (
-                          <img src={it.exercises.image_url} alt={it.exercises.name} className="mt-2 h-24 w-24 rounded border border-border object-cover print:h-32 print:w-32" />
+                          <img
+                            src={it.exercises.image_url}
+                            alt={it.exercises.name}
+                            className="mt-2 h-24 w-24 rounded border border-border object-cover print:h-32 print:w-32"
+                          />
                         )}
                       </div>
-                      {it.exercises?.duration_min && <Badge variant="outline" className="shrink-0">{it.exercises.duration_min}′</Badge>}
+                      {it.exercises?.duration_min && (
+                        <Badge variant="outline" className="shrink-0">
+                          {it.exercises.duration_min}′
+                        </Badge>
+                      )}
                     </li>
                   ))}
                 </ol>
@@ -98,7 +141,9 @@ function SessionDetail() {
       )}
 
       <div className="text-xs text-muted-foreground print:hidden">
-        <Link to="/sessions" className="hover:text-primary">← Volver a sesiones</Link>
+        <Link to="/sessions" className="hover:text-primary">
+          ← Volver a sesiones
+        </Link>
       </div>
     </div>
   );

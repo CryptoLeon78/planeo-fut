@@ -107,7 +107,8 @@ export function detectEnvironment(): AppEnvironment {
   return "development";
 }
 
-const SAFE_SOURCE_TOKEN = /^(?:'self'|'none'|'unsafe-inline'|'unsafe-eval'|data:|blob:|https?:\/\/(?:\*\.)?[a-z0-9.-]+(?::\d+|:\*)?|wss?:\/\/(?:\*\.)?[a-z0-9.-]+(?::\d+|:\*)?)$/i;
+const SAFE_SOURCE_TOKEN =
+  /^(?:'self'|'none'|'unsafe-inline'|'unsafe-eval'|data:|blob:|https?:\/\/(?:\*\.)?[a-z0-9.-]+(?::\d+|:\*)?|wss?:\/\/(?:\*\.)?[a-z0-9.-]+(?::\d+|:\*)?)$/i;
 
 function validateSourceToken(value: string): string | undefined {
   if (value.includes(";") || value.includes("\n") || value.includes("\r")) {
@@ -229,11 +230,7 @@ export function auditEffectiveCsp(): EffectiveSecurityConfig {
 /** True for REST routes under /api/* and server-function RPC endpoints. */
 export function isDataEndpoint(url: string): boolean {
   const { pathname } = new URL(url, "http://localhost");
-  return (
-    pathname === "/api" ||
-    pathname.startsWith("/api/") ||
-    pathname.startsWith("/_serverFn")
-  );
+  return pathname === "/api" || pathname.startsWith("/api/") || pathname.startsWith("/_serverFn");
 }
 
 export function applySecurityHeaders(response: Response, request?: Request): Response {

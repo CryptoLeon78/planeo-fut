@@ -60,7 +60,8 @@ export function initMonitoring(): () => void {
   const observe = (type: string, name: string, pick: (entry: PerformanceEntry) => number) => {
     try {
       const observer = new PerformanceObserver((list) => {
-        for (const entry of list.getEntries()) recordEvent({ type: "metric", name, value: pick(entry) });
+        for (const entry of list.getEntries())
+          recordEvent({ type: "metric", name, value: pick(entry) });
       });
       observer.observe({ type, buffered: true } as PerformanceObserverInit);
       observers.push(observer);

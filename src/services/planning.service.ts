@@ -16,7 +16,12 @@ export type MesocycleInput = {
 
 /** Default preseason phase structure (conditioning → technical → competitive). */
 export function defaultPreseasonPhases() {
-  return PRESEASON_PHASES.map((p) => ({ key: p.key, label: p.label, weeks: p.duration, focus: "" }));
+  return PRESEASON_PHASES.map((p) => ({
+    key: p.key,
+    label: p.label,
+    weeks: p.duration,
+    focus: "",
+  }));
 }
 
 export function validateMesocycleInput(input: MesocycleInput): string | null {

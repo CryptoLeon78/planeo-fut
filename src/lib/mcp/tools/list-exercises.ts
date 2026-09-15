@@ -6,9 +6,16 @@ import { limitField } from "../schemas";
 export default defineAuthedTool({
   name: "list_exercises",
   title: "List exercises",
-  description: "Find football practices in the signed-in coach's private library, including favourites and planning details.",
+  description:
+    "Find football practices in the signed-in coach's private library, including favourites and planning details.",
   inputSchema: {
-    search: z.string().trim().min(1).max(80).optional().describe("Optional text found in the exercise name or objective."),
+    search: z
+      .string()
+      .trim()
+      .min(1)
+      .max(80)
+      .optional()
+      .describe("Optional text found in the exercise name or objective."),
     favouritesOnly: z.boolean().optional().describe("Return only exercises marked as favourites."),
     limit: limitField(50, 20),
   },
@@ -16,7 +23,9 @@ export default defineAuthedTool({
   handler: async ({ search, favouritesOnly, limit }, ctx, userId) => {
     let query = supabaseForUser(ctx)
       .from("exercises")
-      .select("id,name,objective,game_phase,intensity,task_type,duration_min,players_count,space,materials,tags,is_favorite,observations,variants,updated_at")
+      .select(
+        "id,name,objective,game_phase,intensity,task_type,duration_min,players_count,space,materials,tags,is_favorite,observations,variants,updated_at",
+      )
       .eq("owner_id", userId)
       .is("deleted_at", null)
       .order("updated_at", { ascending: false })

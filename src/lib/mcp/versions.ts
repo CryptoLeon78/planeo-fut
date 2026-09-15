@@ -27,11 +27,7 @@ export async function fetchOwnedRow(
   ownerId: string,
   options?: { includeDeleted?: boolean },
 ) {
-  let query = supabase
-    .from(ENTITY_TABLE[entity])
-    .select("*")
-    .eq("id", id)
-    .eq("owner_id", ownerId);
+  let query = supabase.from(ENTITY_TABLE[entity]).select("*").eq("id", id).eq("owner_id", ownerId);
   if (!options?.includeDeleted) query = query.is("deleted_at", null);
   const { data, error } = await query.maybeSingle();
   if (error) throw new Error(error.message);

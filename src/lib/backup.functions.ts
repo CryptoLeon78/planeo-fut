@@ -1,7 +1,13 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { BACKUP_ENTITIES, sanitiseImportRow, type BackupEntity, type BackupPayload, type BackupRow } from "@/lib/backup";
+import {
+  BACKUP_ENTITIES,
+  sanitiseImportRow,
+  type BackupEntity,
+  type BackupPayload,
+  type BackupRow,
+} from "@/lib/backup";
 
 const ExportInput = z.object({
   entities: z.array(z.enum(BACKUP_ENTITIES)).min(1),
@@ -12,7 +18,9 @@ const ImportInput = z.object({
   payload: z.object({
     version: z.number().optional(),
     generated_at: z.string().optional(),
-    entities: z.record(z.string(), z.array(z.record(z.string(), z.any()))) as unknown as z.ZodType<Record<string, BackupRow[]>>,
+    entities: z.record(z.string(), z.array(z.record(z.string(), z.any()))) as unknown as z.ZodType<
+      Record<string, BackupRow[]>
+    >,
   }),
 });
 
@@ -63,7 +71,10 @@ export const exportUserData = createServerFn({ method: "POST" })
 
       if (entity === "sessions" && rows.length > 0) {
         const ids = rows.map((r) => r.id as string);
-        const { data: blocks } = await supabase.from("session_blocks").select("*").in("session_id", ids);
+        const { data: blocks } = await supabase
+          .from("session_blocks")
+          .select("*")
+          .in("session_id", ids);
         const blockList = (blocks ?? []) as Rows;
         const blockIds = blockList.map((b) => b.id as string);
         const { data: blockEx } = blockIds.length
@@ -79,7 +90,10 @@ export const exportUserData = createServerFn({ method: "POST" })
 
       if (entity === "microcycles" && rows.length > 0) {
         const ids = rows.map((r) => r.id as string);
-        const { data: slots } = await supabase.from("microcycle_slots").select("*").in("microcycle_id", ids);
+        const { data: slots } = await supabase
+          .from("microcycle_slots")
+          .select("*")
+          .in("microcycle_id", ids);
         const slotList = (slots ?? []) as Rows;
         for (const row of rows) row.slots = slotList.filter((s) => s.microcycle_id === row.id);
       }
@@ -180,7 +194,9 @@ export const importUserData = createServerFn({ method: "POST" })
               })
               .filter(Boolean);
             if (links.length) {
-              const { error: linkError } = await supabase.from("session_block_exercises").insert(links);
+              const { error: linkError } = await supabase
+                .from("session_block_exercises")
+                .insert(links);
               if (linkError) throw new Error(`session_block_exercises: ${linkError.message}`);
             }
           }
@@ -211,7 +227,9 @@ export const importUserData = createServerFn({ method: "POST" })
             return {
               ...cleanSlot,
               microcycle_id: newMicro.id,
-              session_id: slot.session_id ? (sessionIdMap.get(slot.session_id as string) ?? null) : null,
+              session_id: slot.session_id
+                ? (sessionIdMap.get(slot.session_id as string) ?? null)
+                : null,
             };
           });
           if (slotRows.length) {

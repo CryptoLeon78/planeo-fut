@@ -11,11 +11,9 @@ import {
   readValidatedEnvOrigins,
 } from "@/lib/security-headers";
 
-
 const html = () =>
   new Response("<html></html>", { headers: { "content-type": "text/html; charset=utf-8" } });
-const json = () =>
-  new Response("{}", { headers: { "content-type": "application/json" } });
+const json = () => new Response("{}", { headers: { "content-type": "application/json" } });
 
 const req = (path: string) => new Request(`https://app.test${path}`);
 

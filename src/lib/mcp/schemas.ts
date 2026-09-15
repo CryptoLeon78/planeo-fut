@@ -1,8 +1,6 @@
 import { z } from "zod";
 
-export const isoDate = z
-  .string()
-  .regex(/^\d{4}-\d{2}-\d{2}$/, "Use the YYYY-MM-DD date format.");
+export const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Use the YYYY-MM-DD date format.");
 
 export const uuid = z.string().uuid("Provide a valid record identifier.");
 

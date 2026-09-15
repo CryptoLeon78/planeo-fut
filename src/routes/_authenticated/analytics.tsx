@@ -12,9 +12,17 @@ export const Route = createFileRoute("/_authenticated/analytics")({
   head: () => ({
     meta: [
       { title: "Analytics de sesiones · PlaneoFUT" },
-      { name: "description", content: "Evolución del rating, la intensidad percibida y el cumplimiento de objetivos de tus sesiones." },
+      {
+        name: "description",
+        content:
+          "Evolución del rating, la intensidad percibida y el cumplimiento de objetivos de tus sesiones.",
+      },
       { property: "og:title", content: "Analytics de sesiones · PlaneoFUT" },
-      { property: "og:description", content: "Evolución del rating, la intensidad percibida y el cumplimiento de objetivos de tus sesiones." },
+      {
+        property: "og:description",
+        content:
+          "Evolución del rating, la intensidad percibida y el cumplimiento de objetivos de tus sesiones.",
+      },
     ],
   }),
   component: AnalyticsPage,
@@ -47,8 +55,12 @@ function AnalyticsPage() {
 
   const evals = data ?? [];
   const total = evals.length;
-  const avgRating = total ? (evals.reduce((a, e) => a + (e.rating ?? 0), 0) / total).toFixed(1) : "—";
-  const metPct = total ? Math.round((evals.filter((e) => e.objectives_met).length / total) * 100) : 0;
+  const avgRating = total
+    ? (evals.reduce((a, e) => a + (e.rating ?? 0), 0) / total).toFixed(1)
+    : "—";
+  const metPct = total
+    ? Math.round((evals.filter((e) => e.objectives_met).length / total) * 100)
+    : 0;
 
   const timeline = evals.map((e) => ({
     fecha: new Date(e.evaluated_at).toLocaleDateString("es-ES", { day: "numeric", month: "short" }),
@@ -76,9 +88,21 @@ function AnalyticsPage() {
       </div>
 
       <div className="grid gap-3 md:grid-cols-3">
-        <StatCard icon={<BarChart3 className="h-4 w-4" />} label="Evaluaciones" value={String(total)} />
-        <StatCard icon={<TrendingUp className="h-4 w-4" />} label="Rating medio" value={avgRating} />
-        <StatCard icon={<Target className="h-4 w-4" />} label="Objetivos cumplidos" value={`${metPct}%`} />
+        <StatCard
+          icon={<BarChart3 className="h-4 w-4" />}
+          label="Evaluaciones"
+          value={String(total)}
+        />
+        <StatCard
+          icon={<TrendingUp className="h-4 w-4" />}
+          label="Rating medio"
+          value={avgRating}
+        />
+        <StatCard
+          icon={<Target className="h-4 w-4" />}
+          label="Objetivos cumplidos"
+          value={`${metPct}%`}
+        />
       </div>
 
       {total === 0 ? (
@@ -87,11 +111,17 @@ function AnalyticsPage() {
             <Activity className="h-6 w-6" />
           </div>
           <p className="font-medium">Aún no hay evaluaciones</p>
-          <p className="mt-1 text-sm text-muted-foreground">Evalúa tus sesiones desde el detalle de cada sesión para ver tu evolución aquí.</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Evalúa tus sesiones desde el detalle de cada sesión para ver tu evolución aquí.
+          </p>
         </Card>
       ) : (
         <Suspense fallback={<p className="text-sm text-muted-foreground">Cargando gráficos…</p>}>
-          <AnalyticsCharts timeline={timeline} intensityData={intensityData} lastEight={lastEight} />
+          <AnalyticsCharts
+            timeline={timeline}
+            intensityData={intensityData}
+            lastEight={lastEight}
+          />
         </Suspense>
       )}
     </div>

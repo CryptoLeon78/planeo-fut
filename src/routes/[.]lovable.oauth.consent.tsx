@@ -35,16 +35,24 @@ export const Route = createFileRoute("/.lovable/oauth/consent")({
     <main className="grid min-h-screen place-items-center bg-muted/30 p-6">
       <Alert variant="destructive" className="max-w-lg">
         <AlertTitle>Connection request unavailable</AlertTitle>
-        <AlertDescription>{error instanceof Error ? error.message : String(error)}</AlertDescription>
+        <AlertDescription>
+          {error instanceof Error ? error.message : String(error)}
+        </AlertDescription>
       </Alert>
     </main>
   ),
   head: () => ({
     meta: [
       { title: "Authorise an integration — PlaneoFUT" },
-      { name: "description", content: "Review and authorise secure access to your PlaneoFUT coaching account." },
+      {
+        name: "description",
+        content: "Review and authorise secure access to your PlaneoFUT coaching account.",
+      },
       { property: "og:title", content: "Authorise an integration — PlaneoFUT" },
-      { property: "og:description", content: "Review secure access to your PlaneoFUT coaching account." },
+      {
+        property: "og:description",
+        content: "Review secure access to your PlaneoFUT coaching account.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
@@ -64,7 +72,9 @@ function ConsentPage() {
     setBusy(approve ? "approve" : "deny");
     setError(null);
     const result = approve
-      ? await supabase.auth.oauth.approveAuthorization(authorizationId, { skipBrowserRedirect: true })
+      ? await supabase.auth.oauth.approveAuthorization(authorizationId, {
+          skipBrowserRedirect: true,
+        })
       : await supabase.auth.oauth.denyAuthorization(authorizationId, { skipBrowserRedirect: true });
     if (result.error) {
       setError(result.error.message);
@@ -88,7 +98,8 @@ function ConsentPage() {
             </div>
           </div>
           <p className="text-sm leading-relaxed text-muted-foreground">
-            {clientName} will be able to call PlaneoFUT’s enabled coaching tools while acting as your signed-in account.
+            {clientName} will be able to call PlaneoFUT’s enabled coaching tools while acting as
+            your signed-in account.
           </p>
         </CardHeader>
         <CardContent className="space-y-5 pt-6">
@@ -101,25 +112,62 @@ function ConsentPage() {
           </div>
           <Separator />
           <section aria-labelledby="access-heading">
-            <h2 id="access-heading" className="text-sm font-semibold">Requested access</h2>
+            <h2 id="access-heading" className="text-sm font-semibold">
+              Requested access
+            </h2>
             <ul className="mt-3 space-y-3 text-sm">
-              <li className="flex gap-3"><Check className="mt-0.5 h-4 w-4 text-primary" /><span>Read your exercise library, sessions and weekly microcycles.</span></li>
-              <li className="flex gap-3"><Check className="mt-0.5 h-4 w-4 text-primary" /><span>Create practices, sessions and structured microcycles when you approve the action.</span></li>
-              {scopes.includes("email") && <li className="flex gap-3"><Check className="mt-0.5 h-4 w-4 text-primary" /><span>Share your email address for account identification.</span></li>}
-              {scopes.includes("profile") && <li className="flex gap-3"><Check className="mt-0.5 h-4 w-4 text-primary" /><span>Share your basic profile for account identification.</span></li>}
+              <li className="flex gap-3">
+                <Check className="mt-0.5 h-4 w-4 text-primary" />
+                <span>Read your exercise library, sessions and weekly microcycles.</span>
+              </li>
+              <li className="flex gap-3">
+                <Check className="mt-0.5 h-4 w-4 text-primary" />
+                <span>
+                  Create practices, sessions and structured microcycles when you approve the action.
+                </span>
+              </li>
+              {scopes.includes("email") && (
+                <li className="flex gap-3">
+                  <Check className="mt-0.5 h-4 w-4 text-primary" />
+                  <span>Share your email address for account identification.</span>
+                </li>
+              )}
+              {scopes.includes("profile") && (
+                <li className="flex gap-3">
+                  <Check className="mt-0.5 h-4 w-4 text-primary" />
+                  <span>Share your basic profile for account identification.</span>
+                </li>
+              )}
             </ul>
           </section>
           <div className="rounded-md border bg-muted/40 p-3 text-xs leading-relaxed text-muted-foreground">
-            PlaneoFUT’s account permissions and backend policies still decide which records are accessible. This connection does not bypass them.
+            PlaneoFUT’s account permissions and backend policies still decide which records are
+            accessible. This connection does not bypass them.
           </div>
-          {error && <Alert variant="destructive"><AlertTitle>Connection failed</AlertTitle><AlertDescription>{error}</AlertDescription></Alert>}
-          <p className="break-all text-xs text-muted-foreground">Return to: {details.redirect_uri}</p>
+          {error && (
+            <Alert variant="destructive">
+              <AlertTitle>Connection failed</AlertTitle>
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+          <p className="break-all text-xs text-muted-foreground">
+            Return to: {details.redirect_uri}
+          </p>
         </CardContent>
         <CardFooter className="flex-col-reverse gap-2 border-t bg-background pt-6 sm:flex-row sm:justify-end">
-          <Button variant="outline" className="w-full sm:w-auto" disabled={busy !== null} onClick={() => decide(false)}>
+          <Button
+            variant="outline"
+            className="w-full sm:w-auto"
+            disabled={busy !== null}
+            onClick={() => decide(false)}
+          >
             <X /> Cancel connection
           </Button>
-          <Button className="w-full sm:w-auto" disabled={busy !== null} onClick={() => decide(true)}>
+          <Button
+            className="w-full sm:w-auto"
+            disabled={busy !== null}
+            onClick={() => decide(true)}
+          >
             Approve <ArrowRight />
           </Button>
         </CardFooter>

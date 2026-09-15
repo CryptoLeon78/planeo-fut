@@ -6,7 +6,8 @@ import { useAuth } from "@/hooks/use-auth";
 
 const SITE_URL = "https://planeo-fut.lovable.app";
 const TITLE = "PlaneoFUT — Planificación profesional de entrenamientos de fútbol";
-const DESC = "Crea ejercicios, sesiones, microciclos y temporadas completas. La herramienta del entrenador moderno para fútbol base, cantera, amateur y alto rendimiento.";
+const DESC =
+  "Crea ejercicios, sesiones, microciclos y temporadas completas. La herramienta del entrenador moderno para fútbol base, cantera, amateur y alto rendimiento.";
 
 export const Route = createFileRoute("/")({
   component: Landing,
@@ -21,6 +22,8 @@ export const Route = createFileRoute("/")({
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: TITLE },
       { name: "twitter:description", content: DESC },
+      { property: "og:image", content: `${SITE_URL}/og-planeofut.jpg` },
+      { name: "twitter:image", content: `${SITE_URL}/og-planeofut.jpg` },
     ],
     links: [{ rel: "canonical", href: `${SITE_URL}/` }],
     scripts: [
@@ -42,7 +45,8 @@ export const Route = createFileRoute("/")({
           name: "PlaneoFUT",
           url: SITE_URL,
           email: "info@planeofut.com",
-          description: "Herramienta de planificación de entrenamientos de fútbol para entrenadores.",
+          description:
+            "Herramienta de planificación de entrenamientos de fútbol para entrenadores.",
         }),
       },
     ],
@@ -67,15 +71,21 @@ function Landing() {
             <span className="text-lg font-bold tracking-tight">PlaneoFUT</span>
           </div>
           <div className="flex items-center gap-2">
-            <Button asChild variant="ghost" size="sm"><Link to="/auth">Entrar</Link></Button>
-            <Button asChild size="sm"><Link to="/auth">Empezar gratis</Link></Button>
+            <Button asChild variant="ghost" size="sm">
+              <Link to="/auth">Entrar</Link>
+            </Button>
+            <Button asChild size="sm">
+              <Link to="/auth">Empezar gratis</Link>
+            </Button>
           </div>
         </div>
       </header>
 
       <section className="mx-auto max-w-6xl px-6 pt-20 pb-16 text-center">
         <h1 className="mt-6 text-4xl font-extrabold tracking-tight md:text-6xl">
-          Planifica tu <span className="bg-primary-gradient bg-clip-text text-transparent">temporada</span> como un profesional
+          Planifica tu{" "}
+          <span className="bg-primary-gradient bg-clip-text text-transparent">temporada</span> como
+          un profesional
         </h1>
         <p className="mx-auto mt-5 max-w-2xl text-base text-muted-foreground md:text-lg">
           Crea ejercicios, sesiones, microciclos y temporadas completas. Diseñado para fútbol base,
@@ -93,14 +103,41 @@ function Landing() {
 
       <section className="mx-auto grid max-w-6xl gap-4 px-6 pb-24 sm:grid-cols-2 lg:grid-cols-3">
         {[
-          { icon: Dumbbell, title: "Biblioteca de ejercicios", desc: "Ficha completa: objetivo, fase, intensidad, espacio, material y etiquetas." },
-          { icon: ClipboardList, title: "Sesiones con bloques", desc: "Calentamiento, parte principal, juego de aplicación y vuelta a la calma." },
-          { icon: Calendar, title: "Microciclo semanal", desc: "3 sesiones + partido sábado/domingo sin romper la planificación." },
-          { icon: LineChart, title: "Periodización visual", desc: "Pretemporada y temporada por mesociclos con carga e intensidad por día." },
-          { icon: Users, title: "Gestión de plantilla", desc: "Equipo, categoría, calendario de partidos y staff." },
-          { icon: Trophy, title: "Reutiliza y versiona", desc: "Duplica sesiones, guarda favoritos, plantillas reutilizables." },
+          {
+            icon: Dumbbell,
+            title: "Biblioteca de ejercicios",
+            desc: "Ficha completa: objetivo, fase, intensidad, espacio, material y etiquetas.",
+          },
+          {
+            icon: ClipboardList,
+            title: "Sesiones con bloques",
+            desc: "Calentamiento, parte principal, juego de aplicación y vuelta a la calma.",
+          },
+          {
+            icon: Calendar,
+            title: "Microciclo semanal",
+            desc: "3 sesiones + partido sábado/domingo sin romper la planificación.",
+          },
+          {
+            icon: LineChart,
+            title: "Periodización visual",
+            desc: "Pretemporada y temporada por mesociclos con carga e intensidad por día.",
+          },
+          {
+            icon: Users,
+            title: "Gestión de plantilla",
+            desc: "Equipo, categoría, calendario de partidos y staff.",
+          },
+          {
+            icon: Trophy,
+            title: "Reutiliza y versiona",
+            desc: "Duplica sesiones, guarda favoritos, plantillas reutilizables.",
+          },
         ].map((f) => (
-          <div key={f.title} className="rounded-xl border border-border/60 bg-card p-5 shadow-card transition hover:border-primary/40">
+          <div
+            key={f.title}
+            className="rounded-xl border border-border/60 bg-card p-5 shadow-card transition hover:border-primary/40"
+          >
             <div className="grid h-10 w-10 place-items-center rounded-lg bg-accent text-primary">
               <f.icon className="h-5 w-5" />
             </div>

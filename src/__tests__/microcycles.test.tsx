@@ -5,15 +5,39 @@ import { createSupabaseMock } from "@/test/setup";
 
 vi.mock("@/integrations/supabase/client", () => ({
   supabase: createSupabaseMock({
-    microcycles: { data: [{ id: "m1", name: "Mc 1", week_start: "2026-06-15", match_day: "sabado", weekly_objective: "obj" }], error: null },
-    "microcycles.single": { data: { id: "m1", name: "Mc 1", week_start: "2026-06-15", match_day: "sabado", weekly_objective: "obj", notes: "n" }, error: null },
-    microcycle_slots: { data: [
-      { id: "s1", slot_type: "MD-4", slot_date: "2026-06-16", session_id: null, notes: null },
-      { id: "s2", slot_type: "MD-3", slot_date: "2026-06-17", session_id: null, notes: null },
-      { id: "s3", slot_type: "MD-2", slot_date: "2026-06-18", session_id: null, notes: null },
-      { id: "s4", slot_type: "MD-1", slot_date: "2026-06-19", session_id: null, notes: null },
-      { id: "s5", slot_type: "MD", slot_date: "2026-06-20", session_id: null, notes: null },
-    ], error: null },
+    microcycles: {
+      data: [
+        {
+          id: "m1",
+          name: "Mc 1",
+          week_start: "2026-06-15",
+          match_day: "sabado",
+          weekly_objective: "obj",
+        },
+      ],
+      error: null,
+    },
+    "microcycles.single": {
+      data: {
+        id: "m1",
+        name: "Mc 1",
+        week_start: "2026-06-15",
+        match_day: "sabado",
+        weekly_objective: "obj",
+        notes: "n",
+      },
+      error: null,
+    },
+    microcycle_slots: {
+      data: [
+        { id: "s1", slot_type: "MD-4", slot_date: "2026-06-16", session_id: null, notes: null },
+        { id: "s2", slot_type: "MD-3", slot_date: "2026-06-17", session_id: null, notes: null },
+        { id: "s3", slot_type: "MD-2", slot_date: "2026-06-18", session_id: null, notes: null },
+        { id: "s4", slot_type: "MD-1", slot_date: "2026-06-19", session_id: null, notes: null },
+        { id: "s5", slot_type: "MD", slot_date: "2026-06-20", session_id: null, notes: null },
+      ],
+      error: null,
+    },
     sessions: { data: [], error: null },
   }),
 }));

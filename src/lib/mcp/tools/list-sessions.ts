@@ -5,7 +5,8 @@ import { isoDate, limitField } from "../schemas";
 export default defineAuthedTool({
   name: "list_sessions",
   title: "List sessions",
-  description: "List the signed-in coach's football training sessions with objectives, dates, load and evaluation details.",
+  description:
+    "List the signed-in coach's football training sessions with objectives, dates, load and evaluation details.",
   inputSchema: {
     fromDate: isoDate.optional().describe("Optional inclusive start date in YYYY-MM-DD format."),
     toDate: isoDate.optional().describe("Optional inclusive end date in YYYY-MM-DD format."),
@@ -18,7 +19,9 @@ export default defineAuthedTool({
     }
     let query = supabaseForUser(ctx)
       .from("sessions")
-      .select("id,name,objective,session_date,duration_min,intensity,weekly_focus,notes,evaluation,is_template")
+      .select(
+        "id,name,objective,session_date,duration_min,intensity,weekly_focus,notes,evaluation,is_template",
+      )
       .eq("owner_id", userId)
       .is("deleted_at", null)
       .order("session_date", { ascending: false, nullsFirst: false })

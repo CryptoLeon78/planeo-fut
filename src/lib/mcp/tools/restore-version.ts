@@ -7,13 +7,19 @@ import { ENTITY_TABLE, fetchOwnedRow, snapshotEntity, stripProtectedFields } fro
 export default defineAuthedTool({
   name: "restore_version",
   title: "Restore a previous version",
-  description: "Roll a practice, session or microcycle back to a stored version snapshot, keeping the current state as a new version.",
+  description:
+    "Roll a practice, session or microcycle back to a stored version snapshot, keeping the current state as a new version.",
   inputSchema: {
     entity: entityEnum.describe("Record type: exercise, session or microcycle."),
     recordId: uuid.describe("Identifier of the record to roll back."),
     version: z.number().int().min(1).describe("Version number to restore."),
   },
-  annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: false },
+  annotations: {
+    readOnlyHint: false,
+    destructiveHint: true,
+    idempotentHint: false,
+    openWorldHint: false,
+  },
   handler: async ({ entity, recordId, version }, ctx, userId) => {
     const supabase = supabaseForUser(ctx);
     const current = await fetchOwnedRow(supabase, entity, recordId, userId);
@@ -28,7 +34,8 @@ export default defineAuthedTool({
       .eq("version", version)
       .maybeSingle();
     if (snapshotError) return toolError("backend_error", snapshotError.message);
-    if (!snapshotRow) return toolError("not_found", `Version ${version} does not exist for this record.`);
+    if (!snapshotRow)
+      return toolError("not_found", `Version ${version} does not exist for this record.`);
 
     const backup = await snapshotEntity(supabase, {
       ownerId: userId,

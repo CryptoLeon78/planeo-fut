@@ -13,7 +13,12 @@ export default defineAuthedTool({
     recordId: uuid.describe("Identifier of the record to delete."),
     reason: shortText(160).optional().describe("Optional note explaining why it was deleted."),
   },
-  annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: true, openWorldHint: false },
+  annotations: {
+    readOnlyHint: false,
+    destructiveHint: true,
+    idempotentHint: true,
+    openWorldHint: false,
+  },
   handler: async ({ entity, recordId, reason }, ctx, userId) => {
     const supabase = supabaseForUser(ctx);
     const current = await fetchOwnedRow(supabase, entity, recordId, userId);

@@ -8,13 +8,24 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import {
-  COMMON_TAGS, GAME_PHASES, INTENSITIES, TASK_TYPES, TEAM_CATEGORIES,
+  COMMON_TAGS,
+  GAME_PHASES,
+  INTENSITIES,
+  TASK_TYPES,
+  TEAM_CATEGORIES,
 } from "@/lib/constants";
+import { errorMessage } from "@/lib/utils";
 
 const schema = z.object({
   name: z.string().trim().min(1, "Nombre obligatorio").max(120),
@@ -67,14 +78,12 @@ export function ExerciseForm({ initial, onSaved }: ExerciseFormProps) {
 
       if (uploadError) throw uploadError;
 
-      const { data } = supabase.storage
-        .from("exercise-images")
-        .getPublicUrl(fileName);
+      const { data } = supabase.storage.from("exercise-images").getPublicUrl(fileName);
 
       setImageUrl(data.publicUrl);
       toast.success("Imagen subida correctamente");
-    } catch (err: any) {
-      toast.error(err?.message ?? "Error al subir la imagen");
+    } catch (err) {
+      toast.error(errorMessage(err, "Error al subir la imagen"));
     } finally {
       setUploadingImage(false);
     }
@@ -84,7 +93,9 @@ export function ExerciseForm({ initial, onSaved }: ExerciseFormProps) {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
     const raw: any = Object.fromEntries(fd.entries());
-    Object.keys(raw).forEach((k) => { if (raw[k] === "__empty") raw[k] = ""; });
+    Object.keys(raw).forEach((k) => {
+      if (raw[k] === "__empty") raw[k] = "";
+    });
     const parsed = schema.safeParse(raw);
     if (!parsed.success) {
       return toast.error(parsed.error.issues[0]?.message ?? "Datos inválidos");
@@ -114,20 +125,25 @@ export function ExerciseForm({ initial, onSaved }: ExerciseFormProps) {
     setBusy(true);
     try {
       if (initial?.id) {
-        const { error } = await (supabase.from("exercises") as any).update(payload).eq("id", initial.id);
+        const { error } = await (supabase.from("exercises") as any)
+          .update(payload)
+          .eq("id", initial.id);
         if (error) throw error;
         toast.success("Ejercicio actualizado");
         qc.invalidateQueries({ queryKey: ["exercises"] });
         onSaved?.(initial.id);
       } else {
-        const { data, error } = await (supabase.from("exercises") as any).insert(payload).select("id").single();
+        const { data, error } = await (supabase.from("exercises") as any)
+          .insert(payload)
+          .select("id")
+          .single();
         if (error) throw error;
         toast.success("Ejercicio creado");
         qc.invalidateQueries({ queryKey: ["exercises"] });
         onSaved?.(data!.id);
       }
-    } catch (err: any) {
-      toast.error(err?.message ?? "No se pudo guardar");
+    } catch (err) {
+      toast.error(errorMessage(err, "No se pudo guardar"));
     } finally {
       setBusy(false);
     }
@@ -142,37 +158,97 @@ export function ExerciseForm({ initial, onSaved }: ExerciseFormProps) {
 
       <div className="space-y-1.5">
         <Label htmlFor="objective">Objetivo</Label>
-        <Textarea id="objective" name="objective" defaultValue={initial?.objective ?? ""} rows={2} maxLength={500} />
+        <Textarea
+          id="objective"
+          name="objective"
+          defaultValue={initial?.objective ?? ""}
+          rows={2}
+          maxLength={500}
+        />
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <Field label="Categoría" name="category" defaultValue={initial?.category ?? ""} options={[{ value: "", label: "—" }, ...TEAM_CATEGORIES]} />
-        <Field label="Fase del juego" name="game_phase" defaultValue={initial?.game_phase ?? "general"} options={GAME_PHASES} />
-        <Field label="Tipo de tarea" name="task_type" defaultValue={initial?.task_type ?? "global"} options={TASK_TYPES} />
-        <Field label="Intensidad" name="intensity" defaultValue={initial?.intensity ?? "media"} options={INTENSITIES} />
+        <Field
+          label="Categoría"
+          name="category"
+          defaultValue={initial?.category ?? ""}
+          options={[{ value: "", label: "—" }, ...TEAM_CATEGORIES]}
+        />
+        <Field
+          label="Fase del juego"
+          name="game_phase"
+          defaultValue={initial?.game_phase ?? "general"}
+          options={GAME_PHASES}
+        />
+        <Field
+          label="Tipo de tarea"
+          name="task_type"
+          defaultValue={initial?.task_type ?? "global"}
+          options={TASK_TYPES}
+        />
+        <Field
+          label="Intensidad"
+          name="intensity"
+          defaultValue={initial?.intensity ?? "media"}
+          options={INTENSITIES}
+        />
         <div className="space-y-1.5">
           <Label htmlFor="duration_min">Duración (min)</Label>
-          <Input id="duration_min" name="duration_min" type="number" min={1} max={240} defaultValue={initial?.duration_min ?? ""} />
+          <Input
+            id="duration_min"
+            name="duration_min"
+            type="number"
+            min={1}
+            max={240}
+            defaultValue={initial?.duration_min ?? ""}
+          />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="players_count">Nº jugadores</Label>
-          <Input id="players_count" name="players_count" type="number" min={0} max={99} defaultValue={initial?.players_count ?? ""} />
+          <Input
+            id="players_count"
+            name="players_count"
+            type="number"
+            min={0}
+            max={99}
+            defaultValue={initial?.players_count ?? ""}
+          />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="age_group">Edad / categoría</Label>
-          <Input id="age_group" name="age_group" defaultValue={initial?.age_group ?? ""} placeholder="Ej. Sub-15" />
+          <Input
+            id="age_group"
+            name="age_group"
+            defaultValue={initial?.age_group ?? ""}
+            placeholder="Ej. Sub-15"
+          />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="level">Nivel</Label>
-          <Input id="level" name="level" defaultValue={initial?.level ?? ""} placeholder="Iniciación / Avanzado" />
+          <Input
+            id="level"
+            name="level"
+            defaultValue={initial?.level ?? ""}
+            placeholder="Iniciación / Avanzado"
+          />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="space">Espacio</Label>
-          <Input id="space" name="space" defaultValue={initial?.space ?? ""} placeholder="40×30 m" />
+          <Input
+            id="space"
+            name="space"
+            defaultValue={initial?.space ?? ""}
+            placeholder="40×30 m"
+          />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="materials">Material</Label>
-          <Input id="materials" name="materials" defaultValue={initial?.materials ?? ""} placeholder="Conos, petos, balones…" />
+          <Input
+            id="materials"
+            name="materials"
+            defaultValue={initial?.materials ?? ""}
+            placeholder="Conos, petos, balones…"
+          />
         </div>
       </div>
 
@@ -183,17 +259,27 @@ export function ExerciseForm({ initial, onSaved }: ExerciseFormProps) {
 
       <div className="space-y-1.5">
         <Label htmlFor="observations">Observaciones</Label>
-        <Textarea id="observations" name="observations" defaultValue={initial?.observations ?? ""} rows={2} />
+        <Textarea
+          id="observations"
+          name="observations"
+          defaultValue={initial?.observations ?? ""}
+          rows={2}
+        />
       </div>
 
       <div className="space-y-1.5">
         <Label>Foto/Captura del ejercicio</Label>
         {imageUrl ? (
           <div className="relative inline-block">
-            <img src={imageUrl} alt="Ejercicio" className="h-32 w-32 rounded-lg border border-border object-cover" />
+            <img
+              src={imageUrl}
+              alt="Ejercicio"
+              className="h-32 w-32 rounded-lg border border-border object-cover"
+            />
             <button
               type="button"
               onClick={() => setImageUrl("")}
+              aria-label="Quitar la imagen del ejercicio"
               className="absolute -right-2 -top-2 rounded-full bg-destructive p-1 text-destructive-foreground hover:bg-destructive/90"
             >
               <X className="h-4 w-4" />
@@ -221,47 +307,80 @@ export function ExerciseForm({ initial, onSaved }: ExerciseFormProps) {
         <Label>Etiquetas</Label>
         <div className="flex flex-wrap gap-1.5">
           {tags.map((t) => (
-            <Badge key={t} variant="secondary" className="cursor-pointer" onClick={() => setTags(tags.filter((x) => x !== t))}>
+            <Badge
+              key={t}
+              variant="secondary"
+              className="cursor-pointer"
+              onClick={() => setTags(tags.filter((x) => x !== t))}
+            >
               #{t} ✕
             </Badge>
           ))}
         </div>
         <div className="flex gap-2">
           <Input
-            value={tagInput} onChange={(e) => setTagInput(e.target.value)}
-            onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addTag(tagInput); } }}
+            value={tagInput}
+            onChange={(e) => setTagInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                addTag(tagInput);
+              }
+            }}
             placeholder="Añadir etiqueta y pulsar Enter"
           />
         </div>
         <div className="flex flex-wrap gap-1.5 pt-1">
-          {COMMON_TAGS.filter((t) => !tags.includes(t)).slice(0, 8).map((t) => (
-            <button key={t} type="button" onClick={() => addTag(t)}
-              className="rounded-full border border-border bg-secondary px-2 py-0.5 text-xs text-muted-foreground hover:border-primary hover:text-primary">
-              + {t}
-            </button>
-          ))}
+          {COMMON_TAGS.filter((t) => !tags.includes(t))
+            .slice(0, 8)
+            .map((t) => (
+              <button
+                key={t}
+                type="button"
+                onClick={() => addTag(t)}
+                className="rounded-full border border-border bg-secondary px-2 py-0.5 text-xs text-muted-foreground hover:border-primary hover:text-primary"
+              >
+                + {t}
+              </button>
+            ))}
         </div>
       </div>
 
       <div className="flex justify-end gap-2 pt-2">
-        <Button type="submit" disabled={busy}>{initial?.id ? "Guardar cambios" : "Crear ejercicio"}</Button>
+        <Button type="submit" disabled={busy}>
+          {initial?.id ? "Guardar cambios" : "Crear ejercicio"}
+        </Button>
       </div>
     </form>
   );
 }
 
 function Field({
-  label, name, defaultValue, options,
-}: { label: string; name: string; defaultValue: string; options: readonly { value: string; label: string }[] }) {
+  label,
+  name,
+  defaultValue,
+  options,
+}: {
+  label: string;
+  name: string;
+  defaultValue: string;
+  options: readonly { value: string; label: string }[];
+}) {
   const [value, setValue] = useState(defaultValue);
   return (
     <div className="space-y-1.5">
       <Label>{label}</Label>
       <input type="hidden" name={name} value={value} />
       <Select value={value} onValueChange={setValue}>
-        <SelectTrigger><SelectValue /></SelectTrigger>
+        <SelectTrigger>
+          <SelectValue />
+        </SelectTrigger>
         <SelectContent>
-          {options.map((o) => <SelectItem key={o.value || "__empty"} value={o.value || "__empty"}>{o.label}</SelectItem>)}
+          {options.map((o) => (
+            <SelectItem key={o.value || "__empty"} value={o.value || "__empty"}>
+              {o.label}
+            </SelectItem>
+          ))}
         </SelectContent>
       </Select>
     </div>

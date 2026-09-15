@@ -20,7 +20,8 @@ export default defineMcp({
   name: "planeofut",
   title: "PlaneoFUT",
   version: "0.3.0",
-  instructions: "Manage the signed-in coach's private PlaneoFUT exercise library, training sessions and weekly football microcycles. Every write stores a version snapshot, so prefer update_*, delete_record (soft delete, recoverable with restore_deleted_record) and restore_version over recreating records. Ask before calling creation, update, duplication or restore tools.",
+  instructions:
+    "Manage the signed-in coach's private PlaneoFUT exercise library, training sessions and weekly football microcycles. Every write stores a version snapshot, so prefer update_*, delete_record (soft delete, recoverable with restore_deleted_record) and restore_version over recreating records. Ask before calling creation, update, duplication or restore tools.",
   auth: auth.oauth.issuer({
     issuer: `https://${projectRef}.supabase.co/auth/v1`,
     acceptedAudiences: "authenticated",
