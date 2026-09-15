@@ -152,7 +152,7 @@ function SeasonList() {
 
       {data && data.length > 0 ? (
         <div className="grid gap-3 md:grid-cols-2">
-          {data.map((m: any) => (
+          {data.map((m) => (
             <Card key={m.id} className="flex flex-col p-5">
               <div className="flex items-start justify-between">
                 <Link

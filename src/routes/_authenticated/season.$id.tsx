@@ -92,7 +92,7 @@ function SeasonDetail() {
         .or(`mesocycle_id.eq.${id},week_start.gte.${meso?.start_date ?? "1970-01-01"}`)
         .order("week_start", { ascending: true });
       return (data ?? []).filter(
-        (m: any) =>
+        (m) =>
           m.week_start >= (meso?.start_date ?? "1970-01-01") &&
           m.week_start <= (meso?.end_date ?? "2999-12-31"),
       );
@@ -102,7 +102,7 @@ function SeasonDetail() {
 
   const grouped = useMemo(() => {
     const g: Record<string, any[]> = {};
-    (micros ?? []).forEach((m: any) => {
+    (micros ?? []).forEach((m) => {
       const key = new Date(m.week_start).toLocaleDateString("es-ES", {
         month: "long",
         year: "numeric",
@@ -260,7 +260,7 @@ function SeasonDetail() {
 
         {events && events.length > 0 ? (
           <div className="space-y-2">
-            {events.map((e: any) => (
+            {events.map((e) => (
               <div
                 key={e.id}
                 className="flex items-center justify-between rounded-md border border-border bg-card p-3"
@@ -321,7 +321,7 @@ function SeasonDetail() {
               <div key={month}>
                 <p className="mb-2 text-xs font-medium uppercase text-muted-foreground">{month}</p>
                 <div className="grid gap-2 md:grid-cols-2">
-                  {list.map((m: any) => (
+                  {list.map((m) => (
                     <Link
                       key={m.id}
                       to="/microcycles/$id"

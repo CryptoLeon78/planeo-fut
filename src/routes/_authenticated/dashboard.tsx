@@ -84,7 +84,7 @@ function Dashboard() {
           </div>
           {recentSessions && recentSessions.length > 0 ? (
             <ul className="divide-y divide-border/60">
-              {recentSessions.map((s: any) => (
+              {recentSessions.map((s) => (
                 <li key={s.id} className="flex items-center justify-between py-3">
                   <div>
                     <p className="font-medium">{s.name}</p>

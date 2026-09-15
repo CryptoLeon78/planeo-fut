@@ -86,7 +86,7 @@ function MicrocyclesPage() {
         <p className="text-sm text-muted-foreground">Cargando…</p>
       ) : data && data.length > 0 ? (
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-          {data.map((m: any) => (
+          {data.map((m) => (
             <Card key={m.id} className="flex flex-col p-4">
               <div className="flex items-start justify-between">
                 <Link

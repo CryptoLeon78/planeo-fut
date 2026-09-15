@@ -140,12 +140,12 @@ function CalendarPage() {
       <div className="grid grid-cols-1 gap-3 md:grid-cols-7">
         {days.map((d) => {
           const key = ymd(d);
-          const daySessions = (sessions ?? []).filter((s: any) => s.session_date === key);
-          const dayEvents = (events ?? []).filter((e: any) => e.event_date === key);
-          const daySlots = (slots ?? []).filter((s: any) => s.slot_date === key);
+          const daySessions = (sessions ?? []).filter((s) => s.session_date === key);
+          const dayEvents = (events ?? []).filter((e) => e.event_date === key);
+          const daySlots = (slots ?? []).filter((s) => s.slot_date === key);
           const isToday = key === ymd(new Date());
           const hasMatch = dayEvents.some(
-            (e: any) => e.type === "partido_oficial" || e.type === "amistoso",
+            (e) => e.type === "partido_oficial" || e.type === "amistoso",
           );
           const totalDuration = daySessions.reduce(
             (sum: number, s: any) => sum + (s.duration_min || 0),
@@ -172,7 +172,7 @@ function CalendarPage() {
 
               <div className="min-h-[200px] space-y-2 p-3">
                 {/* Eventos (Partidos, etc) */}
-                {dayEvents.map((e: any) => (
+                {dayEvents.map((e) => (
                   <div
                     key={e.id}
                     className="rounded-md border-l-4 border-primary bg-primary/10 px-2 py-2"
@@ -190,7 +190,7 @@ function CalendarPage() {
                 ))}
 
                 {/* Sesiones */}
-                {daySessions.map((s: any) => (
+                {daySessions.map((s) => (
                   <Link
                     key={s.id}
                     to="/sessions/$id"
@@ -209,8 +209,8 @@ function CalendarPage() {
 
                 {/* Slots sin sesión */}
                 {daySlots
-                  .filter((s: any) => !s.session_id)
-                  .map((s: any) => (
+                  .filter((s) => !s.session_id)
+                  .map((s) => (
                     <Link
                       key={s.id}
                       to="/microcycles/$id"

@@ -205,7 +205,7 @@ function ExercisesPage() {
         </Card>
       ) : (
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.slice(0, visible).map((e: any) => (
+          {filtered.slice(0, visible).map((e) => (
             <Card key={e.id} className="group flex flex-col p-4 transition hover:border-primary/40">
               <div className="flex items-start justify-between gap-2">
                 <Link

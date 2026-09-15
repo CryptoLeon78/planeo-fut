@@ -141,7 +141,7 @@ function PreseasonDetail() {
         <h2 className="mb-3 text-lg font-semibold">Microciclos asociados</h2>
         {micros && micros.length > 0 ? (
           <div className="grid gap-2">
-            {micros.map((m: any) => (
+            {micros.map((m) => (
               <Link
                 key={m.id}
                 to="/microcycles/$id"

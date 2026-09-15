@@ -81,8 +81,8 @@ function SessionDetail() {
       </header>
 
       <div className="space-y-3">
-        {blocks.map((b: any) => {
-          const blockItems = items.filter((it: any) => it.block_id === b.id);
+        {blocks.map((b) => {
+          const blockItems = items.filter((it) => it.block_id === b.id);
           return (
             <Card key={b.id} className="p-5">
               <div className="mb-3 flex items-center justify-between">

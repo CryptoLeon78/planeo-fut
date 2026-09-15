@@ -133,7 +133,7 @@ function NewSessionPage() {
         .select("*")
         .eq("session_id", editId!)
         .order("position");
-      const blockIds = (blks ?? []).map((b: any) => b.id);
+      const blockIds = (blks ?? []).map((b) => b.id);
       const { data: items } = blockIds.length
         ? await supabase
             .from("session_block_exercises")
@@ -144,14 +144,14 @@ function NewSessionPage() {
 
       if (s && blks) {
         setBlocks(
-          blks.map((b: any) => ({
+          blks.map((b) => ({
             block_type: b.block_type,
             name: b.name || "",
             duration_min: b.duration_min || "",
             notes: b.notes || "",
             exercise_ids: (items ?? [])
-              .filter((it: any) => it.block_id === b.id)
-              .map((it: any) => it.exercise_id),
+              .filter((it) => it.block_id === b.id)
+              .map((it) => it.exercise_id),
           })),
         );
       }
@@ -248,7 +248,7 @@ function NewSessionPage() {
 
       const rows: any[] = [];
       blocks.forEach((b, i) => {
-        const bId = inserted.data!.find((x: any) => x.position === i)?.id;
+        const bId = inserted.data!.find((x) => x.position === i)?.id;
         if (!bId) return;
         b.exercise_ids.forEach((exId, pos) =>
           rows.push({ block_id: bId, exercise_id: exId, position: pos }),
@@ -399,7 +399,7 @@ function NewSessionPage() {
               {b.exercise_ids.length > 0 && (
                 <ul className="space-y-1">
                   {b.exercise_ids.map((exId) => {
-                    const ex = allExercises?.find((e: any) => e.id === exId);
+                    const ex = allExercises?.find((e) => e.id === exId);
                     return (
                       <li
                         key={exId}
@@ -429,8 +429,8 @@ function NewSessionPage() {
                 </SelectTrigger>
                 <SelectContent>
                   {(allExercises ?? [])
-                    .filter((e: any) => !b.exercise_ids.includes(e.id))
-                    .map((e: any) => (
+                    .filter((e) => !b.exercise_ids.includes(e.id))
+                    .map((e) => (
                       <SelectItem key={e.id} value={e.id}>
                         {e.name}
                       </SelectItem>

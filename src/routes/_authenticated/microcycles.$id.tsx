@@ -101,8 +101,8 @@ function MicroDetailPage() {
 
   async function assignSession(slotId: string, sessionId: string) {
     // detect conflicts: same session already assigned in another slot
-    const conflict = (slots ?? []).find((s: any) => s.session_id === sessionId && s.id !== slotId);
-    const targetSlot = (slots ?? []).find((s: any) => s.id === slotId);
+    const conflict = (slots ?? []).find((s) => s.session_id === sessionId && s.id !== slotId);
+    const targetSlot = (slots ?? []).find((s) => s.id === slotId);
     if (targetSlot?.slot_type === "MD")
       return toast.error("MD es día de partido, no se asignan sesiones");
     if (conflict)
@@ -117,7 +117,7 @@ function MicroDetailPage() {
   }
 
   function onDragStart(e: DragStartEvent) {
-    const s = (sessions ?? []).find((x: any) => x.id === e.active.id);
+    const s = (sessions ?? []).find((x) => x.id === e.active.id);
     setDraggingSession(s);
   }
 
@@ -165,7 +165,7 @@ function MicroDetailPage() {
     if (!aiResult || !slots) return;
     // Update slot notes & focus, leave session assignment to the user
     for (const sug of aiResult.slots) {
-      const slot = slots.find((s: any) => s.slot_type === sug.slot_type);
+      const slot = slots.find((s) => s.slot_type === sug.slot_type);
       if (!slot) continue;
       const noteLines = [
         `Foco: ${sug.focus}`,
@@ -273,7 +273,7 @@ function MicroDetailPage() {
           <div>
             <h2 className="mb-3 text-lg font-semibold">Planificación semanal</h2>
             <div className="grid gap-3 md:grid-cols-5">
-              {(slots ?? []).map((s: any) => (
+              {(slots ?? []).map((s) => (
                 <SlotCard
                   key={s.id}
                   slot={s}
@@ -301,7 +301,7 @@ function MicroDetailPage() {
                   </Link>
                 </p>
               )}
-              {(sessions ?? []).map((sess: any) => (
+              {(sessions ?? []).map((sess) => (
                 <DraggableSession key={sess.id} session={sess} />
               ))}
             </div>
@@ -422,7 +422,7 @@ function SlotCard({ slot, sessions, onAssign, onClear, onNotes }: any) {
   const meta = MICROCYCLE_SLOT_TYPES.find((x) => x.value === slot.slot_type);
   const isMatch = slot.slot_type === "MD";
   const { setNodeRef, isOver } = useDroppable({ id: slot.id, disabled: isMatch });
-  const assigned = sessions.find((s: any) => s.id === slot.session_id);
+  const assigned = sessions.find((s) => s.id === slot.session_id);
   return (
     <Card
       ref={setNodeRef}
@@ -465,7 +465,7 @@ function SlotCard({ slot, sessions, onAssign, onClear, onNotes }: any) {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="none">— sin sesión —</SelectItem>
-                {sessions.map((x: any) => (
+                {sessions.map((x) => (
                   <SelectItem key={x.id} value={x.id}>
                     {x.name}
                   </SelectItem>

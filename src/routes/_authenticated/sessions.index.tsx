@@ -83,7 +83,7 @@ function SessionsPage() {
         <p className="text-sm text-muted-foreground">Cargando…</p>
       ) : sessions && sessions.length > 0 ? (
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-          {sessions.map((s: any) => (
+          {sessions.map((s) => (
             <Card key={s.id} className="flex flex-col p-4">
               <div className="flex items-start justify-between">
                 <Link

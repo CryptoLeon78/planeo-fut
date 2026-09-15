@@ -266,7 +266,7 @@ function TeamPage() {
 
       {teams && teams.length > 0 ? (
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {teams.map((t: any) => (
+          {teams.map((t) => (
             <Card key={t.id} className="p-4">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
@@ -404,7 +404,7 @@ function TeamPage() {
 
                 {players && players.length > 0 ? (
                   <div className="grid gap-2 sm:grid-cols-2">
-                    {players.map((p: any) => (
+                    {players.map((p) => (
                       <Card key={p.id} className="p-3">
                         <div className="flex items-start gap-2">
                           {p.photo_url ? (
