@@ -151,7 +151,7 @@ function MicroDetailPage() {
       });
       setAiResult(res);
     } catch (e) {
-      const msg = String(e?.message ?? e);
+      const msg = errorMessage(e, String(e));
       if (msg.includes("429")) toast.error("Límite de IA alcanzado. Intenta en un momento.");
       else if (msg.includes("402"))
         toast.error("Créditos de IA agotados. Añade créditos en tu workspace.");
