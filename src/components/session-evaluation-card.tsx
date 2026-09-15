@@ -16,11 +16,11 @@ import {
 import { useAuth } from "@/hooks/use-auth";
 import { INTENSITIES, labelOf } from "@/lib/constants";
 import {
-import { errorMessage } from "@/lib/utils";
   emptyEvaluation as empty,
   sessionEvaluationsService,
   type SessionEvaluation as Evaluation,
 } from "@/services/session-evaluations.service";
+import { errorMessage } from "@/lib/utils";
 
 export function SessionEvaluationCard({ sessionId }: { sessionId: string }) {
   const { user } = useAuth();

@@ -19,13 +19,13 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import {
-import { errorMessage } from "@/lib/utils";
   COMMON_TAGS,
   GAME_PHASES,
   INTENSITIES,
   TASK_TYPES,
   TEAM_CATEGORIES,
 } from "@/lib/constants";
+import { errorMessage } from "@/lib/utils";
 
 const schema = z.object({
   name: z.string().trim().min(1, "Nombre obligatorio").max(120),
