@@ -259,7 +259,7 @@ function NewSessionPage() {
                     return (
                       <li key={exId} className="flex items-center justify-between rounded-md border border-border/60 bg-secondary/40 px-2 py-1.5 text-sm">
                         <span>{ex?.name ?? "Ejercicio"}</span>
-                        <button type="button" onClick={() => removeExerciseFromBlock(i, exId)} className="text-muted-foreground hover:text-destructive">
+                        <button type="button" aria-label="Quitar ejercicio del bloque" onClick={() => removeExerciseFromBlock(i, exId)} className="text-muted-foreground hover:text-destructive">
                           <Trash2 className="h-4 w-4" />
                         </button>
                       </li>

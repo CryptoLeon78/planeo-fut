@@ -194,6 +194,7 @@ export function ExerciseForm({ initial, onSaved }: ExerciseFormProps) {
             <button
               type="button"
               onClick={() => setImageUrl("")}
+              aria-label="Quitar la imagen del ejercicio"
               className="absolute -right-2 -top-2 rounded-full bg-destructive p-1 text-destructive-foreground hover:bg-destructive/90"
             >
               <X className="h-4 w-4" />

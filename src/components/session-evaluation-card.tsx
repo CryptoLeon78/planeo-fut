@@ -62,7 +62,7 @@ export function SessionEvaluationCard({ sessionId }: { sessionId: string }) {
           <Label className="text-xs">Valoración global</Label>
           <div className="flex gap-1">
             {[1, 2, 3, 4, 5].map((n) => (
-              <button key={n} type="button" onClick={() => save({ rating: n })}
+              <button key={n} type="button" aria-label={`Valorar con ${n} de 5`} onClick={() => save({ rating: n })}
                 className={`grid h-9 w-9 place-items-center rounded-md border ${(evaluation.rating ?? 0) >= n ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:border-primary/50"}`}>
                 <Star className="h-4 w-4" fill={(evaluation.rating ?? 0) >= n ? "currentColor" : "none"} />
               </button>
