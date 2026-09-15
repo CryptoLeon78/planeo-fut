@@ -19,6 +19,7 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import {
+import { errorMessage } from "@/lib/utils";
   COMMON_TAGS,
   GAME_PHASES,
   INTENSITIES,
@@ -81,8 +82,8 @@ export function ExerciseForm({ initial, onSaved }: ExerciseFormProps) {
 
       setImageUrl(data.publicUrl);
       toast.success("Imagen subida correctamente");
-    } catch (err: any) {
-      toast.error(err?.message ?? "Error al subir la imagen");
+    } catch (err) {
+      toast.error(errorMessage(err, "Error al subir la imagen"));
     } finally {
       setUploadingImage(false);
     }
@@ -141,8 +142,8 @@ export function ExerciseForm({ initial, onSaved }: ExerciseFormProps) {
         qc.invalidateQueries({ queryKey: ["exercises"] });
         onSaved?.(data!.id);
       }
-    } catch (err: any) {
-      toast.error(err?.message ?? "No se pudo guardar");
+    } catch (err) {
+      toast.error(errorMessage(err, "No se pudo guardar"));
     } finally {
       setBusy(false);
     }

@@ -27,6 +27,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { TEAM_CATEGORIES, labelOf } from "@/lib/constants";
+import { errorMessage } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/team")({
   head: () => ({
@@ -121,8 +122,8 @@ function TeamPage() {
       await (supabase.from("teams") as any).update({ shield_url: data.publicUrl }).eq("id", teamId);
       qc.invalidateQueries({ queryKey: ["teams"] });
       toast.success("Escudo actualizado");
-    } catch (err: any) {
-      toast.error(err?.message ?? "Error al subir el escudo");
+    } catch (err) {
+      toast.error(errorMessage(err, "Error al subir el escudo"));
     }
   }
 
@@ -163,8 +164,8 @@ function TeamPage() {
         .eq("id", playerId);
       qc.invalidateQueries({ queryKey: ["players", selectedTeam?.id] });
       toast.success("Foto del jugador actualizada");
-    } catch (err: any) {
-      toast.error(err?.message ?? "Error al subir la foto");
+    } catch (err) {
+      toast.error(errorMessage(err, "Error al subir la foto"));
     }
   }
 

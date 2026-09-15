@@ -28,6 +28,7 @@ import { GAME_PHASES, INTENSITIES, labelOf } from "@/lib/constants";
 import { exercisesService, filterExercises } from "@/services/exercises.service";
 import { queryKeys } from "@/services/query-keys";
 import { PAGE_SIZE_OPTIONS, usePreferences } from "@/stores/preferences";
+import { errorMessage } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/exercises/")({
   head: () => ({
@@ -76,8 +77,8 @@ function ExercisesPage() {
     try {
       await exercisesService.toggleFavorite(id, current);
       qc.invalidateQueries({ queryKey: ["exercises"] });
-    } catch (e: any) {
-      toast.error(e?.message ?? "Error");
+    } catch (e) {
+      toast.error(errorMessage(e, "Error"));
     }
   }
 

@@ -16,6 +16,7 @@ import {
 import { useAuth } from "@/hooks/use-auth";
 import { startOfWeek, ymd, MICROCYCLE_SLOT_TYPES } from "@/lib/constants";
 import { microcyclesService } from "@/services/microcycles.service";
+import { errorMessage } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/microcycles/new")({
   head: () => ({
@@ -61,8 +62,8 @@ function NewMicrocyclePage() {
       });
       toast.success("Microciclo creado");
       navigate({ to: "/microcycles/$id", params: { id: micro.id } });
-    } catch (e: any) {
-      toast.error(e?.message ?? "Error");
+    } catch (e) {
+      toast.error(errorMessage(e, "Error"));
     } finally {
       setBusy(false);
     }

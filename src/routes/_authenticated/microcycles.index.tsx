@@ -9,6 +9,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { formatDate } from "@/lib/constants";
 import { microcyclesService } from "@/services/microcycles.service";
 import { queryKeys } from "@/services/query-keys";
+import { errorMessage } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/microcycles/")({
   head: () => ({
@@ -49,8 +50,8 @@ function MicrocyclesPage() {
       await microcyclesService.remove(id);
       toast.success("Eliminado");
       refresh();
-    } catch (e: any) {
-      toast.error(e?.message ?? "Error");
+    } catch (e) {
+      toast.error(errorMessage(e, "Error"));
     }
   }
 
@@ -60,8 +61,8 @@ function MicrocyclesPage() {
       if (!created) return;
       toast.success("Microciclo duplicado (+7 días)");
       refresh();
-    } catch (e: any) {
-      toast.error(e?.message ?? "Error");
+    } catch (e) {
+      toast.error(errorMessage(e, "Error"));
     }
   }
 

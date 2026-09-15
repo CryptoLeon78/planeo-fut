@@ -12,6 +12,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { useAuth } from "@/hooks/use-auth";
+import { errorMessage } from "@/lib/utils";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
@@ -90,8 +91,8 @@ function AuthPage() {
         if (error) throw error;
         toast.success("Cuenta creada. Revisa tu email si te lo pide o entra directamente.");
       }
-    } catch (e: any) {
-      toast.error(e?.message ?? "Error de autenticación");
+    } catch (e) {
+      toast.error(errorMessage(e, "Error de autenticación"));
     } finally {
       setBusy(false);
     }
@@ -111,8 +112,8 @@ function AuthPage() {
       window.location.assign(
         target.startsWith("/") && !target.startsWith("//") ? target : "/dashboard",
       );
-    } catch (e: any) {
-      toast.error(e?.message ?? "No se pudo iniciar sesión con Google");
+    } catch (e) {
+      toast.error(errorMessage(e, "No se pudo iniciar sesión con Google"));
       setBusy(false);
     }
   }

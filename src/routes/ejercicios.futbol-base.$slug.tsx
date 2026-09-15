@@ -16,6 +16,7 @@ import {
 } from "@/lib/public-exercises";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import { errorMessage } from "@/lib/utils";
 
 const SITE_URL = "https://planeo-fut.lovable.app";
 
@@ -210,8 +211,8 @@ function ExerciseDetail() {
       if (error) throw error;
       setImported(true);
       toast.success(asFavorite ? "Guardado en favoritos" : "Importado a tu biblioteca");
-    } catch (e: any) {
-      toast.error(e.message ?? "No se pudo importar");
+    } catch (e) {
+      toast.error(errorMessage(e, "No se pudo importar"));
     } finally {
       setImporting(false);
     }

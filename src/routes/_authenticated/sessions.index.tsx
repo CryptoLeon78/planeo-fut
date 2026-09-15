@@ -10,6 +10,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { INTENSITIES, labelOf } from "@/lib/constants";
 import { sessionsService } from "@/services/sessions.service";
 import { queryKeys } from "@/services/query-keys";
+import { errorMessage } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/sessions/")({
   head: () => ({
@@ -46,8 +47,8 @@ function SessionsPage() {
       if (!created) return;
       toast.success("Sesión duplicada");
       qc.invalidateQueries({ queryKey: ["sessions"] });
-    } catch (e: any) {
-      toast.error(e?.message ?? "Error");
+    } catch (e) {
+      toast.error(errorMessage(e, "Error"));
     }
   }
 
@@ -57,8 +58,8 @@ function SessionsPage() {
       await sessionsService.remove(id);
       toast.success("Eliminada");
       qc.invalidateQueries({ queryKey: ["sessions"] });
-    } catch (e: any) {
-      toast.error(e?.message ?? "Error");
+    } catch (e) {
+      toast.error(errorMessage(e, "Error"));
     }
   }
 

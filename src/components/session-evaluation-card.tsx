@@ -16,6 +16,7 @@ import {
 import { useAuth } from "@/hooks/use-auth";
 import { INTENSITIES, labelOf } from "@/lib/constants";
 import {
+import { errorMessage } from "@/lib/utils";
   emptyEvaluation as empty,
   sessionEvaluationsService,
   type SessionEvaluation as Evaluation,
@@ -46,8 +47,8 @@ export function SessionEvaluationCard({ sessionId }: { sessionId: string }) {
     setSaving(true);
     try {
       await sessionEvaluationsService.save(sessionId, user.id, next);
-    } catch (e: any) {
-      toast.error(e?.message ?? "Error");
+    } catch (e) {
+      toast.error(errorMessage(e, "Error"));
     } finally {
       setSaving(false);
     }

@@ -19,6 +19,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { formatDate } from "@/lib/constants";
 import { planningService, validateMesocycleInput } from "@/services/planning.service";
 import { queryKeys } from "@/services/query-keys";
+import { errorMessage } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/season/")({
   head: () => ({
@@ -73,8 +74,8 @@ function SeasonList() {
       toast.success("Temporada creada");
       setOpen(false);
       qc.invalidateQueries({ queryKey: ["mesocycles", "temporada"] });
-    } catch (e: any) {
-      toast.error(e?.message ?? "Error");
+    } catch (e) {
+      toast.error(errorMessage(e, "Error"));
     }
   }
 
@@ -83,8 +84,8 @@ function SeasonList() {
     try {
       await planningService.remove(id);
       qc.invalidateQueries({ queryKey: ["mesocycles", "temporada"] });
-    } catch (e: any) {
-      toast.error(e?.message ?? "Error");
+    } catch (e) {
+      toast.error(errorMessage(e, "Error"));
     }
   }
 

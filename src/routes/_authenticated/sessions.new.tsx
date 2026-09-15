@@ -21,6 +21,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { BLOCK_TYPES, INTENSITIES, labelOf } from "@/lib/constants";
+import { errorMessage } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/sessions/new")({
   head: () => ({
@@ -259,8 +260,8 @@ function NewSessionPage() {
       }
       toast.success(editId ? "Sesión actualizada" : "Sesión creada");
       navigate({ to: "/sessions/$id", params: { id: sessionId! } });
-    } catch (err: any) {
-      toast.error(err?.message ?? "No se pudo guardar");
+    } catch (err) {
+      toast.error(errorMessage(err, "No se pudo guardar"));
     } finally {
       setBusy(false);
     }

@@ -34,6 +34,7 @@ import { sessionsRepository } from "@/api/sessions.repository";
 import { microcyclesService } from "@/services/microcycles.service";
 import { formatDate, MICROCYCLE_SLOT_TYPES } from "@/lib/constants";
 import { suggestMicrocycle, type MicrocycleSuggestion } from "@/lib/microcycle-ai.functions";
+import { errorMessage } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/microcycles/$id")({
   head: () => ({
@@ -84,8 +85,8 @@ function MicroDetailPage() {
     try {
       await microcyclesRepository.update(id, payload);
       qc.invalidateQueries({ queryKey: ["microcycle", id] });
-    } catch (e: any) {
-      toast.error(e?.message ?? "Error");
+    } catch (e) {
+      toast.error(errorMessage(e, "Error"));
     }
   }
 
@@ -93,8 +94,8 @@ function MicroDetailPage() {
     try {
       await microcyclesRepository.updateSlot(slotId, payload);
       qc.invalidateQueries({ queryKey: ["microcycle-slots", id] });
-    } catch (e: any) {
-      toast.error(e?.message ?? "Error");
+    } catch (e) {
+      toast.error(errorMessage(e, "Error"));
     }
   }
 
@@ -110,8 +111,8 @@ function MicroDetailPage() {
       await microcyclesService.assignSession(id, slotId, sessionId);
       qc.invalidateQueries({ queryKey: ["microcycle-slots", id] });
       toast.success("Sesión asignada");
-    } catch (e: any) {
-      toast.error(e?.message ?? "Error");
+    } catch (e) {
+      toast.error(errorMessage(e, "Error"));
     }
   }
 
@@ -149,7 +150,7 @@ function MicroDetailPage() {
         },
       });
       setAiResult(res);
-    } catch (e: any) {
+    } catch (e) {
       const msg = String(e?.message ?? e);
       if (msg.includes("429")) toast.error("Límite de IA alcanzado. Intenta en un momento.");
       else if (msg.includes("402"))
