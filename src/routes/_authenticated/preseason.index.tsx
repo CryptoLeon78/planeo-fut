@@ -15,6 +15,15 @@ import { planningService, validateMesocycleInput } from "@/services/planning.ser
 import { queryKeys } from "@/services/query-keys";
 
 export const Route = createFileRoute("/_authenticated/preseason/")({
+  head: () => ({
+    meta: [
+      { title: "Pretemporada · PlaneoFUT" },
+      { name: "description", content: "Diseña bloques de pretemporada por fases y asocia microciclos." },
+      { property: "og:title", content: "Pretemporada · PlaneoFUT" },
+      { property: "og:description", content: "Diseña bloques de pretemporada por fases y asocia microciclos." },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   component: PreseasonPage,
 });
 

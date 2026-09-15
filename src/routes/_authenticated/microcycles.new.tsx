@@ -12,6 +12,15 @@ import { startOfWeek, ymd, MICROCYCLE_SLOT_TYPES } from "@/lib/constants";
 import { microcyclesService } from "@/services/microcycles.service";
 
 export const Route = createFileRoute("/_authenticated/microcycles/new")({
+  head: () => ({
+    meta: [
+      { title: "Nuevo microciclo · PlaneoFUT" },
+      { name: "description", content: "Crea un microciclo semanal con objetivos y día de partido." },
+      { property: "og:title", content: "Nuevo microciclo · PlaneoFUT" },
+      { property: "og:description", content: "Crea un microciclo semanal con objetivos y día de partido." },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   component: NewMicrocyclePage,
 });
 

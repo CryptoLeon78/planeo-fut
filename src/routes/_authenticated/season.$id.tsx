@@ -16,6 +16,15 @@ import { useAuth } from "@/hooks/use-auth";
 import { formatDate, SEASON_EVENT_TYPES, labelOf } from "@/lib/constants";
 
 export const Route = createFileRoute("/_authenticated/season/$id")({
+  head: () => ({
+    meta: [
+      { title: "Detalle de temporada · PlaneoFUT" },
+      { name: "description", content: "Gestiona partidos, eventos y objetivos de tu temporada competitiva." },
+      { property: "og:title", content: "Detalle de temporada · PlaneoFUT" },
+      { property: "og:description", content: "Gestiona partidos, eventos y objetivos de tu temporada competitiva." },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   component: SeasonDetail,
 });
 

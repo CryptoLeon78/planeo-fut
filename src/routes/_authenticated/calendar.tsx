@@ -10,6 +10,15 @@ import { useAuth } from "@/hooks/use-auth";
 import { addDays, formatDate, labelOf, SEASON_EVENT_TYPES, startOfWeek, ymd } from "@/lib/constants";
 
 export const Route = createFileRoute("/_authenticated/calendar")({
+  head: () => ({
+    meta: [
+      { title: "Calendario semanal · PlaneoFUT" },
+      { name: "description", content: "Vista semanal de entrenamientos, partidos y eventos de temporada." },
+      { property: "og:title", content: "Calendario semanal · PlaneoFUT" },
+      { property: "og:description", content: "Vista semanal de entrenamientos, partidos y eventos de temporada." },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   component: CalendarPage,
 });
 

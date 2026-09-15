@@ -8,6 +8,15 @@ import { dashboardService } from "@/services/dashboard.service";
 import { queryKeys } from "@/services/query-keys";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
+  head: () => ({
+    meta: [
+      { title: "Panel de control · PlaneoFUT" },
+      { name: "description", content: "Resumen de ejercicios, sesiones y microciclos de tu planificación." },
+      { property: "og:title", content: "Panel de control · PlaneoFUT" },
+      { property: "og:description", content: "Resumen de ejercicios, sesiones y microciclos de tu planificación." },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   component: Dashboard,
 });
 

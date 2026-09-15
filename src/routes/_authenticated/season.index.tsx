@@ -15,6 +15,15 @@ import { planningService, validateMesocycleInput } from "@/services/planning.ser
 import { queryKeys } from "@/services/query-keys";
 
 export const Route = createFileRoute("/_authenticated/season/")({
+  head: () => ({
+    meta: [
+      { title: "Temporada competitiva · PlaneoFUT" },
+      { name: "description", content: "Planifica la temporada con partidos, objetivos y microciclos." },
+      { property: "og:title", content: "Temporada competitiva · PlaneoFUT" },
+      { property: "og:description", content: "Planifica la temporada con partidos, objetivos y microciclos." },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   component: SeasonList,
 });
 

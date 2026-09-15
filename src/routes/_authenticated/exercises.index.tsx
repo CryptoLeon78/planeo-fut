@@ -18,6 +18,15 @@ import { queryKeys } from "@/services/query-keys";
 import { PAGE_SIZE_OPTIONS, usePreferences } from "@/stores/preferences";
 
 export const Route = createFileRoute("/_authenticated/exercises/")({
+  head: () => ({
+    meta: [
+      { title: "Biblioteca de ejercicios · PlaneoFUT" },
+      { name: "description", content: "Crea, filtra y organiza tus ejercicios de entrenamiento por fase e intensidad." },
+      { property: "og:title", content: "Biblioteca de ejercicios · PlaneoFUT" },
+      { property: "og:description", content: "Crea, filtra y organiza tus ejercicios de entrenamiento por fase e intensidad." },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   component: ExercisesPage,
 });
 

@@ -23,6 +23,15 @@ import { formatDate, MICROCYCLE_SLOT_TYPES } from "@/lib/constants";
 import { suggestMicrocycle, type MicrocycleSuggestion } from "@/lib/microcycle-ai.functions";
 
 export const Route = createFileRoute("/_authenticated/microcycles/$id")({
+  head: () => ({
+    meta: [
+      { title: "Detalle del microciclo · PlaneoFUT" },
+      { name: "description", content: "Organiza las sesiones de la semana y detecta conflictos de carga." },
+      { property: "og:title", content: "Detalle del microciclo · PlaneoFUT" },
+      { property: "og:description", content: "Organiza las sesiones de la semana y detecta conflictos de carga." },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   component: MicroDetailPage,
 });
 

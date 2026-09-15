@@ -7,6 +7,15 @@ import { ExerciseForm } from "@/components/exercise-form";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/exercises/$id")({
+  head: () => ({
+    meta: [
+      { title: "Detalle del ejercicio · PlaneoFUT" },
+      { name: "description", content: "Consulta y edita los detalles de un ejercicio de tu biblioteca." },
+      { property: "og:title", content: "Detalle del ejercicio · PlaneoFUT" },
+      { property: "og:description", content: "Consulta y edita los detalles de un ejercicio de tu biblioteca." },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   component: ExerciseDetail,
 });
 

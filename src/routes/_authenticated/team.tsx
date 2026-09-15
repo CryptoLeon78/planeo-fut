@@ -17,6 +17,15 @@ import { useAuth } from "@/hooks/use-auth";
 import { TEAM_CATEGORIES, labelOf } from "@/lib/constants";
 
 export const Route = createFileRoute("/_authenticated/team")({
+  head: () => ({
+    meta: [
+      { title: "Equipo y jugadores · PlaneoFUT" },
+      { name: "description", content: "Gestiona tus equipos, categorías y plantillas de jugadores en PlaneoFUT." },
+      { property: "og:title", content: "Equipo y jugadores · PlaneoFUT" },
+      { property: "og:description", content: "Gestiona tus equipos, categorías y plantillas de jugadores en PlaneoFUT." },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   component: TeamPage,
 });
 

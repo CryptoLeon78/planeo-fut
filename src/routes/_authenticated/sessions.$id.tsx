@@ -11,6 +11,15 @@ import { BLOCK_TYPES, INTENSITIES, labelOf } from "@/lib/constants";
 import { SessionEvaluationCard } from "@/components/session-evaluation-card";
 
 export const Route = createFileRoute("/_authenticated/sessions/$id")({
+  head: () => ({
+    meta: [
+      { title: "Detalle de la sesión · PlaneoFUT" },
+      { name: "description", content: "Consulta bloques, ejercicios y evaluación de una sesión de entrenamiento." },
+      { property: "og:title", content: "Detalle de la sesión · PlaneoFUT" },
+      { property: "og:description", content: "Consulta bloques, ejercicios y evaluación de una sesión de entrenamiento." },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   component: SessionDetail,
 });
 

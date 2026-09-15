@@ -11,6 +11,15 @@ import { microcyclesService } from "@/services/microcycles.service";
 import { queryKeys } from "@/services/query-keys";
 
 export const Route = createFileRoute("/_authenticated/microcycles/")({
+  head: () => ({
+    meta: [
+      { title: "Microciclos semanales · PlaneoFUT" },
+      { name: "description", content: "Planifica semanas con tres entrenamientos y partido de fin de semana." },
+      { property: "og:title", content: "Microciclos semanales · PlaneoFUT" },
+      { property: "og:description", content: "Planifica semanas con tres entrenamientos y partido de fin de semana." },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   component: MicrocyclesPage,
 });
 

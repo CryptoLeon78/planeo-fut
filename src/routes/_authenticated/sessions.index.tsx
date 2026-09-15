@@ -12,6 +12,15 @@ import { sessionsService } from "@/services/sessions.service";
 import { queryKeys } from "@/services/query-keys";
 
 export const Route = createFileRoute("/_authenticated/sessions/")({
+  head: () => ({
+    meta: [
+      { title: "Sesiones de entrenamiento · PlaneoFUT" },
+      { name: "description", content: "Agrupa ejercicios en bloques y gestiona tus sesiones completas." },
+      { property: "og:title", content: "Sesiones de entrenamiento · PlaneoFUT" },
+      { property: "og:description", content: "Agrupa ejercicios en bloques y gestiona tus sesiones completas." },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   component: SessionsPage,
 });
 

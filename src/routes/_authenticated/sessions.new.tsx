@@ -17,6 +17,15 @@ import { useAuth } from "@/hooks/use-auth";
 import { BLOCK_TYPES, INTENSITIES, labelOf } from "@/lib/constants";
 
 export const Route = createFileRoute("/_authenticated/sessions/new")({
+  head: () => ({
+    meta: [
+      { title: "Nueva sesión · PlaneoFUT" },
+      { name: "description", content: "Diseña una sesión de entrenamiento con bloques y ejercicios." },
+      { property: "og:title", content: "Nueva sesión · PlaneoFUT" },
+      { property: "og:description", content: "Diseña una sesión de entrenamiento con bloques y ejercicios." },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   component: NewSessionPage,
   validateSearch: (search: Record<string, unknown>): { edit?: string; fromExercise?: string } => ({
     edit: (search.edit as string) || undefined,

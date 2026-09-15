@@ -11,6 +11,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { formatDate } from "@/lib/constants";
 
 export const Route = createFileRoute("/_authenticated/preseason/$id")({
+  head: () => ({
+    meta: [
+      { title: "Detalle de pretemporada · PlaneoFUT" },
+      { name: "description", content: "Gestiona las fases y los microciclos de tu bloque de pretemporada." },
+      { property: "og:title", content: "Detalle de pretemporada · PlaneoFUT" },
+      { property: "og:description", content: "Gestiona las fases y los microciclos de tu bloque de pretemporada." },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   component: PreseasonDetail,
 });
 
