@@ -12,7 +12,10 @@ test("la CSP permite cargar dashboard, navegar y llamar a la API", async ({ page
   );
   await page.goto("/dashboard");
   await expect(page.getByRole("heading", { name: /Hola,/ })).toBeVisible();
-  await page.getByRole("link", { name: /Calendario/i }).first().click();
+  await page
+    .getByRole("link", { name: /Calendario/i })
+    .first()
+    .click();
   await expect(page).toHaveURL(/\/calendar/);
 
   const response = await request.get("/api/public/health");

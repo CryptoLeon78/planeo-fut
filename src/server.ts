@@ -40,7 +40,6 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
 
 // Security headers live in a single module so SSR, REST and RPC never diverge.
 
-
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
@@ -60,4 +59,3 @@ export default {
     }
   },
 };
-

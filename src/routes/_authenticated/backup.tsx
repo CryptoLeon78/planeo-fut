@@ -25,9 +25,15 @@ export const Route = createFileRoute("/_authenticated/backup")({
   head: () => ({
     meta: [
       { title: "Copias de seguridad | PlaneoFUT" },
-      { name: "description", content: "Exporta e importa tus ejercicios, sesiones y microciclos en JSON o CSV." },
+      {
+        name: "description",
+        content: "Exporta e importa tus ejercicios, sesiones y microciclos en JSON o CSV.",
+      },
       { property: "og:title", content: "Copias de seguridad | PlaneoFUT" },
-      { property: "og:description", content: "Exporta e importa tu planificación de entrenamiento en JSON o CSV." },
+      {
+        property: "og:description",
+        content: "Exporta e importa tu planificación de entrenamiento en JSON o CSV.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -82,7 +88,8 @@ function BackupPage() {
       toast.success(`Exportados ${recordCount} registros`);
       qc.invalidateQueries({ queryKey: ["data-exports"] });
     },
-    onError: (error: unknown) => toast.error(error instanceof Error ? error.message : "Error al exportar"),
+    onError: (error: unknown) =>
+      toast.error(error instanceof Error ? error.message : "Error al exportar"),
   });
 
   const importMutation = useMutation({
@@ -94,7 +101,8 @@ function BackupPage() {
       toast.success(`Importados ${total} registros`);
       qc.invalidateQueries();
     },
-    onError: (error: unknown) => toast.error(error instanceof Error ? error.message : "Error al importar"),
+    onError: (error: unknown) =>
+      toast.error(error instanceof Error ? error.message : "Error al importar"),
   });
 
   const busy = exportMutation.isPending || importMutation.isPending;
@@ -120,7 +128,9 @@ function BackupPage() {
                 id={`entity-${entity}`}
                 checked={selected.includes(entity)}
                 onCheckedChange={(checked) =>
-                  setSelected((prev) => (checked ? [...new Set([...prev, entity])] : prev.filter((e) => e !== entity)))
+                  setSelected((prev) =>
+                    checked ? [...new Set([...prev, entity])] : prev.filter((e) => e !== entity),
+                  )
                 }
               />
               <Label htmlFor={`entity-${entity}`} className="text-sm font-normal">
@@ -130,7 +140,10 @@ function BackupPage() {
           ))}
         </fieldset>
         <div className="flex flex-wrap gap-2">
-          <Button disabled={busy || selected.length === 0} onClick={() => exportMutation.mutate("json")}>
+          <Button
+            disabled={busy || selected.length === 0}
+            onClick={() => exportMutation.mutate("json")}
+          >
             <Download className="mr-1 h-4 w-4" aria-hidden="true" /> Exportar JSON
           </Button>
           <Button
@@ -148,8 +161,8 @@ function BackupPage() {
           <Upload className="h-4 w-4 text-primary" aria-hidden="true" /> Importar copia
         </h2>
         <p className="text-sm text-muted-foreground">
-          Selecciona un archivo JSON generado por PlaneoFUT. Los registros se añaden a tu cuenta como nuevos (no
-          sobrescriben los existentes).
+          Selecciona un archivo JSON generado por PlaneoFUT. Los registros se añaden a tu cuenta
+          como nuevos (no sobrescriben los existentes).
         </p>
         <input
           ref={fileRef}
@@ -181,24 +194,40 @@ function BackupPage() {
               <caption className="sr-only">Últimas exportaciones e importaciones</caption>
               <thead>
                 <tr className="border-b text-left text-xs uppercase text-muted-foreground">
-                  <th scope="col" className="py-2 pr-3">Fecha</th>
-                  <th scope="col" className="py-2 pr-3">Operación</th>
-                  <th scope="col" className="py-2 pr-3">Formato</th>
-                  <th scope="col" className="py-2 pr-3">Registros</th>
-                  <th scope="col" className="py-2 pr-3">Tamaño</th>
-                  <th scope="col" className="py-2">Estado</th>
+                  <th scope="col" className="py-2 pr-3">
+                    Fecha
+                  </th>
+                  <th scope="col" className="py-2 pr-3">
+                    Operación
+                  </th>
+                  <th scope="col" className="py-2 pr-3">
+                    Formato
+                  </th>
+                  <th scope="col" className="py-2 pr-3">
+                    Registros
+                  </th>
+                  <th scope="col" className="py-2 pr-3">
+                    Tamaño
+                  </th>
+                  <th scope="col" className="py-2">
+                    Estado
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {history.data.map((row) => (
                   <tr key={String(row.id)} className="border-b last:border-0">
-                    <td className="py-2 pr-3">{new Date(String(row.created_at)).toLocaleString("es-ES")}</td>
+                    <td className="py-2 pr-3">
+                      {new Date(String(row.created_at)).toLocaleString("es-ES")}
+                    </td>
                     <td className="py-2 pr-3 capitalize">{String(row.operation)}</td>
                     <td className="py-2 pr-3 uppercase">{String(row.format)}</td>
                     <td className="py-2 pr-3">{Number(row.record_count ?? 0)}</td>
                     <td className="py-2 pr-3">{formatBytes(Number(row.byte_size ?? 0))}</td>
                     <td className="py-2">
-                      <Badge variant={row.status === "success" ? "outline" : "destructive"}>{String(row.status)}</Badge>
+                      <Badge variant={row.status === "success" ? "outline" : "destructive"}>
+                        {String(row.status)}
+                      </Badge>
                     </td>
                   </tr>
                 ))}
@@ -206,7 +235,9 @@ function BackupPage() {
             </table>
           </div>
         ) : (
-          <p className="text-sm text-muted-foreground">Todavía no has exportado ni importado datos.</p>
+          <p className="text-sm text-muted-foreground">
+            Todavía no has exportado ni importado datos.
+          </p>
         )}
       </Card>
     </div>

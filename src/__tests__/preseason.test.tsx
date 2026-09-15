@@ -5,7 +5,19 @@ import { createSupabaseMock } from "@/test/setup";
 
 vi.mock("@/integrations/supabase/client", () => ({
   supabase: createSupabaseMock({
-    mesocycles: { data: [{ id: "p1", name: "Pre 2026", start_date: "2026-07-01", end_date: "2026-08-15", goals: "g", phases: [{ key: "acondicionamiento", label: "Acond", weeks: 2, focus: "" }] }], error: null },
+    mesocycles: {
+      data: [
+        {
+          id: "p1",
+          name: "Pre 2026",
+          start_date: "2026-07-01",
+          end_date: "2026-08-15",
+          goals: "g",
+          phases: [{ key: "acondicionamiento", label: "Acond", weeks: 2, focus: "" }],
+        },
+      ],
+      error: null,
+    },
   }),
 }));
 

@@ -15,7 +15,9 @@ export const microcyclesRepository = {
   },
 
   async count(): Promise<number> {
-    const res = await table("microcycles").select("id", { count: "exact", head: true }).is("deleted_at", null);
+    const res = await table("microcycles")
+      .select("id", { count: "exact", head: true })
+      .is("deleted_at", null);
     return res.count ?? 0;
   },
 
@@ -37,7 +39,10 @@ export const microcyclesRepository = {
 
   async listSlots(microcycleId: string): Promise<MicrocycleRow[]> {
     const data = await unwrap(
-      await table("microcycle_slots").select("*").eq("microcycle_id", microcycleId).order("slot_date"),
+      await table("microcycle_slots")
+        .select("*")
+        .eq("microcycle_id", microcycleId)
+        .order("slot_date"),
     );
     return data ?? [];
   },

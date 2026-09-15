@@ -11,9 +11,15 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
     meta: [
       { title: "Panel de control · PlaneoFUT" },
-      { name: "description", content: "Resumen de ejercicios, sesiones y microciclos de tu planificación." },
+      {
+        name: "description",
+        content: "Resumen de ejercicios, sesiones y microciclos de tu planificación.",
+      },
       { property: "og:title", content: "Panel de control · PlaneoFUT" },
-      { property: "og:description", content: "Resumen de ejercicios, sesiones y microciclos de tu planificación." },
+      {
+        property: "og:description",
+        content: "Resumen de ejercicios, sesiones y microciclos de tu planificación.",
+      },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -38,22 +44,43 @@ function Dashboard() {
   return (
     <div className="mx-auto max-w-6xl space-y-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Hola, {user?.user_metadata?.full_name ?? "entrenador"} 👋</h1>
-        <p className="mt-1 text-muted-foreground">Tu panel de control para diseñar entrenamientos profesionales.</p>
+        <h1 className="text-3xl font-bold tracking-tight">
+          Hola, {user?.user_metadata?.full_name ?? "entrenador"} 👋
+        </h1>
+        <p className="mt-1 text-muted-foreground">
+          Tu panel de control para diseñar entrenamientos profesionales.
+        </p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard icon={Dumbbell} label="Ejercicios" value={stats?.exercises ?? 0} href="/exercises" />
-        <StatCard icon={ClipboardList} label="Sesiones" value={stats?.sessions ?? 0} href="/sessions" />
+        <StatCard
+          icon={Dumbbell}
+          label="Ejercicios"
+          value={stats?.exercises ?? 0}
+          href="/exercises"
+        />
+        <StatCard
+          icon={ClipboardList}
+          label="Sesiones"
+          value={stats?.sessions ?? 0}
+          href="/sessions"
+        />
         <StatCard icon={Users} label="Equipos" value={stats?.teams ?? 0} href="/team" />
-        <StatCard icon={Trophy} label="Microciclos" value={stats?.microcycles ?? 0} href="/microcycles" />
+        <StatCard
+          icon={Trophy}
+          label="Microciclos"
+          value={stats?.microcycles ?? 0}
+          href="/microcycles"
+        />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
         <Card className="p-5 lg:col-span-2">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="font-semibold">Sesiones recientes</h2>
-            <Button asChild size="sm" variant="ghost"><Link to="/sessions">Ver todas</Link></Button>
+            <Button asChild size="sm" variant="ghost">
+              <Link to="/sessions">Ver todas</Link>
+            </Button>
           </div>
           {recentSessions && recentSessions.length > 0 ? (
             <ul className="divide-y divide-border/60">
@@ -63,7 +90,11 @@ function Dashboard() {
                     <p className="font-medium">{s.name}</p>
                     <p className="text-xs text-muted-foreground">{s.objective ?? "Sin objetivo"}</p>
                   </div>
-                  <Button asChild size="sm" variant="ghost"><Link to="/sessions/$id" params={{ id: s.id }}>Abrir</Link></Button>
+                  <Button asChild size="sm" variant="ghost">
+                    <Link to="/sessions/$id" params={{ id: s.id }}>
+                      Abrir
+                    </Link>
+                  </Button>
                 </li>
               ))}
             </ul>
@@ -72,7 +103,13 @@ function Dashboard() {
               icon={ClipboardList}
               title="Aún no hay sesiones"
               desc="Crea tu primera sesión combinando ejercicios en bloques."
-              action={<Button asChild><Link to="/sessions/new"><Plus className="mr-1 h-4 w-4" /> Nueva sesión</Link></Button>}
+              action={
+                <Button asChild>
+                  <Link to="/sessions/new">
+                    <Plus className="mr-1 h-4 w-4" /> Nueva sesión
+                  </Link>
+                </Button>
+              }
             />
           )}
         </Card>
@@ -80,10 +117,26 @@ function Dashboard() {
         <Card className="p-5">
           <h2 className="mb-4 font-semibold">Accesos rápidos</h2>
           <div className="grid gap-2">
-            <Button asChild variant="outline" className="justify-start"><Link to="/exercises"><Dumbbell className="mr-2 h-4 w-4" /> Nuevo ejercicio</Link></Button>
-            <Button asChild variant="outline" className="justify-start"><Link to="/sessions/new"><ClipboardList className="mr-2 h-4 w-4" /> Nueva sesión</Link></Button>
-            <Button asChild variant="outline" className="justify-start"><Link to="/calendar"><Calendar className="mr-2 h-4 w-4" /> Ver calendario</Link></Button>
-            <Button asChild variant="outline" className="justify-start"><Link to="/team"><Users className="mr-2 h-4 w-4" /> Configurar equipo</Link></Button>
+            <Button asChild variant="outline" className="justify-start">
+              <Link to="/exercises">
+                <Dumbbell className="mr-2 h-4 w-4" /> Nuevo ejercicio
+              </Link>
+            </Button>
+            <Button asChild variant="outline" className="justify-start">
+              <Link to="/sessions/new">
+                <ClipboardList className="mr-2 h-4 w-4" /> Nueva sesión
+              </Link>
+            </Button>
+            <Button asChild variant="outline" className="justify-start">
+              <Link to="/calendar">
+                <Calendar className="mr-2 h-4 w-4" /> Ver calendario
+              </Link>
+            </Button>
+            <Button asChild variant="outline" className="justify-start">
+              <Link to="/team">
+                <Users className="mr-2 h-4 w-4" /> Configurar equipo
+              </Link>
+            </Button>
           </div>
         </Card>
       </div>
@@ -91,7 +144,17 @@ function Dashboard() {
   );
 }
 
-function StatCard({ icon: Icon, label, value, href }: { icon: any; label: string; value: number; href: string }) {
+function StatCard({
+  icon: Icon,
+  label,
+  value,
+  href,
+}: {
+  icon: any;
+  label: string;
+  value: number;
+  href: string;
+}) {
   return (
     <Link to={href} className="block">
       <Card className="p-5 transition hover:border-primary/40 hover:shadow-glow">
@@ -109,7 +172,17 @@ function StatCard({ icon: Icon, label, value, href }: { icon: any; label: string
   );
 }
 
-function EmptyState({ icon: Icon, title, desc, action }: { icon: any; title: string; desc: string; action?: React.ReactNode }) {
+function EmptyState({
+  icon: Icon,
+  title,
+  desc,
+  action,
+}: {
+  icon: any;
+  title: string;
+  desc: string;
+  action?: React.ReactNode;
+}) {
   return (
     <div className="grid place-items-center py-10 text-center">
       <div className="mb-3 grid h-12 w-12 place-items-center rounded-full bg-accent text-primary">

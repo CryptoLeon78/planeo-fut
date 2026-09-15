@@ -8,9 +8,15 @@ type ToolLike = {
   description?: string;
   inputSchema?: Record<string, unknown>;
   annotations?: Record<string, unknown>;
-  handler: (input: unknown, ctx: unknown) => Promise<{
+  handler: (
+    input: unknown,
+    ctx: unknown,
+  ) => Promise<{
     isError?: boolean;
-    structuredContent?: { ok?: boolean; error?: { code?: string; message?: string; details?: { issues?: unknown[] } } };
+    structuredContent?: {
+      ok?: boolean;
+      error?: { code?: string; message?: string; details?: { issues?: unknown[] } };
+    };
     content: Array<{ type: string; text: string }>;
   }>;
 };
@@ -81,7 +87,10 @@ describe("MCP tool contract", () => {
       expect(tool.annotations, `${tool.name} annotations`).toBeDefined();
       for (const [field, schema] of Object.entries(tool.inputSchema ?? {})) {
         expect(schema, `${tool.name}.${field} schema`).toBeInstanceOf(z.ZodType);
-        expect((schema as z.ZodTypeAny).description, `${tool.name}.${field} description`).toBeTruthy();
+        expect(
+          (schema as z.ZodTypeAny).description,
+          `${tool.name}.${field} description`,
+        ).toBeTruthy();
       }
     }
   });
@@ -121,7 +130,10 @@ describe("MCP tool contract", () => {
 
   it("reports the offending field path for a wrong argument type", async () => {
     const result = await byName("list_exercises").handler({ limit: "many" }, authedCtx);
-    const issues = (result.structuredContent?.error?.details?.issues ?? []) as Array<{ path: string; code: string }>;
+    const issues = (result.structuredContent?.error?.details?.issues ?? []) as Array<{
+      path: string;
+      code: string;
+    }>;
     expect(result.structuredContent?.error?.code).toBe("invalid_arguments");
     expect(issues.some((issue) => issue.path === "limit")).toBe(true);
   });

@@ -1,21 +1,41 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Trophy, Zap, Users } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Calendar as CalendarIcon,
+  Trophy,
+  Zap,
+  Users,
+} from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { addDays, formatDate, labelOf, SEASON_EVENT_TYPES, startOfWeek, ymd } from "@/lib/constants";
+import {
+  addDays,
+  formatDate,
+  labelOf,
+  SEASON_EVENT_TYPES,
+  startOfWeek,
+  ymd,
+} from "@/lib/constants";
 
 export const Route = createFileRoute("/_authenticated/calendar")({
   head: () => ({
     meta: [
       { title: "Calendario semanal · PlaneoFUT" },
-      { name: "description", content: "Vista semanal de entrenamientos, partidos y eventos de temporada." },
+      {
+        name: "description",
+        content: "Vista semanal de entrenamientos, partidos y eventos de temporada.",
+      },
       { property: "og:title", content: "Calendario semanal · PlaneoFUT" },
-      { property: "og:description", content: "Vista semanal de entrenamientos, partidos y eventos de temporada." },
+      {
+        property: "og:description",
+        content: "Vista semanal de entrenamientos, partidos y eventos de temporada.",
+      },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -26,7 +46,10 @@ function CalendarPage() {
   const { user } = useAuth();
   const [offset, setOffset] = useState(0);
   const weekStart = useMemo(() => addDays(startOfWeek(new Date()), offset * 7), [offset]);
-  const days = useMemo(() => Array.from({ length: 7 }, (_, i) => addDays(weekStart, i)), [weekStart]);
+  const days = useMemo(
+    () => Array.from({ length: 7 }, (_, i) => addDays(weekStart, i)),
+    [weekStart],
+  );
   const weekStartStr = ymd(weekStart);
   const weekEndStr = ymd(addDays(weekStart, 7));
 
@@ -34,9 +57,11 @@ function CalendarPage() {
     queryKey: ["calendar-sessions", user?.id, weekStartStr],
     enabled: !!user,
     queryFn: async () => {
-      const { data } = await supabase.from("sessions")
+      const { data } = await supabase
+        .from("sessions")
         .select("id,name,session_date,intensity,duration_min")
-        .gte("session_date", weekStartStr).lt("session_date", weekEndStr);
+        .gte("session_date", weekStartStr)
+        .lt("session_date", weekEndStr);
       return data ?? [];
     },
   });
@@ -45,8 +70,11 @@ function CalendarPage() {
     queryKey: ["calendar-events", user?.id, weekStartStr],
     enabled: !!user,
     queryFn: async () => {
-      const { data } = await supabase.from("season_events").select("*")
-        .gte("event_date", weekStartStr).lt("event_date", weekEndStr)
+      const { data } = await supabase
+        .from("season_events")
+        .select("*")
+        .gte("event_date", weekStartStr)
+        .lt("event_date", weekEndStr)
         .order("event_date", { ascending: true });
       return data ?? [];
     },
@@ -56,9 +84,11 @@ function CalendarPage() {
     queryKey: ["calendar-slots", user?.id, weekStartStr],
     enabled: !!user,
     queryFn: async () => {
-      const { data } = await supabase.from("microcycle_slots")
+      const { data } = await supabase
+        .from("microcycle_slots")
         .select("id,slot_type,slot_date,session_id,microcycle_id,microcycles!inner(owner_id,name)")
-        .gte("slot_date", weekStartStr).lt("slot_date", weekEndStr);
+        .gte("slot_date", weekStartStr)
+        .lt("slot_date", weekEndStr);
       return data ?? [];
     },
   });
@@ -76,13 +106,34 @@ function CalendarPage() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Calendario semanal</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Semana del {weekStart.toLocaleDateString("es-ES", { day: "numeric", month: "long" })} al {addDays(weekStart, 6).toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" })}
+            Semana del {weekStart.toLocaleDateString("es-ES", { day: "numeric", month: "long" })} al{" "}
+            {addDays(weekStart, 6).toLocaleDateString("es-ES", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            })}
           </p>
         </div>
         <div className="flex items-center gap-1">
-          <Button variant="outline" size="icon" aria-label="Semana anterior" onClick={() => setOffset((o) => o - 1)}><ChevronLeft className="h-4 w-4" /></Button>
-          <Button variant="outline" size="sm" onClick={() => setOffset(0)}>Hoy</Button>
-          <Button variant="outline" size="icon" aria-label="Semana siguiente" onClick={() => setOffset((o) => o + 1)}><ChevronRight className="h-4 w-4" /></Button>
+          <Button
+            variant="outline"
+            size="icon"
+            aria-label="Semana anterior"
+            onClick={() => setOffset((o) => o - 1)}
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => setOffset(0)}>
+            Hoy
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            aria-label="Semana siguiente"
+            onClick={() => setOffset((o) => o + 1)}
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
         </div>
       </div>
 
@@ -93,8 +144,13 @@ function CalendarPage() {
           const dayEvents = (events ?? []).filter((e: any) => e.event_date === key);
           const daySlots = (slots ?? []).filter((s: any) => s.slot_date === key);
           const isToday = key === ymd(new Date());
-          const hasMatch = dayEvents.some((e: any) => e.type === "partido_oficial" || e.type === "amistoso");
-          const totalDuration = daySessions.reduce((sum: number, s: any) => sum + (s.duration_min || 0), 0);
+          const hasMatch = dayEvents.some(
+            (e: any) => e.type === "partido_oficial" || e.type === "amistoso",
+          );
+          const totalDuration = daySessions.reduce(
+            (sum: number, s: any) => sum + (s.duration_min || 0),
+            0,
+          );
 
           return (
             <Card
@@ -108,19 +164,26 @@ function CalendarPage() {
                   <span className="text-xs font-semibold uppercase text-muted-foreground">
                     {d.toLocaleDateString("es-ES", { weekday: "short" })}
                   </span>
-                  <span className={`text-lg font-bold ${isToday ? "text-primary" : ""}`}>{d.getDate()}</span>
+                  <span className={`text-lg font-bold ${isToday ? "text-primary" : ""}`}>
+                    {d.getDate()}
+                  </span>
                 </div>
               </div>
 
               <div className="min-h-[200px] space-y-2 p-3">
                 {/* Eventos (Partidos, etc) */}
                 {dayEvents.map((e: any) => (
-                  <div key={e.id} className="rounded-md border-l-4 border-primary bg-primary/10 px-2 py-2">
+                  <div
+                    key={e.id}
+                    className="rounded-md border-l-4 border-primary bg-primary/10 px-2 py-2"
+                  >
                     <div className="flex items-start gap-2">
                       <Trophy className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
                       <div className="min-w-0 flex-1">
                         <p className="line-clamp-1 text-xs font-semibold text-primary">{e.title}</p>
-                        <Badge variant="outline" className="mt-1 text-[10px]">{labelOf(SEASON_EVENT_TYPES, e.type)}</Badge>
+                        <Badge variant="outline" className="mt-1 text-[10px]">
+                          {labelOf(SEASON_EVENT_TYPES, e.type)}
+                        </Badge>
                       </div>
                     </div>
                   </div>
@@ -145,17 +208,19 @@ function CalendarPage() {
                 ))}
 
                 {/* Slots sin sesión */}
-                {daySlots.filter((s: any) => !s.session_id).map((s: any) => (
-                  <Link
-                    key={s.id}
-                    to="/microcycles/$id"
-                    params={{ id: s.microcycle_id }}
-                    className="block rounded-md border border-dashed border-border/60 px-2 py-2 text-xs text-muted-foreground hover:border-primary hover:bg-muted/50"
-                  >
-                    <p className="line-clamp-1 font-medium">{s.slot_type}</p>
-                    <p className="text-[10px]">sin sesión</p>
-                  </Link>
-                ))}
+                {daySlots
+                  .filter((s: any) => !s.session_id)
+                  .map((s: any) => (
+                    <Link
+                      key={s.id}
+                      to="/microcycles/$id"
+                      params={{ id: s.microcycle_id }}
+                      className="block rounded-md border border-dashed border-border/60 px-2 py-2 text-xs text-muted-foreground hover:border-primary hover:bg-muted/50"
+                    >
+                      <p className="line-clamp-1 font-medium">{s.slot_type}</p>
+                      <p className="text-[10px]">sin sesión</p>
+                    </Link>
+                  ))}
 
                 {/* Día libre */}
                 {daySessions.length === 0 && dayEvents.length === 0 && daySlots.length === 0 && (
@@ -171,7 +236,9 @@ function CalendarPage() {
                 {(daySessions.length > 0 || dayEvents.length > 0) && (
                   <div className="border-t border-border/40 pt-2 text-[10px] text-muted-foreground">
                     <div className="flex items-center justify-between">
-                      <span>{daySessions.length} sesión{daySessions.length !== 1 ? "es" : ""}</span>
+                      <span>
+                        {daySessions.length} sesión{daySessions.length !== 1 ? "es" : ""}
+                      </span>
                       <span className="font-medium">{totalDuration}′</span>
                     </div>
                   </div>

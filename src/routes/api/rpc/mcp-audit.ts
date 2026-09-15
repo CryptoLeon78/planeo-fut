@@ -6,10 +6,22 @@ import type { Database } from "@/integrations/supabase/types";
 const querySchema = z.object({
   limit: z.coerce.number().int().min(1).max(200).default(50),
   offset: z.coerce.number().int().min(0).max(100_000).default(0),
-  tool: z.string().trim().min(1).max(60).regex(/^[a-z0-9_]+$/i).optional(),
+  tool: z
+    .string()
+    .trim()
+    .min(1)
+    .max(60)
+    .regex(/^[a-z0-9_]+$/i)
+    .optional(),
   status: z.enum(["success", "error"]).optional(),
-  from: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
-  to: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  from: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .optional(),
+  to: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .optional(),
   includeParams: z
     .union([z.literal("true"), z.literal("false")])
     .default("false")
@@ -28,7 +40,8 @@ async function readAudit(request: Request) {
   }
 
   const url = process.env["SUPABASE_URL"] ?? process.env["VITE_SUPABASE_URL"];
-  const key = process.env["SUPABASE_PUBLISHABLE_KEY"] ?? process.env["VITE_SUPABASE_PUBLISHABLE_KEY"];
+  const key =
+    process.env["SUPABASE_PUBLISHABLE_KEY"] ?? process.env["VITE_SUPABASE_PUBLISHABLE_KEY"];
   if (!url || !key) return Response.json({ error: "backend_not_configured" }, { status: 500 });
 
   const params = Object.fromEntries(new URL(request.url).searchParams.entries());
@@ -48,7 +61,15 @@ async function readAudit(request: Request) {
   }
   const { limit, offset, tool, status, from, to, includeParams } = parsed.data;
   if (from && to && from > to) {
-    return Response.json({ error: "invalid_arguments", issues: [{ path: "from", code: "custom", message: "from must be earlier than or equal to to." }] }, { status: 400 });
+    return Response.json(
+      {
+        error: "invalid_arguments",
+        issues: [
+          { path: "from", code: "custom", message: "from must be earlier than or equal to to." },
+        ],
+      },
+      { status: 400 },
+    );
   }
 
   const supabase = createClient<Database>(url, key, {

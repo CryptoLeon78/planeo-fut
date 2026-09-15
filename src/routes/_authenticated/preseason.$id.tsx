@@ -14,9 +14,15 @@ export const Route = createFileRoute("/_authenticated/preseason/$id")({
   head: () => ({
     meta: [
       { title: "Detalle de pretemporada · PlaneoFUT" },
-      { name: "description", content: "Gestiona las fases y los microciclos de tu bloque de pretemporada." },
+      {
+        name: "description",
+        content: "Gestiona las fases y los microciclos de tu bloque de pretemporada.",
+      },
       { property: "og:title", content: "Detalle de pretemporada · PlaneoFUT" },
-      { property: "og:description", content: "Gestiona las fases y los microciclos de tu bloque de pretemporada." },
+      {
+        property: "og:description",
+        content: "Gestiona las fases y los microciclos de tu bloque de pretemporada.",
+      },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -40,8 +46,10 @@ function PreseasonDetail() {
     queryKey: ["mesocycle-micros", id],
     queryFn: async () => {
       const { data } = await supabase
-        .from("microcycles").select("id,name,week_start,weekly_objective")
-        .eq("mesocycle_id", id).order("week_start", { ascending: true });
+        .from("microcycles")
+        .select("id,name,week_start,weekly_objective")
+        .eq("mesocycle_id", id)
+        .order("week_start", { ascending: true });
       return data ?? [];
     },
   });
@@ -56,7 +64,9 @@ function PreseasonDetail() {
   }
 
   async function saveField(field: string, value: string) {
-    const { error } = await (supabase.from("mesocycles") as any).update({ [field]: value }).eq("id", id);
+    const { error } = await (supabase.from("mesocycles") as any)
+      .update({ [field]: value })
+      .eq("id", id);
     if (error) return toast.error(error.message);
     toast.success("Guardado");
   }
@@ -67,21 +77,35 @@ function PreseasonDetail() {
   return (
     <div className="mx-auto max-w-5xl space-y-6">
       <div className="flex items-center gap-3">
-        <Button asChild variant="ghost" size="icon" aria-label="Volver a pretemporada"><Link to="/preseason"><ArrowLeft className="h-4 w-4" /></Link></Button>
+        <Button asChild variant="ghost" size="icon" aria-label="Volver a pretemporada">
+          <Link to="/preseason">
+            <ArrowLeft className="h-4 w-4" />
+          </Link>
+        </Button>
         <div>
           <h1 className="text-2xl font-bold tracking-tight">{meso.name}</h1>
-          <p className="text-sm text-muted-foreground">{formatDate(meso.start_date)} → {formatDate(meso.end_date)}</p>
+          <p className="text-sm text-muted-foreground">
+            {formatDate(meso.start_date)} → {formatDate(meso.end_date)}
+          </p>
         </div>
       </div>
 
       <Card className="space-y-3 p-5">
         <div className="space-y-1.5">
           <Label>Objetivos</Label>
-          <Textarea defaultValue={meso.goals ?? ""} rows={3} onBlur={(e) => saveField("goals", e.target.value)} />
+          <Textarea
+            defaultValue={meso.goals ?? ""}
+            rows={3}
+            onBlur={(e) => saveField("goals", e.target.value)}
+          />
         </div>
         <div className="space-y-1.5">
           <Label>Notas</Label>
-          <Textarea defaultValue={meso.notes ?? ""} rows={2} onBlur={(e) => saveField("notes", e.target.value)} />
+          <Textarea
+            defaultValue={meso.notes ?? ""}
+            rows={2}
+            onBlur={(e) => saveField("notes", e.target.value)}
+          />
         </div>
       </Card>
 
@@ -93,13 +117,20 @@ function PreseasonDetail() {
               <p className="text-xs font-medium uppercase text-primary">{p.label}</p>
               <div className="space-y-1">
                 <Label className="text-xs">Semanas</Label>
-                <Input type="number" min={1} defaultValue={p.weeks ?? 1}
-                  onBlur={(e) => updatePhase(i, "weeks", e.target.value)} />
+                <Input
+                  type="number"
+                  min={1}
+                  defaultValue={p.weeks ?? 1}
+                  onBlur={(e) => updatePhase(i, "weeks", e.target.value)}
+                />
               </div>
               <div className="space-y-1">
                 <Label className="text-xs">Foco principal</Label>
-                <Textarea rows={3} defaultValue={p.focus ?? ""}
-                  onBlur={(e) => updatePhase(i, "focus", e.target.value)} />
+                <Textarea
+                  rows={3}
+                  defaultValue={p.focus ?? ""}
+                  onBlur={(e) => updatePhase(i, "focus", e.target.value)}
+                />
               </div>
             </Card>
           ))}
@@ -111,18 +142,26 @@ function PreseasonDetail() {
         {micros && micros.length > 0 ? (
           <div className="grid gap-2">
             {micros.map((m: any) => (
-              <Link key={m.id} to="/microcycles/$id" params={{ id: m.id }}
-                className="flex items-center justify-between rounded-md border border-border bg-card px-4 py-3 hover:border-primary">
+              <Link
+                key={m.id}
+                to="/microcycles/$id"
+                params={{ id: m.id }}
+                className="flex items-center justify-between rounded-md border border-border bg-card px-4 py-3 hover:border-primary"
+              >
                 <div>
                   <p className="font-medium">{m.name}</p>
-                  <p className="text-xs text-muted-foreground">Semana del {formatDate(m.week_start, { day: "numeric", month: "long" })}</p>
+                  <p className="text-xs text-muted-foreground">
+                    Semana del {formatDate(m.week_start, { day: "numeric", month: "long" })}
+                  </p>
                 </div>
                 <span className="text-xs text-primary">Abrir →</span>
               </Link>
             ))}
           </div>
         ) : (
-          <p className="text-sm text-muted-foreground">No hay microciclos asociados aún. Crea uno desde la sección Microciclos.</p>
+          <p className="text-sm text-muted-foreground">
+            No hay microciclos asociados aún. Crea uno desde la sección Microciclos.
+          </p>
         )}
       </div>
     </div>

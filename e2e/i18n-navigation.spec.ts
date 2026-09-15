@@ -3,7 +3,9 @@ import { expect, test } from "@playwright/test";
 const SWITCHER = { role: "radiogroup" as const, name: /Idioma de la aplicación/ };
 
 test.describe("multi-language navigation", () => {
-  test("switches the public site to British English and keeps it while navigating", async ({ page }) => {
+  test("switches the public site to British English and keeps it while navigating", async ({
+    page,
+  }) => {
     await page.goto("/");
     const group = page.getByRole(SWITCHER.role, { name: SWITCHER.name }).first();
     await expect(group).toBeVisible();

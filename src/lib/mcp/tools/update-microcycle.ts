@@ -7,13 +7,17 @@ import { ENTITY_TABLE, fetchOwnedRow, snapshotEntity } from "../versions";
 export default defineAuthedTool({
   name: "update_microcycle",
   title: "Update microcycle",
-  description: "Update a weekly microcycle header and optionally assign a session to one of its MD slots.",
+  description:
+    "Update a weekly microcycle header and optionally assign a session to one of its MD slots.",
   inputSchema: {
     microcycleId: uuid.describe("Identifier of the microcycle to update."),
     name: shortText(120).optional().describe("New microcycle name."),
     weekStart: isoDate.optional().describe("New first planning date in YYYY-MM-DD format."),
     matchDay: z.enum(["sabado", "domingo"]).optional().describe("New fixture day."),
-    weeklyObjective: longText(600).nullable().optional().describe("New weekly objective; pass null to clear."),
+    weeklyObjective: longText(600)
+      .nullable()
+      .optional()
+      .describe("New weekly objective; pass null to clear."),
     notes: longText(2000).nullable().optional().describe("New notes; pass null to clear."),
     assignSession: z
       .object({
@@ -23,11 +27,17 @@ export default defineAuthedTool({
       .optional()
       .describe("Optionally assign or clear a training session in one planning slot."),
   },
-  annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+  annotations: {
+    readOnlyHint: false,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false,
+  },
   handler: async (input, ctx, userId) => {
     const supabase = supabaseForUser(ctx);
     const current = await fetchOwnedRow(supabase, "microcycle", input.microcycleId, userId);
-    if (!current) return toolError("not_found", "No microcycle with that identifier belongs to you.");
+    if (!current)
+      return toolError("not_found", "No microcycle with that identifier belongs to you.");
 
     const patch: Record<string, unknown> = {};
     if (input.name !== undefined) patch.name = input.name;
@@ -36,7 +46,10 @@ export default defineAuthedTool({
     if (input.weeklyObjective !== undefined) patch.weekly_objective = input.weeklyObjective;
     if (input.notes !== undefined) patch.notes = input.notes;
     if (Object.keys(patch).length === 0 && !input.assignSession) {
-      return toolError("invalid_arguments", "Provide at least one field to update or a slot assignment.");
+      return toolError(
+        "invalid_arguments",
+        "Provide at least one field to update or a slot assignment.",
+      );
     }
 
     const version = await snapshotEntity(supabase, {
@@ -73,7 +86,11 @@ export default defineAuthedTool({
           .eq("microcycle_id", input.microcycleId);
         const ids = (microcycleSlots ?? []).map((row) => row.id);
         if (ids.length) {
-          await supabase.from("microcycle_slots").update({ session_id: null }).in("id", ids).eq("session_id", sessionId);
+          await supabase
+            .from("microcycle_slots")
+            .update({ session_id: null })
+            .in("id", ids)
+            .eq("session_id", sessionId);
         }
       }
       const { data, error } = await supabase

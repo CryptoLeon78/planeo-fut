@@ -26,7 +26,9 @@ export const sessionsRepository = {
   },
 
   async count(): Promise<number> {
-    const res = await table("sessions").select("id", { count: "exact", head: true }).is("deleted_at", null);
+    const res = await table("sessions")
+      .select("id", { count: "exact", head: true })
+      .is("deleted_at", null);
     return res.count ?? 0;
   },
 
@@ -55,7 +57,9 @@ export const sessionsRepository = {
 
   async createBlocks(blocks: SessionRow[]): Promise<SessionRow[]> {
     if (blocks.length === 0) return [];
-    const data = await unwrap(await table("session_blocks").insert(blocks).select("id,position,block_type"));
+    const data = await unwrap(
+      await table("session_blocks").insert(blocks).select("id,position,block_type"),
+    );
     return data ?? [];
   },
 
@@ -71,7 +75,9 @@ export const sessionsRepository = {
   },
 
   async listExercisesOfBlock(blockId: string): Promise<SessionRow[]> {
-    const data = await unwrap(await table("session_block_exercises").select("*").eq("block_id", blockId));
+    const data = await unwrap(
+      await table("session_block_exercises").select("*").eq("block_id", blockId),
+    );
     return data ?? [];
   },
 

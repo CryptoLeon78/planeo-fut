@@ -8,15 +8,29 @@ import { addDays } from "./create-microcycle";
 export default defineAuthedTool({
   name: "duplicate_record",
   title: "Duplicate exercise, session or microcycle",
-  description: "Clone a practice, session or weekly microcycle owned by the coach, optionally renaming it or shifting its dates.",
+  description:
+    "Clone a practice, session or weekly microcycle owned by the coach, optionally renaming it or shifting its dates.",
   inputSchema: {
     entity: entityEnum.describe("What to duplicate: exercise, session or microcycle."),
     recordId: uuid.describe("Identifier of the record to duplicate."),
-    newName: shortText(120).optional().describe("Name for the copy; defaults to the original plus a copy suffix."),
-    shiftDays: z.number().int().min(-365).max(365).optional().describe("Shift every date in the copy by this number of days."),
+    newName: shortText(120)
+      .optional()
+      .describe("Name for the copy; defaults to the original plus a copy suffix."),
+    shiftDays: z
+      .number()
+      .int()
+      .min(-365)
+      .max(365)
+      .optional()
+      .describe("Shift every date in the copy by this number of days."),
     newDate: isoDate.optional().describe("Explicit date for the copy (sessions and microcycles)."),
   },
-  annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false },
+  annotations: {
+    readOnlyHint: false,
+    destructiveHint: false,
+    idempotentHint: false,
+    openWorldHint: false,
+  },
   handler: async (input, ctx, userId) => {
     const supabase = supabaseForUser(ctx);
     const original = await fetchOwnedRow(supabase, input.entity, input.recordId, userId);
@@ -56,12 +70,14 @@ export default defineAuthedTool({
       if (originalSlots?.length) {
         const { data: insertedSlots, error: slotsError } = await supabase
           .from("microcycle_slots")
-          .insert(originalSlots.map((slot) => ({
-            microcycle_id: created.id,
-            slot_type: slot.slot_type,
-            slot_date: slot.slot_date ? addDays(slot.slot_date, days) : null,
-            notes: slot.notes,
-          })))
+          .insert(
+            originalSlots.map((slot) => ({
+              microcycle_id: created.id,
+              slot_type: slot.slot_type,
+              slot_date: slot.slot_date ? addDays(slot.slot_date, days) : null,
+              notes: slot.notes,
+            })),
+          )
           .select("id,slot_type,slot_date");
         if (slotsError) return toolError("backend_error", slotsError.message);
         slots = insertedSlots;
@@ -76,11 +92,14 @@ export default defineAuthedTool({
       label: `duplicated-from:${input.recordId}`,
     });
 
-    return toolSuccess(`Duplicated ${input.entity} as “${String((created as unknown as Record<string, unknown>).name)}”.`, {
-      record: created,
-      slots,
-      version,
-      sourceId: input.recordId,
-    });
+    return toolSuccess(
+      `Duplicated ${input.entity} as “${String((created as unknown as Record<string, unknown>).name)}”.`,
+      {
+        record: created,
+        slots,
+        version,
+        sourceId: input.recordId,
+      },
+    );
   },
 });

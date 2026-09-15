@@ -7,7 +7,13 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CATEGORIES, PHASES, categoryLabel, findExercise, phaseLabel } from "@/lib/public-exercises";
+import {
+  CATEGORIES,
+  PHASES,
+  categoryLabel,
+  findExercise,
+  phaseLabel,
+} from "@/lib/public-exercises";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -22,22 +28,33 @@ const searchSchema = z.object({
 
 function mapPhase(p: string): string {
   switch (p) {
-    case "posesion": return "progresion";
-    case "finalizacion": return "finalizacion";
-    case "presion": return "transicion_ad";
-    case "transiciones": return "transicion_da";
-    case "juegos-reducidos": return "general";
-    default: return "general";
+    case "posesion":
+      return "progresion";
+    case "finalizacion":
+      return "finalizacion";
+    case "presion":
+      return "transicion_ad";
+    case "transiciones":
+      return "transicion_da";
+    case "juegos-reducidos":
+      return "general";
+    default:
+      return "general";
   }
 }
 
 function mapTaskType(p: string): string {
   switch (p) {
-    case "juegos-reducidos": return "juego_reducido";
-    case "posesion": return "rondo";
-    case "finalizacion": return "analitica";
-    case "presion": return "situacional";
-    default: return "global";
+    case "juegos-reducidos":
+      return "juego_reducido";
+    case "posesion":
+      return "rondo";
+    case "finalizacion":
+      return "analitica";
+    case "presion":
+      return "situacional";
+    default:
+      return "global";
   }
 }
 
@@ -98,7 +115,12 @@ export const Route = createFileRoute("/ejercicios/futbol-base/$slug")({
             "@type": "BreadcrumbList",
             itemListElement: [
               { "@type": "ListItem", position: 1, name: "Inicio", item: SITE_URL },
-              { "@type": "ListItem", position: 2, name: "Ejercicios de fútbol base", item: `${SITE_URL}/ejercicios/futbol-base` },
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "Ejercicios de fútbol base",
+                item: `${SITE_URL}/ejercicios/futbol-base`,
+              },
               { "@type": "ListItem", position: 3, name: ex.name, item: url },
             ],
           }),
@@ -109,7 +131,9 @@ export const Route = createFileRoute("/ejercicios/futbol-base/$slug")({
   notFoundComponent: () => (
     <div className="mx-auto max-w-2xl px-6 py-20 text-center">
       <h1 className="text-2xl font-bold">Ejercicio no encontrado</h1>
-      <Button asChild className="mt-6"><Link to="/ejercicios/futbol-base">Volver a la biblioteca</Link></Button>
+      <Button asChild className="mt-6">
+        <Link to="/ejercicios/futbol-base">Volver a la biblioteca</Link>
+      </Button>
     </div>
   ),
   errorComponent: ({ reset }) => {
@@ -117,7 +141,15 @@ export const Route = createFileRoute("/ejercicios/futbol-base/$slug")({
     return (
       <div className="mx-auto max-w-2xl px-6 py-20 text-center">
         <h1 className="text-2xl font-bold">No se pudo cargar el ejercicio</h1>
-        <Button className="mt-6" onClick={() => { router.invalidate(); reset(); }}>Reintentar</Button>
+        <Button
+          className="mt-6"
+          onClick={() => {
+            router.invalidate();
+            reset();
+          }}
+        >
+          Reintentar
+        </Button>
       </div>
     );
   },
@@ -148,7 +180,8 @@ function ExerciseDetail() {
       if (existing?.id) {
         if (asFavorite) {
           const { error } = await (supabase.from("exercises") as any)
-            .update({ is_favorite: true }).eq("id", existing.id);
+            .update({ is_favorite: true })
+            .eq("id", existing.id);
           if (error) throw error;
         }
         setImported(true);
@@ -194,11 +227,17 @@ function ExerciseDetail() {
           </Link>
           <div className="flex items-center gap-2">
             {user ? (
-              <Button asChild variant="ghost" size="sm"><Link to="/exercises">Mi biblioteca</Link></Button>
+              <Button asChild variant="ghost" size="sm">
+                <Link to="/exercises">Mi biblioteca</Link>
+              </Button>
             ) : (
               <>
-                <Button asChild variant="ghost" size="sm"><Link to="/auth">Entrar</Link></Button>
-                <Button asChild size="sm"><Link to="/auth">Empezar gratis</Link></Button>
+                <Button asChild variant="ghost" size="sm">
+                  <Link to="/auth">Entrar</Link>
+                </Button>
+                <Button asChild size="sm">
+                  <Link to="/auth">Empezar gratis</Link>
+                </Button>
               </>
             )}
           </div>
@@ -212,9 +251,13 @@ function ExerciseDetail() {
           </Link>
         </Button>
         <nav aria-label="breadcrumb" className="mt-4 text-xs text-muted-foreground">
-          <Link to="/" className="hover:text-primary">Inicio</Link>
+          <Link to="/" className="hover:text-primary">
+            Inicio
+          </Link>
           <span className="mx-2">/</span>
-          <Link to="/ejercicios/futbol-base" search={search} className="hover:text-primary">Ejercicios de fútbol base</Link>
+          <Link to="/ejercicios/futbol-base" search={search} className="hover:text-primary">
+            Ejercicios de fútbol base
+          </Link>
           <span className="mx-2">/</span>
           <span>{ex.name}</span>
         </nav>
@@ -230,62 +273,104 @@ function ExerciseDetail() {
 
         <div className="mt-6 flex flex-wrap gap-2">
           <Button onClick={() => importToLibrary(true)} disabled={importing || imported}>
-            {importing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : imported ? <Check className="mr-2 h-4 w-4" /> : <Star className="mr-2 h-4 w-4" />}
+            {importing ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : imported ? (
+              <Check className="mr-2 h-4 w-4" />
+            ) : (
+              <Star className="mr-2 h-4 w-4" />
+            )}
             {imported ? "Guardado en favoritos" : "Guardar en favoritos"}
           </Button>
-          <Button variant="outline" onClick={() => importToLibrary(false)} disabled={importing || imported}>
+          <Button
+            variant="outline"
+            onClick={() => importToLibrary(false)}
+            disabled={importing || imported}
+          >
             <Dumbbell className="mr-2 h-4 w-4" /> Importar a mi biblioteca
           </Button>
           {!user && (
             <p className="w-full text-xs text-muted-foreground">
-              <Link to="/auth" className="text-primary underline">Inicia sesión</Link> para guardar este ejercicio y reutilizarlo en sesiones y microciclos.
+              <Link to="/auth" className="text-primary underline">
+                Inicia sesión
+              </Link>{" "}
+              para guardar este ejercicio y reutilizarlo en sesiones y microciclos.
             </p>
           )}
         </div>
 
         <Card className="mt-8 grid gap-4 p-6 sm:grid-cols-2 md:grid-cols-4">
-          <div><dt className="text-xs text-muted-foreground">Jugadores</dt><dd className="text-base font-semibold">{ex.players}</dd></div>
-          <div><dt className="text-xs text-muted-foreground">Duración</dt><dd className="text-base font-semibold">{ex.duration}</dd></div>
-          <div><dt className="text-xs text-muted-foreground">Espacio</dt><dd className="text-base font-semibold">{ex.space}</dd></div>
-          <div><dt className="text-xs text-muted-foreground">Categoría</dt><dd className="text-base font-semibold">{categoryLabel(ex.category)}</dd></div>
+          <div>
+            <dt className="text-xs text-muted-foreground">Jugadores</dt>
+            <dd className="text-base font-semibold">{ex.players}</dd>
+          </div>
+          <div>
+            <dt className="text-xs text-muted-foreground">Duración</dt>
+            <dd className="text-base font-semibold">{ex.duration}</dd>
+          </div>
+          <div>
+            <dt className="text-xs text-muted-foreground">Espacio</dt>
+            <dd className="text-base font-semibold">{ex.space}</dd>
+          </div>
+          <div>
+            <dt className="text-xs text-muted-foreground">Categoría</dt>
+            <dd className="text-base font-semibold">{categoryLabel(ex.category)}</dd>
+          </div>
         </Card>
 
         <section className="mt-8">
           <h2 className="text-xl font-bold tracking-tight">Descripción de la tarea</h2>
-          <p className="mt-3 whitespace-pre-line text-base leading-relaxed text-foreground/90">{ex.description}</p>
+          <p className="mt-3 whitespace-pre-line text-base leading-relaxed text-foreground/90">
+            {ex.description}
+          </p>
         </section>
 
         <section className="mt-8">
           <h2 className="text-xl font-bold tracking-tight">Etiquetas</h2>
           <div className="mt-3 flex flex-wrap gap-2">
-            {ex.tags.map((t: string) => <Badge key={t} variant="secondary">#{t}</Badge>)}
+            {ex.tags.map((t: string) => (
+              <Badge key={t} variant="secondary">
+                #{t}
+              </Badge>
+            ))}
           </div>
         </section>
 
         <section className="mt-10 grid gap-3 sm:grid-cols-2">
-          {CATEGORIES.filter((c) => c.id !== ex.category).slice(0, 2).map((c) => (
-            <Card key={c.id} className="p-4">
-              <div className="text-xs text-muted-foreground">Más ejercicios</div>
-              <h3 className="mt-1 font-semibold">{c.label}</h3>
-              <Button asChild variant="link" size="sm" className="-ml-3 mt-1">
-                <Link to="/ejercicios/futbol-base" search={{ ...search, cat: c.id }}>Ver ejercicios →</Link>
-              </Button>
-            </Card>
-          ))}
-          {PHASES.filter((p) => p.id !== ex.phase).slice(0, 2).map((p) => (
-            <Card key={p.id} className="p-4">
-              <div className="text-xs text-muted-foreground">Fase táctica</div>
-              <h3 className="mt-1 font-semibold">{p.label}</h3>
-              <Button asChild variant="link" size="sm" className="-ml-3 mt-1">
-                <Link to="/ejercicios/futbol-base" search={{ ...search, phase: p.id }}>Ver ejercicios →</Link>
-              </Button>
-            </Card>
-          ))}
+          {CATEGORIES.filter((c) => c.id !== ex.category)
+            .slice(0, 2)
+            .map((c) => (
+              <Card key={c.id} className="p-4">
+                <div className="text-xs text-muted-foreground">Más ejercicios</div>
+                <h3 className="mt-1 font-semibold">{c.label}</h3>
+                <Button asChild variant="link" size="sm" className="-ml-3 mt-1">
+                  <Link to="/ejercicios/futbol-base" search={{ ...search, cat: c.id }}>
+                    Ver ejercicios →
+                  </Link>
+                </Button>
+              </Card>
+            ))}
+          {PHASES.filter((p) => p.id !== ex.phase)
+            .slice(0, 2)
+            .map((p) => (
+              <Card key={p.id} className="p-4">
+                <div className="text-xs text-muted-foreground">Fase táctica</div>
+                <h3 className="mt-1 font-semibold">{p.label}</h3>
+                <Button asChild variant="link" size="sm" className="-ml-3 mt-1">
+                  <Link to="/ejercicios/futbol-base" search={{ ...search, phase: p.id }}>
+                    Ver ejercicios →
+                  </Link>
+                </Button>
+              </Card>
+            ))}
         </section>
       </article>
 
       <footer className="border-t border-border/60 py-6 text-center text-xs text-muted-foreground">
-        © {new Date().getFullYear()} PlaneoFUT · <Link to="/ejercicios/futbol-base" search={search} className="hover:text-primary">Biblioteca pública</Link>
+        © {new Date().getFullYear()} PlaneoFUT ·{" "}
+        <Link to="/ejercicios/futbol-base" search={search} className="hover:text-primary">
+          Biblioteca pública
+        </Link>
       </footer>
     </div>
   );

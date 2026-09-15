@@ -13,9 +13,11 @@ export function filterExercises(exercises: ExerciseRow[], filters: ExerciseFilte
   return exercises.filter((e) => {
     if (filters.onlyFavorites && !e.is_favorite) return false;
     if (filters.phase && filters.phase !== "all" && e.game_phase !== filters.phase) return false;
-    if (filters.intensity && filters.intensity !== "all" && e.intensity !== filters.intensity) return false;
+    if (filters.intensity && filters.intensity !== "all" && e.intensity !== filters.intensity)
+      return false;
     if (q) {
-      const haystack = `${e.name ?? ""} ${e.objective ?? ""} ${(e.tags ?? []).join(" ")}`.toLowerCase();
+      const haystack =
+        `${e.name ?? ""} ${e.objective ?? ""} ${(e.tags ?? []).join(" ")}`.toLowerCase();
       if (!haystack.includes(q)) return false;
     }
     return true;

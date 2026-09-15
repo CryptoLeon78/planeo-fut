@@ -40,10 +40,12 @@ const MAX_STRING = 240;
 /** Removes credentials and truncates long values before anything is persisted. */
 export function sanitiseParams(value: unknown, depth = 0): unknown {
   if (value === null || value === undefined) return value;
-  if (typeof value === "string") return value.length > MAX_STRING ? `${value.slice(0, MAX_STRING)}…` : value;
+  if (typeof value === "string")
+    return value.length > MAX_STRING ? `${value.slice(0, MAX_STRING)}…` : value;
   if (typeof value === "number" || typeof value === "boolean") return value;
   if (depth >= 4) return "[truncated]";
-  if (Array.isArray(value)) return value.slice(0, 25).map((item) => sanitiseParams(item, depth + 1));
+  if (Array.isArray(value))
+    return value.slice(0, 25).map((item) => sanitiseParams(item, depth + 1));
   if (typeof value === "object") {
     const out: Record<string, unknown> = {};
     for (const [key, item] of Object.entries(value as Record<string, unknown>)) {
@@ -68,15 +70,17 @@ async function recordAudit(
   const userId = ctx.getUserId();
   if (!userId) return;
   try {
-    await supabaseForUser(ctx).from("mcp_audit_log").insert({
-      user_id: userId,
-      tool: entry.tool,
-      params: sanitiseParams(entry.params) as never,
-      status: entry.status,
-      error_code: entry.errorCode ?? null,
-      error_message: entry.errorMessage ? entry.errorMessage.slice(0, 500) : null,
-      duration_ms: entry.durationMs,
-    });
+    await supabaseForUser(ctx)
+      .from("mcp_audit_log")
+      .insert({
+        user_id: userId,
+        tool: entry.tool,
+        params: sanitiseParams(entry.params) as never,
+        status: entry.status,
+        error_code: entry.errorCode ?? null,
+        error_message: entry.errorMessage ? entry.errorMessage.slice(0, 500) : null,
+        duration_ms: entry.durationMs,
+      });
   } catch {
     // Auditing must never break a tool call.
   }
@@ -116,7 +120,9 @@ export function defineAuthedTool<Shape extends ZodRawShape>(config: {
     handler: (async (rawInput: unknown, ctx: ToolContext) => {
       const started = Date.now();
       const finish = async (result: ToolResult) => {
-        const error = (result.structuredContent as { error?: { code?: string; message?: string } } | undefined)?.error;
+        const error = (
+          result.structuredContent as { error?: { code?: string; message?: string } } | undefined
+        )?.error;
         await recordAudit(ctx, {
           tool: config.name,
           params: rawInput,
@@ -129,11 +135,15 @@ export function defineAuthedTool<Shape extends ZodRawShape>(config: {
       };
 
       if (!ctx.isAuthenticated()) {
-        return finish(toolError("unauthenticated", "Sign in to PlaneoFUT before calling this tool."));
+        return finish(
+          toolError("unauthenticated", "Sign in to PlaneoFUT before calling this tool."),
+        );
       }
       const userId = ctx.getUserId();
       if (!userId) {
-        return finish(toolError("unauthenticated", "The authenticated session has no user identifier."));
+        return finish(
+          toolError("unauthenticated", "The authenticated session has no user identifier."),
+        );
       }
 
       const parsed = strictSchema.safeParse(rawInput ?? {});
@@ -144,7 +154,9 @@ export function defineAuthedTool<Shape extends ZodRawShape>(config: {
           message: issue.message,
         }));
         return finish(
-          toolError("invalid_arguments", "One or more arguments are missing or invalid.", { issues }),
+          toolError("invalid_arguments", "One or more arguments are missing or invalid.", {
+            issues,
+          }),
         );
       }
 

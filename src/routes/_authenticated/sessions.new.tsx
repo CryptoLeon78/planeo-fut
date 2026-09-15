@@ -11,7 +11,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { BLOCK_TYPES, INTENSITIES, labelOf } from "@/lib/constants";
@@ -20,9 +26,15 @@ export const Route = createFileRoute("/_authenticated/sessions/new")({
   head: () => ({
     meta: [
       { title: "Nueva sesión · PlaneoFUT" },
-      { name: "description", content: "Diseña una sesión de entrenamiento con bloques y ejercicios." },
+      {
+        name: "description",
+        content: "Diseña una sesión de entrenamiento con bloques y ejercicios.",
+      },
       { property: "og:title", content: "Nueva sesión · PlaneoFUT" },
-      { property: "og:description", content: "Diseña una sesión de entrenamiento con bloques y ejercicios." },
+      {
+        property: "og:description",
+        content: "Diseña una sesión de entrenamiento con bloques y ejercicios.",
+      },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -42,10 +54,34 @@ type BlockDraft = {
 };
 
 const DEFAULT_BLOCKS: BlockDraft[] = [
-  { block_type: "calentamiento", name: "Calentamiento", duration_min: 15, notes: "", exercise_ids: [] },
-  { block_type: "parte_principal", name: "Parte principal", duration_min: 30, notes: "", exercise_ids: [] },
-  { block_type: "juego_aplicacion", name: "Juego de aplicación", duration_min: 20, notes: "", exercise_ids: [] },
-  { block_type: "vuelta_calma", name: "Vuelta a la calma", duration_min: 10, notes: "", exercise_ids: [] },
+  {
+    block_type: "calentamiento",
+    name: "Calentamiento",
+    duration_min: 15,
+    notes: "",
+    exercise_ids: [],
+  },
+  {
+    block_type: "parte_principal",
+    name: "Parte principal",
+    duration_min: 30,
+    notes: "",
+    exercise_ids: [],
+  },
+  {
+    block_type: "juego_aplicacion",
+    name: "Juego de aplicación",
+    duration_min: 20,
+    notes: "",
+    exercise_ids: [],
+  },
+  {
+    block_type: "vuelta_calma",
+    name: "Vuelta a la calma",
+    duration_min: 10,
+    notes: "",
+    exercise_ids: [],
+  },
 ];
 
 const schema = z.object({
@@ -68,7 +104,11 @@ function NewSessionPage() {
     queryKey: ["session-seed-exercise", fromExercise],
     enabled: !!fromExercise && !editId,
     queryFn: async () => {
-      const { data } = await supabase.from("exercises").select("*").eq("id", fromExercise!).single();
+      const { data } = await supabase
+        .from("exercises")
+        .select("*")
+        .eq("id", fromExercise!)
+        .single();
       if (data) {
         setBlocks((prev) =>
           prev.map((b) =>
@@ -82,27 +122,37 @@ function NewSessionPage() {
     },
   });
 
-
-
   const { data: editData } = useQuery({
     queryKey: ["session-edit", editId],
     enabled: !!editId && !!user,
     queryFn: async () => {
       const { data: s } = await supabase.from("sessions").select("*").eq("id", editId!).single();
-      const { data: blks } = await supabase.from("session_blocks").select("*").eq("session_id", editId!).order("position");
+      const { data: blks } = await supabase
+        .from("session_blocks")
+        .select("*")
+        .eq("session_id", editId!)
+        .order("position");
       const blockIds = (blks ?? []).map((b: any) => b.id);
       const { data: items } = blockIds.length
-        ? await supabase.from("session_block_exercises").select("*").in("block_id", blockIds).order("position")
+        ? await supabase
+            .from("session_block_exercises")
+            .select("*")
+            .in("block_id", blockIds)
+            .order("position")
         : { data: [] };
 
       if (s && blks) {
-        setBlocks(blks.map((b: any) => ({
-          block_type: b.block_type,
-          name: b.name || "",
-          duration_min: b.duration_min || "",
-          notes: b.notes || "",
-          exercise_ids: (items ?? []).filter((it: any) => it.block_id === b.id).map((it: any) => it.exercise_id),
-        })));
+        setBlocks(
+          blks.map((b: any) => ({
+            block_type: b.block_type,
+            name: b.name || "",
+            duration_min: b.duration_min || "",
+            notes: b.notes || "",
+            exercise_ids: (items ?? [])
+              .filter((it: any) => it.block_id === b.id)
+              .map((it: any) => it.exercise_id),
+          })),
+        );
       }
       return { session: s, blocks: blks, items };
     },
@@ -112,7 +162,9 @@ function NewSessionPage() {
     queryKey: ["exercises", user?.id],
     enabled: !!user,
     queryFn: async () => {
-      const { data } = await supabase.from("exercises").select("id,name,game_phase,intensity,duration_min");
+      const { data } = await supabase
+        .from("exercises")
+        .select("id,name,game_phase,intensity,duration_min");
       return data ?? [];
     },
   });
@@ -148,44 +200,58 @@ function NewSessionPage() {
       let sessionId = editId;
 
       if (editId) {
-        const { error } = await supabase.from("sessions").update({
-          name: parsed.data.name,
-          objective: parsed.data.objective || null,
-          intensity: (parsed.data.intensity || "media") as "alta" | "baja" | "media" | "muy_alta",
-          session_date: parsed.data.session_date || null,
-          duration_min: parsed.data.duration_min === "" ? null : parsed.data.duration_min,
-        }).eq("id", editId!);
+        const { error } = await supabase
+          .from("sessions")
+          .update({
+            name: parsed.data.name,
+            objective: parsed.data.objective || null,
+            intensity: (parsed.data.intensity || "media") as "alta" | "baja" | "media" | "muy_alta",
+            session_date: parsed.data.session_date || null,
+            duration_min: parsed.data.duration_min === "" ? null : parsed.data.duration_min,
+          })
+          .eq("id", editId!);
         if (error) throw error;
 
         // Limpiar bloques antiguos y sus ejercicios (cascada manual si no está en DB)
         // Por simplicidad en este MVP, borramos y re-insertamos bloques
         await supabase.from("session_blocks").delete().eq("session_id", editId!);
       } else {
-        const { data: created, error } = await (supabase.from("sessions") as any).insert({
-          owner_id: user.id,
-          name: parsed.data.name,
-          objective: parsed.data.objective || null,
-          intensity: (parsed.data.intensity || "media") as "alta" | "baja" | "media" | "muy_alta",
-          session_date: parsed.data.session_date || null,
-          duration_min: parsed.data.duration_min === "" ? null : parsed.data.duration_min,
-        }).select("id").single();
+        const { data: created, error } = await (supabase.from("sessions") as any)
+          .insert({
+            owner_id: user.id,
+            name: parsed.data.name,
+            objective: parsed.data.objective || null,
+            intensity: (parsed.data.intensity || "media") as "alta" | "baja" | "media" | "muy_alta",
+            session_date: parsed.data.session_date || null,
+            duration_min: parsed.data.duration_min === "" ? null : parsed.data.duration_min,
+          })
+          .select("id")
+          .single();
         if (error) throw error;
         sessionId = created!.id;
       }
 
-      const inserted = await (supabase.from("session_blocks") as any).insert(
-        blocks.map((b, i) => ({
-          session_id: sessionId, block_type: b.block_type, name: b.name || null,
-          position: i, duration_min: b.duration_min === "" ? null : b.duration_min, notes: b.notes || null,
-        })),
-      ).select("id,position");
+      const inserted = await (supabase.from("session_blocks") as any)
+        .insert(
+          blocks.map((b, i) => ({
+            session_id: sessionId,
+            block_type: b.block_type,
+            name: b.name || null,
+            position: i,
+            duration_min: b.duration_min === "" ? null : b.duration_min,
+            notes: b.notes || null,
+          })),
+        )
+        .select("id,position");
       if (inserted.error) throw inserted.error;
 
       const rows: any[] = [];
       blocks.forEach((b, i) => {
         const bId = inserted.data!.find((x: any) => x.position === i)?.id;
         if (!bId) return;
-        b.exercise_ids.forEach((exId, pos) => rows.push({ block_id: bId, exercise_id: exId, position: pos }));
+        b.exercise_ids.forEach((exId, pos) =>
+          rows.push({ block_id: bId, exercise_id: exId, position: pos }),
+        );
       });
       if (rows.length) {
         const r = await (supabase.from("session_block_exercises") as any).insert(rows);
@@ -209,7 +275,9 @@ function NewSessionPage() {
   return (
     <form key={formKey} onSubmit={onSubmit} className="mx-auto max-w-5xl space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">{editId ? "Editar sesión" : "Nueva sesión"}</h1>
+        <h1 className="text-2xl font-bold tracking-tight">
+          {editId ? "Editar sesión" : "Nueva sesión"}
+        </h1>
         <p className="text-sm text-muted-foreground">
           {seedExercise
             ? `Sesión prellenada con el ejercicio "${seedExercise.name}". Ajusta los bloques según necesites.`
@@ -218,20 +286,74 @@ function NewSessionPage() {
       </div>
 
       <Card className="grid gap-4 p-5 sm:grid-cols-2">
-        <div className="space-y-1.5 sm:col-span-2"><Label htmlFor="name">Nombre *</Label><Input id="name" name="name" defaultValue={editData?.session?.name ?? seedName} required maxLength={120} placeholder="Ej. MD-3 Posesión bajo presión" /></div>
-        <div className="space-y-1.5 sm:col-span-2"><Label htmlFor="objective">Objetivo</Label><Textarea id="objective" name="objective" defaultValue={editData?.session?.objective ?? seedObjective} rows={2} /></div>
-        <div className="space-y-1.5"><Label htmlFor="session_date">Fecha</Label><Input id="session_date" name="session_date" defaultValue={editData?.session?.session_date ?? ""} type="date" /></div>
-        <div className="space-y-1.5"><Label htmlFor="duration_min">Duración total (min)</Label><Input id="duration_min" name="duration_min" defaultValue={editData?.session?.duration_min ?? seedDuration} type="number" min={1} max={360} placeholder="75" /></div>
+        <div className="space-y-1.5 sm:col-span-2">
+          <Label htmlFor="name">Nombre *</Label>
+          <Input
+            id="name"
+            name="name"
+            defaultValue={editData?.session?.name ?? seedName}
+            required
+            maxLength={120}
+            placeholder="Ej. MD-3 Posesión bajo presión"
+          />
+        </div>
+        <div className="space-y-1.5 sm:col-span-2">
+          <Label htmlFor="objective">Objetivo</Label>
+          <Textarea
+            id="objective"
+            name="objective"
+            defaultValue={editData?.session?.objective ?? seedObjective}
+            rows={2}
+          />
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="session_date">Fecha</Label>
+          <Input
+            id="session_date"
+            name="session_date"
+            defaultValue={editData?.session?.session_date ?? ""}
+            type="date"
+          />
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="duration_min">Duración total (min)</Label>
+          <Input
+            id="duration_min"
+            name="duration_min"
+            defaultValue={editData?.session?.duration_min ?? seedDuration}
+            type="number"
+            min={1}
+            max={360}
+            placeholder="75"
+          />
+        </div>
         <div className="space-y-1.5 sm:col-span-2">
           <Label>Intensidad</Label>
-          <input type="hidden" name="intensity" defaultValue={editData?.session?.intensity || seedIntensity} id="hidden-intensity" />
-          <Select defaultValue={editData?.session?.intensity || seedIntensity} onValueChange={(v) => { (document.getElementById("hidden-intensity") as HTMLInputElement).value = v; }}>
-            <SelectTrigger className="sm:max-w-xs"><SelectValue /></SelectTrigger>
-            <SelectContent>{INTENSITIES.map((i) => <SelectItem key={i.value} value={i.value}>{i.label}</SelectItem>)}</SelectContent>
+          <input
+            type="hidden"
+            name="intensity"
+            defaultValue={editData?.session?.intensity || seedIntensity}
+            id="hidden-intensity"
+          />
+          <Select
+            defaultValue={editData?.session?.intensity || seedIntensity}
+            onValueChange={(v) => {
+              (document.getElementById("hidden-intensity") as HTMLInputElement).value = v;
+            }}
+          >
+            <SelectTrigger className="sm:max-w-xs">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {INTENSITIES.map((i) => (
+                <SelectItem key={i.value} value={i.value}>
+                  {i.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
           </Select>
         </div>
       </Card>
-
 
       <div className="space-y-3">
         <h2 className="font-semibold">Bloques de la sesión</h2>
@@ -241,14 +363,35 @@ function NewSessionPage() {
             draggable
             onDragStart={() => setDragIdx(i)}
             onDragOver={(e) => e.preventDefault()}
-            onDrop={() => { if (dragIdx !== null) { move(dragIdx, i); setDragIdx(null); } }}
+            onDrop={() => {
+              if (dragIdx !== null) {
+                move(dragIdx, i);
+                setDragIdx(null);
+              }
+            }}
             className="p-4"
           >
             <div className="flex items-center gap-2">
               <GripVertical className="h-4 w-4 cursor-grab text-muted-foreground" />
               <Badge variant="secondary">{labelOf(BLOCK_TYPES, b.block_type)}</Badge>
-              <Input value={b.name} onChange={(e) => updateBlock(i, { name: e.target.value })} className="max-w-xs" placeholder="Título del bloque" />
-              <Input type="number" min={1} value={b.duration_min} onChange={(e) => updateBlock(i, { duration_min: e.target.value === "" ? "" : Number(e.target.value) })} className="w-20" placeholder="min" />
+              <Input
+                value={b.name}
+                onChange={(e) => updateBlock(i, { name: e.target.value })}
+                className="max-w-xs"
+                placeholder="Título del bloque"
+              />
+              <Input
+                type="number"
+                min={1}
+                value={b.duration_min}
+                onChange={(e) =>
+                  updateBlock(i, {
+                    duration_min: e.target.value === "" ? "" : Number(e.target.value),
+                  })
+                }
+                className="w-20"
+                placeholder="min"
+              />
             </div>
 
             <div className="mt-3 space-y-2">
@@ -257,9 +400,17 @@ function NewSessionPage() {
                   {b.exercise_ids.map((exId) => {
                     const ex = allExercises?.find((e: any) => e.id === exId);
                     return (
-                      <li key={exId} className="flex items-center justify-between rounded-md border border-border/60 bg-secondary/40 px-2 py-1.5 text-sm">
+                      <li
+                        key={exId}
+                        className="flex items-center justify-between rounded-md border border-border/60 bg-secondary/40 px-2 py-1.5 text-sm"
+                      >
                         <span>{ex?.name ?? "Ejercicio"}</span>
-                        <button type="button" aria-label="Quitar ejercicio del bloque" onClick={() => removeExerciseFromBlock(i, exId)} className="text-muted-foreground hover:text-destructive">
+                        <button
+                          type="button"
+                          aria-label="Quitar ejercicio del bloque"
+                          onClick={() => removeExerciseFromBlock(i, exId)}
+                          className="text-muted-foreground hover:text-destructive"
+                        >
                           <Trash2 className="h-4 w-4" />
                         </button>
                       </li>
@@ -268,25 +419,59 @@ function NewSessionPage() {
                 </ul>
               )}
               <Select onValueChange={(v) => addExerciseToBlock(i, v)} value="">
-                <SelectTrigger className="max-w-md"><SelectValue placeholder={allExercises?.length ? "+ Añadir ejercicio" : "Crea ejercicios primero"} /></SelectTrigger>
+                <SelectTrigger className="max-w-md">
+                  <SelectValue
+                    placeholder={
+                      allExercises?.length ? "+ Añadir ejercicio" : "Crea ejercicios primero"
+                    }
+                  />
+                </SelectTrigger>
                 <SelectContent>
-                  {(allExercises ?? []).filter((e: any) => !b.exercise_ids.includes(e.id)).map((e: any) => (
-                    <SelectItem key={e.id} value={e.id}>{e.name}</SelectItem>
-                  ))}
+                  {(allExercises ?? [])
+                    .filter((e: any) => !b.exercise_ids.includes(e.id))
+                    .map((e: any) => (
+                      <SelectItem key={e.id} value={e.id}>
+                        {e.name}
+                      </SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
-              <Textarea value={b.notes} onChange={(e) => updateBlock(i, { notes: e.target.value })} rows={1} placeholder="Notas del bloque" />
+              <Textarea
+                value={b.notes}
+                onChange={(e) => updateBlock(i, { notes: e.target.value })}
+                rows={1}
+                placeholder="Notas del bloque"
+              />
             </div>
           </Card>
         ))}
-        <Button type="button" variant="outline" onClick={() => setBlocks([...blocks, { block_type: "parte_principal", name: "Nuevo bloque", duration_min: 10, notes: "", exercise_ids: [] }])}>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() =>
+            setBlocks([
+              ...blocks,
+              {
+                block_type: "parte_principal",
+                name: "Nuevo bloque",
+                duration_min: 10,
+                notes: "",
+                exercise_ids: [],
+              },
+            ])
+          }
+        >
           <Plus className="mr-1 h-4 w-4" /> Añadir bloque
         </Button>
       </div>
 
       <div className="flex justify-end gap-2">
-        <Button type="button" variant="ghost" onClick={() => navigate({ to: "/sessions" })}>Cancelar</Button>
-        <Button type="submit" disabled={busy}>{editId ? "Guardar cambios" : "Crear sesión"}</Button>
+        <Button type="button" variant="ghost" onClick={() => navigate({ to: "/sessions" })}>
+          Cancelar
+        </Button>
+        <Button type="submit" disabled={busy}>
+          {editId ? "Guardar cambios" : "Crear sesión"}
+        </Button>
       </div>
     </form>
   );

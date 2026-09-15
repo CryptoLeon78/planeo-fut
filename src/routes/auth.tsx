@@ -22,9 +22,16 @@ export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
       { title: "Accede a PlaneoFUT — Gestión de Entrenamientos" },
-      { name: "description", content: "Inicia sesión o crea tu cuenta gratuita en PlaneoFUT para planificar ejercicios, sesiones y microciclos de fútbol." },
+      {
+        name: "description",
+        content:
+          "Inicia sesión o crea tu cuenta gratuita en PlaneoFUT para planificar ejercicios, sesiones y microciclos de fútbol.",
+      },
       { property: "og:title", content: "Accede a PlaneoFUT" },
-      { property: "og:description", content: "Inicia sesión o crea tu cuenta gratuita para empezar a planificar tu temporada." },
+      {
+        property: "og:description",
+        content: "Inicia sesión o crea tu cuenta gratuita para empezar a planificar tu temporada.",
+      },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://planeo-fut.lovable.app/auth" },
       { name: "robots", content: "noindex" },
@@ -64,7 +71,10 @@ function AuthPage() {
     setBusy(true);
     try {
       if (mode === "signin") {
-        const { error } = await supabase.auth.signInWithPassword({ email: email.data, password: password.data });
+        const { error } = await supabase.auth.signInWithPassword({
+          email: email.data,
+          password: password.data,
+        });
         if (error) throw error;
         toast.success("Bienvenido");
         window.location.assign(safeNext);
@@ -98,7 +108,9 @@ function AuthPage() {
       if (result.redirected) return;
       const target = sessionStorage.getItem("planeofut-auth-next") ?? safeNext;
       sessionStorage.removeItem("planeofut-auth-next");
-      window.location.assign(target.startsWith("/") && !target.startsWith("//") ? target : "/dashboard");
+      window.location.assign(
+        target.startsWith("/") && !target.startsWith("//") ? target : "/dashboard",
+      );
     } catch (e: any) {
       toast.error(e?.message ?? "No se pudo iniciar sesión con Google");
       setBusy(false);
@@ -117,7 +129,8 @@ function AuthPage() {
         <div className="text-primary-foreground">
           <h2 className="text-3xl font-bold leading-tight">Planifica como un profesional.</h2>
           <p className="mt-3 max-w-md text-primary-foreground/85">
-            Ejercicios, sesiones, microciclos y temporadas completas en una sola herramienta diseñada para entrenadores serios.
+            Ejercicios, sesiones, microciclos y temporadas completas en una sola herramienta
+            diseñada para entrenadores serios.
           </p>
         </div>
       </div>
@@ -130,12 +143,18 @@ function AuthPage() {
           </div>
 
           <Button onClick={handleGoogle} disabled={busy} variant="outline" className="w-full">
-            <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 11v3.2h5.4c-.2 1.4-1.6 4.1-5.4 4.1-3.3 0-5.9-2.7-5.9-6s2.6-6 5.9-6c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.7 14.6 2.8 12 2.8 6.9 2.8 2.8 6.9 2.8 12s4.1 9.2 9.2 9.2c5.3 0 8.8-3.7 8.8-9 0-.6-.1-1.1-.2-1.5H12z"/></svg>
+            <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
+              <path
+                fill="#EA4335"
+                d="M12 11v3.2h5.4c-.2 1.4-1.6 4.1-5.4 4.1-3.3 0-5.9-2.7-5.9-6s2.6-6 5.9-6c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.7 14.6 2.8 12 2.8 6.9 2.8 2.8 6.9 2.8 12s4.1 9.2 9.2 9.2c5.3 0 8.8-3.7 8.8-9 0-.6-.1-1.1-.2-1.5H12z"
+              />
+            </svg>
             Continuar con Google
           </Button>
 
           <div className="my-4 flex items-center gap-3 text-xs text-muted-foreground">
-            <div className="h-px flex-1 bg-border" /> o con email <div className="h-px flex-1 bg-border" />
+            <div className="h-px flex-1 bg-border" /> o con email{" "}
+            <div className="h-px flex-1 bg-border" />
           </div>
 
           <Tabs defaultValue="signin">
@@ -145,19 +164,62 @@ function AuthPage() {
             </TabsList>
 
             <TabsContent value="signin">
-              <form onSubmit={(e) => { e.preventDefault(); handleEmail("signin", e.currentTarget); }} className="space-y-3">
-                <div className="space-y-1.5"><Label htmlFor="si-email">Email</Label><Input id="si-email" name="email" type="email" autoComplete="email" required /></div>
-                <div className="space-y-1.5"><Label htmlFor="si-pass">Contraseña</Label><Input id="si-pass" name="password" type="password" autoComplete="current-password" required /></div>
-                <Button disabled={busy} type="submit" className="w-full">Entrar</Button>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleEmail("signin", e.currentTarget);
+                }}
+                className="space-y-3"
+              >
+                <div className="space-y-1.5">
+                  <Label htmlFor="si-email">Email</Label>
+                  <Input id="si-email" name="email" type="email" autoComplete="email" required />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="si-pass">Contraseña</Label>
+                  <Input
+                    id="si-pass"
+                    name="password"
+                    type="password"
+                    autoComplete="current-password"
+                    required
+                  />
+                </div>
+                <Button disabled={busy} type="submit" className="w-full">
+                  Entrar
+                </Button>
               </form>
             </TabsContent>
 
             <TabsContent value="signup">
-              <form onSubmit={(e) => { e.preventDefault(); handleEmail("signup", e.currentTarget); }} className="space-y-3">
-                <div className="space-y-1.5"><Label htmlFor="su-name">Nombre</Label><Input id="su-name" name="fullName" type="text" /></div>
-                <div className="space-y-1.5"><Label htmlFor="su-email">Email</Label><Input id="su-email" name="email" type="email" autoComplete="email" required /></div>
-                <div className="space-y-1.5"><Label htmlFor="su-pass">Contraseña</Label><Input id="su-pass" name="password" type="password" autoComplete="new-password" required /></div>
-                <Button disabled={busy} type="submit" className="w-full">Crear cuenta</Button>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleEmail("signup", e.currentTarget);
+                }}
+                className="space-y-3"
+              >
+                <div className="space-y-1.5">
+                  <Label htmlFor="su-name">Nombre</Label>
+                  <Input id="su-name" name="fullName" type="text" />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="su-email">Email</Label>
+                  <Input id="su-email" name="email" type="email" autoComplete="email" required />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="su-pass">Contraseña</Label>
+                  <Input
+                    id="su-pass"
+                    name="password"
+                    type="password"
+                    autoComplete="new-password"
+                    required
+                  />
+                </div>
+                <Button disabled={busy} type="submit" className="w-full">
+                  Crear cuenta
+                </Button>
               </form>
             </TabsContent>
           </Tabs>

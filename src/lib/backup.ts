@@ -23,7 +23,13 @@ export const ENTITY_LABELS: Record<BackupEntity, string> = {
   session_evaluations: "Evaluaciones de sesión",
 };
 
-export type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
+export type JsonValue =
+  | string
+  | number
+  | boolean
+  | null
+  | JsonValue[]
+  | { [key: string]: JsonValue };
 
 export type BackupRow = Record<string, JsonValue>;
 

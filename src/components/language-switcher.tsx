@@ -4,8 +4,18 @@ import { useLanguage, type AppLanguage } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 const options: Array<{ value: AppLanguage; short: string; label: string; announcement: string }> = [
-  { value: "es-ES", short: "ES", label: "Español (España)", announcement: "Idioma cambiado a español de España" },
-  { value: "en-GB", short: "EN", label: "English (United Kingdom)", announcement: "Language switched to British English" },
+  {
+    value: "es-ES",
+    short: "ES",
+    label: "Español (España)",
+    announcement: "Idioma cambiado a español de España",
+  },
+  {
+    value: "en-GB",
+    short: "EN",
+    label: "English (United Kingdom)",
+    announcement: "Language switched to British English",
+  },
 ];
 
 export function LanguageSwitcher() {

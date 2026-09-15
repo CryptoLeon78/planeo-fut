@@ -42,9 +42,20 @@ export const BLOCK_TYPES = [
 ] as const;
 
 export const COMMON_TAGS = [
-  "posesión", "presión alta", "salida de balón", "ataque posicional",
-  "transiciones", "ABP", "finalización", "centros", "1v1", "duelo aéreo",
-  "vigilancias", "repliegue", "marcaje", "contraataque",
+  "posesión",
+  "presión alta",
+  "salida de balón",
+  "ataque posicional",
+  "transiciones",
+  "ABP",
+  "finalización",
+  "centros",
+  "1v1",
+  "duelo aéreo",
+  "vigilancias",
+  "repliegue",
+  "marcaje",
+  "contraataque",
 ];
 
 export const MICROCYCLE_SLOT_TYPES = [
@@ -103,6 +114,9 @@ export function ymd(d: Date): string {
 
 export function formatDate(d: string | Date, opts?: Intl.DateTimeFormatOptions): string {
   const date = typeof d === "string" ? new Date(d) : d;
-  const locale = typeof document !== "undefined" && document.documentElement.lang === "en-GB" ? "en-GB" : "es-ES";
+  const locale =
+    typeof document !== "undefined" && document.documentElement.lang === "en-GB"
+      ? "en-GB"
+      : "es-ES";
   return date.toLocaleDateString(locale, opts ?? { day: "numeric", month: "short" });
 }

@@ -12,13 +12,17 @@ const InputSchema = z.object({
 
 const SuggestionSchema = z.object({
   weekly_objective: z.string(),
-  slots: z.array(z.object({
-    slot_type: z.enum(["MD-4", "MD-3", "MD-2", "MD-1", "MD"]),
-    focus: z.string(),
-    intensity: z.string(),
-    recommended_exercise_ids: z.array(z.string()),
-    notes: z.string(),
-  })).length(5),
+  slots: z
+    .array(
+      z.object({
+        slot_type: z.enum(["MD-4", "MD-3", "MD-2", "MD-1", "MD"]),
+        focus: z.string(),
+        intensity: z.string(),
+        recommended_exercise_ids: z.array(z.string()),
+        notes: z.string(),
+      }),
+    )
+    .length(5),
 });
 
 export type MicrocycleSuggestion = z.infer<typeof SuggestionSchema>;
@@ -35,11 +39,19 @@ export const suggestMicrocycle = createServerFn({ method: "POST" })
 
     let mesocycle: any = null;
     if (mesocycleId) {
-      const { data: m } = await supabase.from("mesocycles").select("name,type,goals,phases").eq("id", mesocycleId).maybeSingle();
+      const { data: m } = await supabase
+        .from("mesocycles")
+        .select("name,type,goals,phases")
+        .eq("id", mesocycleId)
+        .maybeSingle();
       mesocycle = m;
     } else {
-      const { data: m } = await supabase.from("mesocycles").select("name,type,goals,phases")
-        .lte("start_date", weekStart).gte("end_date", weekStart).limit(1);
+      const { data: m } = await supabase
+        .from("mesocycles")
+        .select("name,type,goals,phases")
+        .lte("start_date", weekStart)
+        .gte("end_date", weekStart)
+        .limit(1);
       mesocycle = m?.[0] ?? null;
     }
 
@@ -49,9 +61,12 @@ export const suggestMicrocycle = createServerFn({ method: "POST" })
       .order("created_at", { ascending: false })
       .limit(60);
 
-    const catalog = (exercises ?? []).map((e: any) =>
-      `- ${e.id} | ${e.name} | obj: ${e.objective ?? "-"} | fase: ${e.game_phase ?? "-"} | int: ${e.intensity ?? "-"} | tipo: ${e.task_type ?? "-"} | ${e.duration_min ?? "-"}min`
-    ).join("\n");
+    const catalog = (exercises ?? [])
+      .map(
+        (e: any) =>
+          `- ${e.id} | ${e.name} | obj: ${e.objective ?? "-"} | fase: ${e.game_phase ?? "-"} | int: ${e.intensity ?? "-"} | tipo: ${e.task_type ?? "-"} | ${e.duration_min ?? "-"}min`,
+      )
+      .join("\n");
 
     const system = `Eres un asistente experto en planificación de microciclos de fútbol (modelo MD-4, MD-3, MD-2, MD-1, MD).
 Reglas de carga:

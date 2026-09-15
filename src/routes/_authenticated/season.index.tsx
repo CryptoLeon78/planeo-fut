@@ -8,7 +8,13 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { useAuth } from "@/hooks/use-auth";
 import { formatDate } from "@/lib/constants";
 import { planningService, validateMesocycleInput } from "@/services/planning.service";
@@ -18,9 +24,15 @@ export const Route = createFileRoute("/_authenticated/season/")({
   head: () => ({
     meta: [
       { title: "Temporada competitiva · PlaneoFUT" },
-      { name: "description", content: "Planifica la temporada con partidos, objetivos y microciclos." },
+      {
+        name: "description",
+        content: "Planifica la temporada con partidos, objetivos y microciclos.",
+      },
       { property: "og:title", content: "Temporada competitiva · PlaneoFUT" },
-      { property: "og:description", content: "Planifica la temporada con partidos, objetivos y microciclos." },
+      {
+        property: "og:description",
+        content: "Planifica la temporada con partidos, objetivos y microciclos.",
+      },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -81,28 +93,57 @@ function SeasonList() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Temporada</h1>
-          <p className="text-sm text-muted-foreground">Bloques competitivos largos con sus partidos y microciclos.</p>
+          <p className="text-sm text-muted-foreground">
+            Bloques competitivos largos con sus partidos y microciclos.
+          </p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild><Button><Plus className="mr-1 h-4 w-4" /> Nueva temporada</Button></DialogTrigger>
+          <DialogTrigger asChild>
+            <Button>
+              <Plus className="mr-1 h-4 w-4" /> Nueva temporada
+            </Button>
+          </DialogTrigger>
           <DialogContent>
-            <DialogHeader><DialogTitle>Nueva temporada</DialogTitle></DialogHeader>
+            <DialogHeader>
+              <DialogTitle>Nueva temporada</DialogTitle>
+            </DialogHeader>
             <div className="space-y-3">
               <div className="space-y-1.5">
                 <Label>Nombre</Label>
-                <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+                <Input
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                />
               </div>
               <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1.5"><Label>Inicio</Label>
-                  <Input type="date" value={form.start_date} onChange={(e) => setForm({ ...form, start_date: e.target.value })} /></div>
-                <div className="space-y-1.5"><Label>Fin</Label>
-                  <Input type="date" value={form.end_date} onChange={(e) => setForm({ ...form, end_date: e.target.value })} /></div>
+                <div className="space-y-1.5">
+                  <Label>Inicio</Label>
+                  <Input
+                    type="date"
+                    value={form.start_date}
+                    onChange={(e) => setForm({ ...form, start_date: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label>Fin</Label>
+                  <Input
+                    type="date"
+                    value={form.end_date}
+                    onChange={(e) => setForm({ ...form, end_date: e.target.value })}
+                  />
+                </div>
               </div>
               <div className="space-y-1.5">
                 <Label>Objetivos de temporada</Label>
-                <Textarea rows={3} value={form.goals} onChange={(e) => setForm({ ...form, goals: e.target.value })} />
+                <Textarea
+                  rows={3}
+                  value={form.goals}
+                  onChange={(e) => setForm({ ...form, goals: e.target.value })}
+                />
               </div>
-              <Button onClick={onCreate} className="w-full">Crear</Button>
+              <Button onClick={onCreate} className="w-full">
+                Crear
+              </Button>
             </div>
           </DialogContent>
         </Dialog>
@@ -113,19 +154,40 @@ function SeasonList() {
           {data.map((m: any) => (
             <Card key={m.id} className="flex flex-col p-5">
               <div className="flex items-start justify-between">
-                <Link to="/season/$id" params={{ id: m.id }} className="font-semibold hover:text-primary">{m.name}</Link>
-                <Button variant="ghost" size="icon" aria-label="Eliminar temporada" onClick={() => remove(m.id)}><Trash2 className="h-4 w-4" /></Button>
+                <Link
+                  to="/season/$id"
+                  params={{ id: m.id }}
+                  className="font-semibold hover:text-primary"
+                >
+                  {m.name}
+                </Link>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Eliminar temporada"
+                  onClick={() => remove(m.id)}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
               </div>
-              <p className="text-xs text-muted-foreground">{formatDate(m.start_date)} → {formatDate(m.end_date)}</p>
-              {m.goals && <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">{m.goals}</p>}
+              <p className="text-xs text-muted-foreground">
+                {formatDate(m.start_date)} → {formatDate(m.end_date)}
+              </p>
+              {m.goals && (
+                <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">{m.goals}</p>
+              )}
             </Card>
           ))}
         </div>
       ) : (
         <Card className="p-12 text-center">
-          <div className="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-full bg-accent text-primary"><Trophy className="h-6 w-6" /></div>
+          <div className="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-full bg-accent text-primary">
+            <Trophy className="h-6 w-6" />
+          </div>
           <p className="font-medium">Aún no tienes temporadas</p>
-          <p className="mt-1 text-sm text-muted-foreground">Crea tu temporada competitiva y planifica partidos, microciclos y objetivos por mes.</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Crea tu temporada competitiva y planifica partidos, microciclos y objetivos por mes.
+          </p>
         </Card>
       )}
     </div>

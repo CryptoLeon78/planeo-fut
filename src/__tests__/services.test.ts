@@ -6,8 +6,24 @@ import { toEvaluationPayload, emptyEvaluation } from "@/services/session-evaluat
 
 describe("exercises service", () => {
   const rows = [
-    { id: "1", name: "Rondo 4v2", objective: "Salida", tags: ["posesion"], game_phase: "ataque", intensity: "alta", is_favorite: true },
-    { id: "2", name: "Presión tras pérdida", objective: null, tags: [], game_phase: "defensa", intensity: "media", is_favorite: false },
+    {
+      id: "1",
+      name: "Rondo 4v2",
+      objective: "Salida",
+      tags: ["posesion"],
+      game_phase: "ataque",
+      intensity: "alta",
+      is_favorite: true,
+    },
+    {
+      id: "2",
+      name: "Presión tras pérdida",
+      objective: null,
+      tags: [],
+      game_phase: "defensa",
+      intensity: "media",
+      is_favorite: false,
+    },
   ];
 
   it("filters by free text across name, objective and tags", () => {
@@ -32,13 +48,22 @@ describe("microcycles service", () => {
   it("builds five dated slots from the week start", () => {
     const slots = buildSlots("m1", "2026-08-10", "sabado");
     expect(slots).toHaveLength(5);
-    expect(slots[0]).toMatchObject({ microcycle_id: "m1", slot_type: "MD-4", slot_date: "2026-08-11" });
+    expect(slots[0]).toMatchObject({
+      microcycle_id: "m1",
+      slot_type: "MD-4",
+      slot_date: "2026-08-11",
+    });
     expect(slots[4]).toMatchObject({ slot_type: "MD", slot_date: "2026-08-15" });
   });
 });
 
 describe("planning service", () => {
-  const base = { ownerId: "u1", name: "Pretemporada", startDate: "2026-07-01", endDate: "2026-08-01" };
+  const base = {
+    ownerId: "u1",
+    name: "Pretemporada",
+    startDate: "2026-07-01",
+    endDate: "2026-08-01",
+  };
 
   it("accepts valid input and rejects bad input", () => {
     expect(validateMesocycleInput(base)).toBeNull();
@@ -55,6 +80,11 @@ describe("planning service", () => {
 describe("session evaluations service", () => {
   it("normalises empty strings to null in the payload", () => {
     const payload = toEvaluationPayload("s1", "u1", { ...emptyEvaluation, rating: 4 });
-    expect(payload).toMatchObject({ session_id: "s1", owner_id: "u1", rating: 4, what_worked: null });
+    expect(payload).toMatchObject({
+      session_id: "s1",
+      owner_id: "u1",
+      rating: 4,
+      what_worked: null,
+    });
   });
 });

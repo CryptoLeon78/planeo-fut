@@ -1,10 +1,33 @@
 import { Link, useRouter, useRouterState } from "@tanstack/react-router";
-import { BarChart3, BookOpen, Calendar, ClipboardList, Dumbbell, HardDriveDownload, LayoutDashboard, LogOut, Trophy, Users, CalendarRange, Sun, Medal } from "lucide-react";
+import {
+  BarChart3,
+  BookOpen,
+  Calendar,
+  ClipboardList,
+  Dumbbell,
+  HardDriveDownload,
+  LayoutDashboard,
+  LogOut,
+  Trophy,
+  Users,
+  CalendarRange,
+  Sun,
+  Medal,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
-  Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
-  SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarHeader, SidebarFooter, useSidebar,
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarHeader,
+  SidebarFooter,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { useAuth } from "@/hooks/use-auth";
 import { useQueryClient } from "@tanstack/react-query";

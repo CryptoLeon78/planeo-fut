@@ -21,15 +21,23 @@ export function addDays(date: string, days: number): string {
 export default defineAuthedTool({
   name: "create_microcycle",
   title: "Create microcycle",
-  description: "Create a weekly football microcycle and its MD-4 to match-day planning slots for the signed-in coach.",
+  description:
+    "Create a weekly football microcycle and its MD-4 to match-day planning slots for the signed-in coach.",
   inputSchema: {
     name: shortText(120).describe("Microcycle name."),
     weekStart: isoDate.describe("First planning date in YYYY-MM-DD format."),
-    matchDay: z.enum(["sabado", "domingo"]).describe("Whether the competitive fixture is on Saturday or Sunday."),
+    matchDay: z
+      .enum(["sabado", "domingo"])
+      .describe("Whether the competitive fixture is on Saturday or Sunday."),
     weeklyObjective: longText(600).optional().describe("Primary outcome for the week."),
     notes: longText(2000).optional().describe("Context, constraints or load notes."),
   },
-  annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false },
+  annotations: {
+    readOnlyHint: false,
+    destructiveHint: false,
+    idempotentHint: false,
+    openWorldHint: false,
+  },
   handler: async (input, ctx, userId) => {
     const supabase = supabaseForUser(ctx);
     const { data: microcycle, error } = await supabase
@@ -48,11 +56,13 @@ export default defineAuthedTool({
 
     const { data: slots, error: slotsError } = await supabase
       .from("microcycle_slots")
-      .insert(SLOT_OFFSETS.map((slot) => ({
-        microcycle_id: microcycle.id,
-        slot_type: slot.type,
-        slot_date: addDays(input.weekStart, slot.offset),
-      })))
+      .insert(
+        SLOT_OFFSETS.map((slot) => ({
+          microcycle_id: microcycle.id,
+          slot_type: slot.type,
+          slot_date: addDays(input.weekStart, slot.offset),
+        })),
+      )
       .select("id,slot_type,slot_date");
     if (slotsError) {
       await supabase.from("microcycles").delete().eq("id", microcycle.id).eq("owner_id", userId);

@@ -24,7 +24,9 @@ export const exercisesRepository = {
   },
 
   async count(): Promise<number> {
-    const res = await table("exercises").select("id", { count: "exact", head: true }).is("deleted_at", null);
+    const res = await table("exercises")
+      .select("id", { count: "exact", head: true })
+      .is("deleted_at", null);
     return res.count ?? 0;
   },
 

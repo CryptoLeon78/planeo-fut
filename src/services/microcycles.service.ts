@@ -9,8 +9,20 @@ export type MatchDay = "sabado" | "domingo";
  */
 export function slotOffsetsFor(matchDay: MatchDay): ReadonlyArray<readonly [string, number]> {
   return matchDay === "sabado"
-    ? ([["MD-4", 1], ["MD-3", 2], ["MD-2", 3], ["MD-1", 4], ["MD", 5]] as const)
-    : ([["MD-4", 1], ["MD-3", 2], ["MD-2", 3], ["MD-1", 5], ["MD", 6]] as const);
+    ? ([
+        ["MD-4", 1],
+        ["MD-3", 2],
+        ["MD-2", 3],
+        ["MD-1", 4],
+        ["MD", 5],
+      ] as const)
+    : ([
+        ["MD-4", 1],
+        ["MD-3", 2],
+        ["MD-2", 3],
+        ["MD-1", 5],
+        ["MD", 6],
+      ] as const);
 }
 
 export function buildSlots(microcycleId: string, weekStart: string, matchDay: MatchDay) {
@@ -47,7 +59,9 @@ export const microcyclesService = {
       weekly_objective: input.weeklyObjective || null,
       mesocycle_id: input.mesocycleId ?? null,
     });
-    await microcyclesRepository.createSlots(buildSlots(created.id, input.weekStart, input.matchDay));
+    await microcyclesRepository.createSlots(
+      buildSlots(created.id, input.weekStart, input.matchDay),
+    );
     return created;
   },
 
@@ -55,11 +69,16 @@ export const microcyclesService = {
    * Assigns a session to a slot. A session can only live in one slot at a
    * time, so any previous slot holding it is cleared (conflict resolution).
    */
-  async assignSession(microcycleId: string, slotId: string, sessionId: string | null): Promise<void> {
+  async assignSession(
+    microcycleId: string,
+    slotId: string,
+    sessionId: string | null,
+  ): Promise<void> {
     if (sessionId) {
       const slots = await microcyclesRepository.listSlots(microcycleId);
       const conflicting = slots.filter((s) => s.session_id === sessionId && s.id !== slotId);
-      for (const slot of conflicting) await microcyclesRepository.updateSlot(slot.id, { session_id: null });
+      for (const slot of conflicting)
+        await microcyclesRepository.updateSlot(slot.id, { session_id: null });
     }
     await microcyclesRepository.updateSlot(slotId, { session_id: sessionId });
   },

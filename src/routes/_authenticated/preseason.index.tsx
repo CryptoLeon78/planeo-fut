@@ -8,7 +8,13 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { useAuth } from "@/hooks/use-auth";
 import { formatDate } from "@/lib/constants";
 import { planningService, validateMesocycleInput } from "@/services/planning.service";
@@ -18,9 +24,15 @@ export const Route = createFileRoute("/_authenticated/preseason/")({
   head: () => ({
     meta: [
       { title: "Pretemporada · PlaneoFUT" },
-      { name: "description", content: "Diseña bloques de pretemporada por fases y asocia microciclos." },
+      {
+        name: "description",
+        content: "Diseña bloques de pretemporada por fases y asocia microciclos.",
+      },
       { property: "og:title", content: "Pretemporada · PlaneoFUT" },
-      { property: "og:description", content: "Diseña bloques de pretemporada por fases y asocia microciclos." },
+      {
+        property: "og:description",
+        content: "Diseña bloques de pretemporada por fases y asocia microciclos.",
+      },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -80,65 +92,113 @@ function PreseasonPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Pretemporada</h1>
-          <p className="text-sm text-muted-foreground">Diseña el bloque de pretemporada con sus fases.</p>
+          <p className="text-sm text-muted-foreground">
+            Diseña el bloque de pretemporada con sus fases.
+          </p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild><Button><Plus className="mr-1 h-4 w-4" /> Nueva pretemporada</Button></DialogTrigger>
+          <DialogTrigger asChild>
+            <Button>
+              <Plus className="mr-1 h-4 w-4" /> Nueva pretemporada
+            </Button>
+          </DialogTrigger>
           <DialogContent>
-            <DialogHeader><DialogTitle>Nueva pretemporada</DialogTitle></DialogHeader>
+            <DialogHeader>
+              <DialogTitle>Nueva pretemporada</DialogTitle>
+            </DialogHeader>
             <div className="space-y-3">
               <div className="space-y-1.5">
                 <Label>Nombre</Label>
-                <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+                <Input
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <Label>Inicio</Label>
-                  <Input type="date" value={form.start_date} onChange={(e) => setForm({ ...form, start_date: e.target.value })} />
+                  <Input
+                    type="date"
+                    value={form.start_date}
+                    onChange={(e) => setForm({ ...form, start_date: e.target.value })}
+                  />
                 </div>
                 <div className="space-y-1.5">
                   <Label>Fin</Label>
-                  <Input type="date" value={form.end_date} onChange={(e) => setForm({ ...form, end_date: e.target.value })} />
+                  <Input
+                    type="date"
+                    value={form.end_date}
+                    onChange={(e) => setForm({ ...form, end_date: e.target.value })}
+                  />
                 </div>
               </div>
               <div className="space-y-1.5">
                 <Label>Objetivos generales</Label>
-                <Textarea rows={3} value={form.goals} onChange={(e) => setForm({ ...form, goals: e.target.value })} />
+                <Textarea
+                  rows={3}
+                  value={form.goals}
+                  onChange={(e) => setForm({ ...form, goals: e.target.value })}
+                />
               </div>
-              <Button onClick={onCreate} className="w-full">Crear</Button>
+              <Button onClick={onCreate} className="w-full">
+                Crear
+              </Button>
             </div>
           </DialogContent>
         </Dialog>
       </div>
 
-      {isLoading ? <p className="text-sm text-muted-foreground">Cargando…</p>
-        : data && data.length > 0 ? (
-          <div className="grid gap-3 md:grid-cols-2">
-            {data.map((m: any) => (
-              <Card key={m.id} className="flex flex-col p-5">
-                <div className="flex items-start justify-between">
-                  <Link to="/preseason/$id" params={{ id: m.id }} className="font-semibold hover:text-primary">{m.name}</Link>
-                  <Button variant="ghost" size="icon" aria-label="Eliminar bloque de pretemporada" onClick={() => remove(m.id)}><Trash2 className="h-4 w-4" /></Button>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  {formatDate(m.start_date)} → {formatDate(m.end_date)}
-                </p>
-                {m.goals && <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">{m.goals}</p>}
-                <div className="mt-3 flex flex-wrap gap-1.5">
-                  {(m.phases ?? []).map((p: any) => (
-                    <span key={p.key} className="rounded-full bg-secondary px-2 py-0.5 text-xs">{p.label}</span>
-                  ))}
-                </div>
-              </Card>
-            ))}
+      {isLoading ? (
+        <p className="text-sm text-muted-foreground">Cargando…</p>
+      ) : data && data.length > 0 ? (
+        <div className="grid gap-3 md:grid-cols-2">
+          {data.map((m: any) => (
+            <Card key={m.id} className="flex flex-col p-5">
+              <div className="flex items-start justify-between">
+                <Link
+                  to="/preseason/$id"
+                  params={{ id: m.id }}
+                  className="font-semibold hover:text-primary"
+                >
+                  {m.name}
+                </Link>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Eliminar bloque de pretemporada"
+                  onClick={() => remove(m.id)}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {formatDate(m.start_date)} → {formatDate(m.end_date)}
+              </p>
+              {m.goals && (
+                <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">{m.goals}</p>
+              )}
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {(m.phases ?? []).map((p: any) => (
+                  <span key={p.key} className="rounded-full bg-secondary px-2 py-0.5 text-xs">
+                    {p.label}
+                  </span>
+                ))}
+              </div>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <Card className="p-12 text-center">
+          <div className="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-full bg-accent text-primary">
+            <Sun className="h-6 w-6" />
           </div>
-        ) : (
-          <Card className="p-12 text-center">
-            <div className="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-full bg-accent text-primary"><Sun className="h-6 w-6" /></div>
-            <p className="font-medium">Aún no tienes pretemporada</p>
-            <p className="mt-1 text-sm text-muted-foreground">Crea bloques con fases (acondicionamiento, técnico-táctico, competitivo) y asocia microciclos.</p>
-          </Card>
-        )}
+          <p className="font-medium">Aún no tienes pretemporada</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Crea bloques con fases (acondicionamiento, técnico-táctico, competitivo) y asocia
+            microciclos.
+          </p>
+        </Card>
+      )}
     </div>
   );
 }

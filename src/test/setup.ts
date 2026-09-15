@@ -25,8 +25,20 @@ export function createSupabaseMock(handlers: Record<string, any> = {}) {
       or: vi.fn(() => builder),
       order: vi.fn(() => builder),
       limit: vi.fn(() => builder),
-      single: vi.fn(async () => single ?? { data: Array.isArray(result.data) ? result.data[0] ?? null : result.data, error: null }),
-      maybeSingle: vi.fn(async () => single ?? { data: Array.isArray(result.data) ? result.data[0] ?? null : result.data, error: null }),
+      single: vi.fn(
+        async () =>
+          single ?? {
+            data: Array.isArray(result.data) ? (result.data[0] ?? null) : result.data,
+            error: null,
+          },
+      ),
+      maybeSingle: vi.fn(
+        async () =>
+          single ?? {
+            data: Array.isArray(result.data) ? (result.data[0] ?? null) : result.data,
+            error: null,
+          },
+      ),
       then: (onFulfilled: any) => Promise.resolve(result).then(onFulfilled),
     };
     return builder;
@@ -65,7 +77,8 @@ vi.mock("@tanstack/react-router", async () => {
     createFileRoute: () => makeRoute(),
     createRootRoute: () => makeRoute(),
     createRootRouteWithContext: () => makeRoute(),
-    Link: ({ children, to, params, ...p }: any) => React.createElement("a", { href: to, ...p }, children),
+    Link: ({ children, to, params, ...p }: any) =>
+      React.createElement("a", { href: to, ...p }, children),
     Outlet: () => null,
     useNavigate: () => vi.fn(),
     useParams: () => ({ id: "test-id" }),

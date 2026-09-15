@@ -19,7 +19,10 @@ export function table(name: string) {
 export { supabase as db };
 
 export class RepositoryError extends Error {
-  constructor(message: string, readonly cause?: unknown) {
+  constructor(
+    message: string,
+    readonly cause?: unknown,
+  ) {
     super(message);
     this.name = "RepositoryError";
   }

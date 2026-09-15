@@ -5,7 +5,8 @@ import { entityEnum, limitField, uuid } from "../schemas";
 export default defineAuthedTool({
   name: "list_versions",
   title: "List version history",
-  description: "List stored version snapshots for one of the coach's practices, sessions or microcycles.",
+  description:
+    "List stored version snapshots for one of the coach's practices, sessions or microcycles.",
   inputSchema: {
     entity: entityEnum.describe("Record type: exercise, session or microcycle."),
     recordId: uuid.describe("Identifier of the record."),
