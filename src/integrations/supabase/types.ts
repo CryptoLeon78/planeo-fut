@@ -1,723 +1,739 @@
-export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
 
 export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.5";
-  };
+    PostgrestVersion: "14.5"
+  }
   public: {
     Tables: {
       data_exports: {
         Row: {
-          byte_size: number;
-          created_at: string;
-          entities: string[];
-          error_message: string | null;
-          format: string;
-          id: string;
-          operation: string;
-          owner_id: string;
-          record_count: number;
-          status: string;
-        };
+          byte_size: number
+          created_at: string
+          entities: string[]
+          error_message: string | null
+          format: string
+          id: string
+          operation: string
+          owner_id: string
+          record_count: number
+          status: string
+        }
         Insert: {
-          byte_size?: number;
-          created_at?: string;
-          entities?: string[];
-          error_message?: string | null;
-          format?: string;
-          id?: string;
-          operation?: string;
-          owner_id: string;
-          record_count?: number;
-          status?: string;
-        };
+          byte_size?: number
+          created_at?: string
+          entities?: string[]
+          error_message?: string | null
+          format?: string
+          id?: string
+          operation?: string
+          owner_id: string
+          record_count?: number
+          status?: string
+        }
         Update: {
-          byte_size?: number;
-          created_at?: string;
-          entities?: string[];
-          error_message?: string | null;
-          format?: string;
-          id?: string;
-          operation?: string;
-          owner_id?: string;
-          record_count?: number;
-          status?: string;
-        };
-        Relationships: [];
-      };
+          byte_size?: number
+          created_at?: string
+          entities?: string[]
+          error_message?: string | null
+          format?: string
+          id?: string
+          operation?: string
+          owner_id?: string
+          record_count?: number
+          status?: string
+        }
+        Relationships: []
+      }
       entity_versions: {
         Row: {
-          created_at: string;
-          entity_id: string;
-          entity_type: string;
-          id: string;
-          label: string | null;
-          owner_id: string;
-          snapshot: Json;
-          source: string;
-          version: number;
-        };
+          created_at: string
+          entity_id: string
+          entity_type: string
+          id: string
+          label: string | null
+          owner_id: string
+          snapshot: Json
+          source: string
+          version: number
+        }
         Insert: {
-          created_at?: string;
-          entity_id: string;
-          entity_type: string;
-          id?: string;
-          label?: string | null;
-          owner_id: string;
-          snapshot?: Json;
-          source?: string;
-          version: number;
-        };
+          created_at?: string
+          entity_id: string
+          entity_type: string
+          id?: string
+          label?: string | null
+          owner_id: string
+          snapshot?: Json
+          source?: string
+          version: number
+        }
         Update: {
-          created_at?: string;
-          entity_id?: string;
-          entity_type?: string;
-          id?: string;
-          label?: string | null;
-          owner_id?: string;
-          snapshot?: Json;
-          source?: string;
-          version?: number;
-        };
-        Relationships: [];
-      };
+          created_at?: string
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          label?: string | null
+          owner_id?: string
+          snapshot?: Json
+          source?: string
+          version?: number
+        }
+        Relationships: []
+      }
       exercises: {
         Row: {
-          age_group: string | null;
-          category: Database["public"]["Enums"]["team_category"] | null;
-          created_at: string;
-          deleted_at: string | null;
-          duration_min: number | null;
-          game_phase: Database["public"]["Enums"]["game_phase"] | null;
-          id: string;
-          intensity: Database["public"]["Enums"]["exercise_intensity"] | null;
-          is_favorite: boolean;
-          level: string | null;
-          materials: string | null;
-          name: string;
-          objective: string | null;
-          observations: string | null;
-          owner_id: string;
-          players_count: number | null;
-          space: string | null;
-          tags: string[];
-          task_type: Database["public"]["Enums"]["task_type"] | null;
-          team_id: string | null;
-          updated_at: string;
-          variants: string | null;
-        };
+          age_group: string | null
+          category: Database["public"]["Enums"]["team_category"] | null
+          created_at: string
+          deleted_at: string | null
+          duration_min: number | null
+          game_phase: Database["public"]["Enums"]["game_phase"] | null
+          id: string
+          intensity: Database["public"]["Enums"]["exercise_intensity"] | null
+          is_favorite: boolean
+          level: string | null
+          materials: string | null
+          name: string
+          objective: string | null
+          observations: string | null
+          owner_id: string
+          players_count: number | null
+          space: string | null
+          tags: string[]
+          task_type: Database["public"]["Enums"]["task_type"] | null
+          team_id: string | null
+          updated_at: string
+          variants: string | null
+        }
         Insert: {
-          age_group?: string | null;
-          category?: Database["public"]["Enums"]["team_category"] | null;
-          created_at?: string;
-          deleted_at?: string | null;
-          duration_min?: number | null;
-          game_phase?: Database["public"]["Enums"]["game_phase"] | null;
-          id?: string;
-          intensity?: Database["public"]["Enums"]["exercise_intensity"] | null;
-          is_favorite?: boolean;
-          level?: string | null;
-          materials?: string | null;
-          name: string;
-          objective?: string | null;
-          observations?: string | null;
-          owner_id: string;
-          players_count?: number | null;
-          space?: string | null;
-          tags?: string[];
-          task_type?: Database["public"]["Enums"]["task_type"] | null;
-          team_id?: string | null;
-          updated_at?: string;
-          variants?: string | null;
-        };
+          age_group?: string | null
+          category?: Database["public"]["Enums"]["team_category"] | null
+          created_at?: string
+          deleted_at?: string | null
+          duration_min?: number | null
+          game_phase?: Database["public"]["Enums"]["game_phase"] | null
+          id?: string
+          intensity?: Database["public"]["Enums"]["exercise_intensity"] | null
+          is_favorite?: boolean
+          level?: string | null
+          materials?: string | null
+          name: string
+          objective?: string | null
+          observations?: string | null
+          owner_id: string
+          players_count?: number | null
+          space?: string | null
+          tags?: string[]
+          task_type?: Database["public"]["Enums"]["task_type"] | null
+          team_id?: string | null
+          updated_at?: string
+          variants?: string | null
+        }
         Update: {
-          age_group?: string | null;
-          category?: Database["public"]["Enums"]["team_category"] | null;
-          created_at?: string;
-          deleted_at?: string | null;
-          duration_min?: number | null;
-          game_phase?: Database["public"]["Enums"]["game_phase"] | null;
-          id?: string;
-          intensity?: Database["public"]["Enums"]["exercise_intensity"] | null;
-          is_favorite?: boolean;
-          level?: string | null;
-          materials?: string | null;
-          name?: string;
-          objective?: string | null;
-          observations?: string | null;
-          owner_id?: string;
-          players_count?: number | null;
-          space?: string | null;
-          tags?: string[];
-          task_type?: Database["public"]["Enums"]["task_type"] | null;
-          team_id?: string | null;
-          updated_at?: string;
-          variants?: string | null;
-        };
+          age_group?: string | null
+          category?: Database["public"]["Enums"]["team_category"] | null
+          created_at?: string
+          deleted_at?: string | null
+          duration_min?: number | null
+          game_phase?: Database["public"]["Enums"]["game_phase"] | null
+          id?: string
+          intensity?: Database["public"]["Enums"]["exercise_intensity"] | null
+          is_favorite?: boolean
+          level?: string | null
+          materials?: string | null
+          name?: string
+          objective?: string | null
+          observations?: string | null
+          owner_id?: string
+          players_count?: number | null
+          space?: string | null
+          tags?: string[]
+          task_type?: Database["public"]["Enums"]["task_type"] | null
+          team_id?: string | null
+          updated_at?: string
+          variants?: string | null
+        }
         Relationships: [
           {
-            foreignKeyName: "exercises_team_id_fkey";
-            columns: ["team_id"];
-            isOneToOne: false;
-            referencedRelation: "teams";
-            referencedColumns: ["id"];
+            foreignKeyName: "exercises_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
           },
-        ];
-      };
+        ]
+      }
       mcp_audit_log: {
         Row: {
-          created_at: string;
-          duration_ms: number | null;
-          error_code: string | null;
-          error_message: string | null;
-          id: string;
-          params: Json;
-          status: string;
-          tool: string;
-          user_id: string;
-        };
+          created_at: string
+          duration_ms: number | null
+          error_code: string | null
+          error_message: string | null
+          id: string
+          params: Json
+          status: string
+          tool: string
+          user_id: string
+        }
         Insert: {
-          created_at?: string;
-          duration_ms?: number | null;
-          error_code?: string | null;
-          error_message?: string | null;
-          id?: string;
-          params?: Json;
-          status: string;
-          tool: string;
-          user_id: string;
-        };
+          created_at?: string
+          duration_ms?: number | null
+          error_code?: string | null
+          error_message?: string | null
+          id?: string
+          params?: Json
+          status: string
+          tool: string
+          user_id: string
+        }
         Update: {
-          created_at?: string;
-          duration_ms?: number | null;
-          error_code?: string | null;
-          error_message?: string | null;
-          id?: string;
-          params?: Json;
-          status?: string;
-          tool?: string;
-          user_id?: string;
-        };
-        Relationships: [];
-      };
+          created_at?: string
+          duration_ms?: number | null
+          error_code?: string | null
+          error_message?: string | null
+          id?: string
+          params?: Json
+          status?: string
+          tool?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       mesocycles: {
         Row: {
-          created_at: string;
-          end_date: string;
-          goals: string | null;
-          id: string;
-          name: string;
-          notes: string | null;
-          owner_id: string;
-          phases: Json;
-          start_date: string;
-          team_id: string | null;
-          type: Database["public"]["Enums"]["mesocycle_type"];
-          updated_at: string;
-        };
+          created_at: string
+          end_date: string
+          goals: string | null
+          id: string
+          name: string
+          notes: string | null
+          owner_id: string
+          phases: Json
+          start_date: string
+          team_id: string | null
+          type: Database["public"]["Enums"]["mesocycle_type"]
+          updated_at: string
+        }
         Insert: {
-          created_at?: string;
-          end_date: string;
-          goals?: string | null;
-          id?: string;
-          name: string;
-          notes?: string | null;
-          owner_id: string;
-          phases?: Json;
-          start_date: string;
-          team_id?: string | null;
-          type?: Database["public"]["Enums"]["mesocycle_type"];
-          updated_at?: string;
-        };
+          created_at?: string
+          end_date: string
+          goals?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          owner_id: string
+          phases?: Json
+          start_date: string
+          team_id?: string | null
+          type?: Database["public"]["Enums"]["mesocycle_type"]
+          updated_at?: string
+        }
         Update: {
-          created_at?: string;
-          end_date?: string;
-          goals?: string | null;
-          id?: string;
-          name?: string;
-          notes?: string | null;
-          owner_id?: string;
-          phases?: Json;
-          start_date?: string;
-          team_id?: string | null;
-          type?: Database["public"]["Enums"]["mesocycle_type"];
-          updated_at?: string;
-        };
+          created_at?: string
+          end_date?: string
+          goals?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          owner_id?: string
+          phases?: Json
+          start_date?: string
+          team_id?: string | null
+          type?: Database["public"]["Enums"]["mesocycle_type"]
+          updated_at?: string
+        }
         Relationships: [
           {
-            foreignKeyName: "mesocycles_team_id_fkey";
-            columns: ["team_id"];
-            isOneToOne: false;
-            referencedRelation: "teams";
-            referencedColumns: ["id"];
+            foreignKeyName: "mesocycles_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
           },
-        ];
-      };
+        ]
+      }
       microcycle_slots: {
         Row: {
-          id: string;
-          microcycle_id: string;
-          notes: string | null;
-          session_id: string | null;
-          slot_date: string | null;
-          slot_type: string;
-        };
+          id: string
+          microcycle_id: string
+          notes: string | null
+          session_id: string | null
+          slot_date: string | null
+          slot_type: string
+        }
         Insert: {
-          id?: string;
-          microcycle_id: string;
-          notes?: string | null;
-          session_id?: string | null;
-          slot_date?: string | null;
-          slot_type: string;
-        };
+          id?: string
+          microcycle_id: string
+          notes?: string | null
+          session_id?: string | null
+          slot_date?: string | null
+          slot_type: string
+        }
         Update: {
-          id?: string;
-          microcycle_id?: string;
-          notes?: string | null;
-          session_id?: string | null;
-          slot_date?: string | null;
-          slot_type?: string;
-        };
+          id?: string
+          microcycle_id?: string
+          notes?: string | null
+          session_id?: string | null
+          slot_date?: string | null
+          slot_type?: string
+        }
         Relationships: [
           {
-            foreignKeyName: "microcycle_slots_microcycle_id_fkey";
-            columns: ["microcycle_id"];
-            isOneToOne: false;
-            referencedRelation: "microcycles";
-            referencedColumns: ["id"];
+            foreignKeyName: "microcycle_slots_microcycle_id_fkey"
+            columns: ["microcycle_id"]
+            isOneToOne: false
+            referencedRelation: "microcycles"
+            referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "microcycle_slots_session_id_fkey";
-            columns: ["session_id"];
-            isOneToOne: false;
-            referencedRelation: "sessions";
-            referencedColumns: ["id"];
+            foreignKeyName: "microcycle_slots_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
           },
-        ];
-      };
+        ]
+      }
       microcycles: {
         Row: {
-          created_at: string;
-          deleted_at: string | null;
-          id: string;
-          match_day: string;
-          mesocycle_id: string | null;
-          name: string;
-          notes: string | null;
-          owner_id: string;
-          team_id: string | null;
-          updated_at: string;
-          week_start: string;
-          weekly_objective: string | null;
-        };
+          created_at: string
+          deleted_at: string | null
+          id: string
+          match_day: string
+          mesocycle_id: string | null
+          name: string
+          notes: string | null
+          owner_id: string
+          team_id: string | null
+          updated_at: string
+          week_start: string
+          weekly_objective: string | null
+        }
         Insert: {
-          created_at?: string;
-          deleted_at?: string | null;
-          id?: string;
-          match_day?: string;
-          mesocycle_id?: string | null;
-          name: string;
-          notes?: string | null;
-          owner_id: string;
-          team_id?: string | null;
-          updated_at?: string;
-          week_start: string;
-          weekly_objective?: string | null;
-        };
+          created_at?: string
+          deleted_at?: string | null
+          id?: string
+          match_day?: string
+          mesocycle_id?: string | null
+          name: string
+          notes?: string | null
+          owner_id: string
+          team_id?: string | null
+          updated_at?: string
+          week_start: string
+          weekly_objective?: string | null
+        }
         Update: {
-          created_at?: string;
-          deleted_at?: string | null;
-          id?: string;
-          match_day?: string;
-          mesocycle_id?: string | null;
-          name?: string;
-          notes?: string | null;
-          owner_id?: string;
-          team_id?: string | null;
-          updated_at?: string;
-          week_start?: string;
-          weekly_objective?: string | null;
-        };
+          created_at?: string
+          deleted_at?: string | null
+          id?: string
+          match_day?: string
+          mesocycle_id?: string | null
+          name?: string
+          notes?: string | null
+          owner_id?: string
+          team_id?: string | null
+          updated_at?: string
+          week_start?: string
+          weekly_objective?: string | null
+        }
         Relationships: [
           {
-            foreignKeyName: "microcycles_mesocycle_id_fkey";
-            columns: ["mesocycle_id"];
-            isOneToOne: false;
-            referencedRelation: "mesocycles";
-            referencedColumns: ["id"];
+            foreignKeyName: "microcycles_mesocycle_id_fkey"
+            columns: ["mesocycle_id"]
+            isOneToOne: false
+            referencedRelation: "mesocycles"
+            referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "microcycles_team_id_fkey";
-            columns: ["team_id"];
-            isOneToOne: false;
-            referencedRelation: "teams";
-            referencedColumns: ["id"];
+            foreignKeyName: "microcycles_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
           },
-        ];
-      };
+        ]
+      }
       profiles: {
         Row: {
-          avatar_url: string | null;
-          created_at: string;
-          full_name: string | null;
-          id: string;
-          language: string;
-          updated_at: string;
-        };
+          avatar_url: string | null
+          created_at: string
+          full_name: string | null
+          id: string
+          language: string
+          updated_at: string
+        }
         Insert: {
-          avatar_url?: string | null;
-          created_at?: string;
-          full_name?: string | null;
-          id: string;
-          language?: string;
-          updated_at?: string;
-        };
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id: string
+          language?: string
+          updated_at?: string
+        }
         Update: {
-          avatar_url?: string | null;
-          created_at?: string;
-          full_name?: string | null;
-          id?: string;
-          language?: string;
-          updated_at?: string;
-        };
-        Relationships: [];
-      };
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          language?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       season_events: {
         Row: {
-          created_at: string;
-          event_date: string;
-          id: string;
-          is_home: boolean | null;
-          location: string | null;
-          notes: string | null;
-          opponent: string | null;
-          owner_id: string;
-          result: string | null;
-          team_id: string | null;
-          title: string;
-          type: Database["public"]["Enums"]["season_event_type"];
-          updated_at: string;
-        };
+          created_at: string
+          event_date: string
+          id: string
+          is_home: boolean | null
+          location: string | null
+          notes: string | null
+          opponent: string | null
+          owner_id: string
+          result: string | null
+          team_id: string | null
+          title: string
+          type: Database["public"]["Enums"]["season_event_type"]
+          updated_at: string
+        }
         Insert: {
-          created_at?: string;
-          event_date: string;
-          id?: string;
-          is_home?: boolean | null;
-          location?: string | null;
-          notes?: string | null;
-          opponent?: string | null;
-          owner_id: string;
-          result?: string | null;
-          team_id?: string | null;
-          title: string;
-          type?: Database["public"]["Enums"]["season_event_type"];
-          updated_at?: string;
-        };
+          created_at?: string
+          event_date: string
+          id?: string
+          is_home?: boolean | null
+          location?: string | null
+          notes?: string | null
+          opponent?: string | null
+          owner_id: string
+          result?: string | null
+          team_id?: string | null
+          title: string
+          type?: Database["public"]["Enums"]["season_event_type"]
+          updated_at?: string
+        }
         Update: {
-          created_at?: string;
-          event_date?: string;
-          id?: string;
-          is_home?: boolean | null;
-          location?: string | null;
-          notes?: string | null;
-          opponent?: string | null;
-          owner_id?: string;
-          result?: string | null;
-          team_id?: string | null;
-          title?: string;
-          type?: Database["public"]["Enums"]["season_event_type"];
-          updated_at?: string;
-        };
+          created_at?: string
+          event_date?: string
+          id?: string
+          is_home?: boolean | null
+          location?: string | null
+          notes?: string | null
+          opponent?: string | null
+          owner_id?: string
+          result?: string | null
+          team_id?: string | null
+          title?: string
+          type?: Database["public"]["Enums"]["season_event_type"]
+          updated_at?: string
+        }
         Relationships: [
           {
-            foreignKeyName: "season_events_team_id_fkey";
-            columns: ["team_id"];
-            isOneToOne: false;
-            referencedRelation: "teams";
-            referencedColumns: ["id"];
+            foreignKeyName: "season_events_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
           },
-        ];
-      };
+        ]
+      }
       session_block_exercises: {
         Row: {
-          block_id: string;
-          created_at: string;
-          duration_override: number | null;
-          exercise_id: string;
-          id: string;
-          notes: string | null;
-          position: number;
-        };
+          block_id: string
+          created_at: string
+          duration_override: number | null
+          exercise_id: string
+          id: string
+          notes: string | null
+          position: number
+        }
         Insert: {
-          block_id: string;
-          created_at?: string;
-          duration_override?: number | null;
-          exercise_id: string;
-          id?: string;
-          notes?: string | null;
-          position?: number;
-        };
+          block_id: string
+          created_at?: string
+          duration_override?: number | null
+          exercise_id: string
+          id?: string
+          notes?: string | null
+          position?: number
+        }
         Update: {
-          block_id?: string;
-          created_at?: string;
-          duration_override?: number | null;
-          exercise_id?: string;
-          id?: string;
-          notes?: string | null;
-          position?: number;
-        };
+          block_id?: string
+          created_at?: string
+          duration_override?: number | null
+          exercise_id?: string
+          id?: string
+          notes?: string | null
+          position?: number
+        }
         Relationships: [
           {
-            foreignKeyName: "session_block_exercises_block_id_fkey";
-            columns: ["block_id"];
-            isOneToOne: false;
-            referencedRelation: "session_blocks";
-            referencedColumns: ["id"];
+            foreignKeyName: "session_block_exercises_block_id_fkey"
+            columns: ["block_id"]
+            isOneToOne: false
+            referencedRelation: "session_blocks"
+            referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "session_block_exercises_exercise_id_fkey";
-            columns: ["exercise_id"];
-            isOneToOne: false;
-            referencedRelation: "exercises";
-            referencedColumns: ["id"];
+            foreignKeyName: "session_block_exercises_exercise_id_fkey"
+            columns: ["exercise_id"]
+            isOneToOne: false
+            referencedRelation: "exercises"
+            referencedColumns: ["id"]
           },
-        ];
-      };
+        ]
+      }
       session_blocks: {
         Row: {
-          block_type: Database["public"]["Enums"]["block_type"];
-          created_at: string;
-          duration_min: number | null;
-          id: string;
-          name: string | null;
-          notes: string | null;
-          position: number;
-          session_id: string;
-        };
+          block_type: Database["public"]["Enums"]["block_type"]
+          created_at: string
+          duration_min: number | null
+          id: string
+          name: string | null
+          notes: string | null
+          position: number
+          session_id: string
+        }
         Insert: {
-          block_type: Database["public"]["Enums"]["block_type"];
-          created_at?: string;
-          duration_min?: number | null;
-          id?: string;
-          name?: string | null;
-          notes?: string | null;
-          position?: number;
-          session_id: string;
-        };
+          block_type: Database["public"]["Enums"]["block_type"]
+          created_at?: string
+          duration_min?: number | null
+          id?: string
+          name?: string | null
+          notes?: string | null
+          position?: number
+          session_id: string
+        }
         Update: {
-          block_type?: Database["public"]["Enums"]["block_type"];
-          created_at?: string;
-          duration_min?: number | null;
-          id?: string;
-          name?: string | null;
-          notes?: string | null;
-          position?: number;
-          session_id?: string;
-        };
+          block_type?: Database["public"]["Enums"]["block_type"]
+          created_at?: string
+          duration_min?: number | null
+          id?: string
+          name?: string | null
+          notes?: string | null
+          position?: number
+          session_id?: string
+        }
         Relationships: [
           {
-            foreignKeyName: "session_blocks_session_id_fkey";
-            columns: ["session_id"];
-            isOneToOne: false;
-            referencedRelation: "sessions";
-            referencedColumns: ["id"];
+            foreignKeyName: "session_blocks_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
           },
-        ];
-      };
+        ]
+      }
       session_evaluations: {
         Row: {
-          created_at: string;
-          evaluated_at: string;
-          id: string;
-          intensity_perceived: Database["public"]["Enums"]["perceived_intensity"] | null;
-          objectives_met: boolean | null;
-          owner_id: string;
-          player_notes: string | null;
-          rating: number | null;
-          session_id: string;
-          updated_at: string;
-          what_to_improve: string | null;
-          what_worked: string | null;
-        };
+          created_at: string
+          evaluated_at: string
+          id: string
+          intensity_perceived:
+            | Database["public"]["Enums"]["perceived_intensity"]
+            | null
+          objectives_met: boolean | null
+          owner_id: string
+          player_notes: string | null
+          rating: number | null
+          session_id: string
+          updated_at: string
+          what_to_improve: string | null
+          what_worked: string | null
+        }
         Insert: {
-          created_at?: string;
-          evaluated_at?: string;
-          id?: string;
-          intensity_perceived?: Database["public"]["Enums"]["perceived_intensity"] | null;
-          objectives_met?: boolean | null;
-          owner_id: string;
-          player_notes?: string | null;
-          rating?: number | null;
-          session_id: string;
-          updated_at?: string;
-          what_to_improve?: string | null;
-          what_worked?: string | null;
-        };
+          created_at?: string
+          evaluated_at?: string
+          id?: string
+          intensity_perceived?:
+            | Database["public"]["Enums"]["perceived_intensity"]
+            | null
+          objectives_met?: boolean | null
+          owner_id: string
+          player_notes?: string | null
+          rating?: number | null
+          session_id: string
+          updated_at?: string
+          what_to_improve?: string | null
+          what_worked?: string | null
+        }
         Update: {
-          created_at?: string;
-          evaluated_at?: string;
-          id?: string;
-          intensity_perceived?: Database["public"]["Enums"]["perceived_intensity"] | null;
-          objectives_met?: boolean | null;
-          owner_id?: string;
-          player_notes?: string | null;
-          rating?: number | null;
-          session_id?: string;
-          updated_at?: string;
-          what_to_improve?: string | null;
-          what_worked?: string | null;
-        };
+          created_at?: string
+          evaluated_at?: string
+          id?: string
+          intensity_perceived?:
+            | Database["public"]["Enums"]["perceived_intensity"]
+            | null
+          objectives_met?: boolean | null
+          owner_id?: string
+          player_notes?: string | null
+          rating?: number | null
+          session_id?: string
+          updated_at?: string
+          what_to_improve?: string | null
+          what_worked?: string | null
+        }
         Relationships: [
           {
-            foreignKeyName: "session_evaluations_session_id_fkey";
-            columns: ["session_id"];
-            isOneToOne: true;
-            referencedRelation: "sessions";
-            referencedColumns: ["id"];
+            foreignKeyName: "session_evaluations_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: true
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
           },
-        ];
-      };
+        ]
+      }
       sessions: {
         Row: {
-          created_at: string;
-          deleted_at: string | null;
-          duration_min: number | null;
-          evaluation: string | null;
-          id: string;
-          intensity: Database["public"]["Enums"]["exercise_intensity"] | null;
-          is_template: boolean;
-          name: string;
-          notes: string | null;
-          objective: string | null;
-          owner_id: string;
-          session_date: string | null;
-          team_id: string | null;
-          updated_at: string;
-          weekly_focus: string | null;
-        };
+          created_at: string
+          deleted_at: string | null
+          duration_min: number | null
+          evaluation: string | null
+          id: string
+          intensity: Database["public"]["Enums"]["exercise_intensity"] | null
+          is_template: boolean
+          name: string
+          notes: string | null
+          objective: string | null
+          owner_id: string
+          session_date: string | null
+          team_id: string | null
+          updated_at: string
+          weekly_focus: string | null
+        }
         Insert: {
-          created_at?: string;
-          deleted_at?: string | null;
-          duration_min?: number | null;
-          evaluation?: string | null;
-          id?: string;
-          intensity?: Database["public"]["Enums"]["exercise_intensity"] | null;
-          is_template?: boolean;
-          name: string;
-          notes?: string | null;
-          objective?: string | null;
-          owner_id: string;
-          session_date?: string | null;
-          team_id?: string | null;
-          updated_at?: string;
-          weekly_focus?: string | null;
-        };
+          created_at?: string
+          deleted_at?: string | null
+          duration_min?: number | null
+          evaluation?: string | null
+          id?: string
+          intensity?: Database["public"]["Enums"]["exercise_intensity"] | null
+          is_template?: boolean
+          name: string
+          notes?: string | null
+          objective?: string | null
+          owner_id: string
+          session_date?: string | null
+          team_id?: string | null
+          updated_at?: string
+          weekly_focus?: string | null
+        }
         Update: {
-          created_at?: string;
-          deleted_at?: string | null;
-          duration_min?: number | null;
-          evaluation?: string | null;
-          id?: string;
-          intensity?: Database["public"]["Enums"]["exercise_intensity"] | null;
-          is_template?: boolean;
-          name?: string;
-          notes?: string | null;
-          objective?: string | null;
-          owner_id?: string;
-          session_date?: string | null;
-          team_id?: string | null;
-          updated_at?: string;
-          weekly_focus?: string | null;
-        };
+          created_at?: string
+          deleted_at?: string | null
+          duration_min?: number | null
+          evaluation?: string | null
+          id?: string
+          intensity?: Database["public"]["Enums"]["exercise_intensity"] | null
+          is_template?: boolean
+          name?: string
+          notes?: string | null
+          objective?: string | null
+          owner_id?: string
+          session_date?: string | null
+          team_id?: string | null
+          updated_at?: string
+          weekly_focus?: string | null
+        }
         Relationships: [
           {
-            foreignKeyName: "sessions_team_id_fkey";
-            columns: ["team_id"];
-            isOneToOne: false;
-            referencedRelation: "teams";
-            referencedColumns: ["id"];
+            foreignKeyName: "sessions_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
           },
-        ];
-      };
+        ]
+      }
       teams: {
         Row: {
-          age_group: string | null;
-          category: Database["public"]["Enums"]["team_category"];
-          created_at: string;
-          id: string;
-          match_day: string;
-          name: string;
-          notes: string | null;
-          owner_id: string;
-          season: string | null;
-          updated_at: string;
-        };
+          age_group: string | null
+          category: Database["public"]["Enums"]["team_category"]
+          created_at: string
+          id: string
+          match_day: string
+          name: string
+          notes: string | null
+          owner_id: string
+          season: string | null
+          updated_at: string
+        }
         Insert: {
-          age_group?: string | null;
-          category?: Database["public"]["Enums"]["team_category"];
-          created_at?: string;
-          id?: string;
-          match_day?: string;
-          name: string;
-          notes?: string | null;
-          owner_id: string;
-          season?: string | null;
-          updated_at?: string;
-        };
+          age_group?: string | null
+          category?: Database["public"]["Enums"]["team_category"]
+          created_at?: string
+          id?: string
+          match_day?: string
+          name: string
+          notes?: string | null
+          owner_id: string
+          season?: string | null
+          updated_at?: string
+        }
         Update: {
-          age_group?: string | null;
-          category?: Database["public"]["Enums"]["team_category"];
-          created_at?: string;
-          id?: string;
-          match_day?: string;
-          name?: string;
-          notes?: string | null;
-          owner_id?: string;
-          season?: string | null;
-          updated_at?: string;
-        };
-        Relationships: [];
-      };
+          age_group?: string | null
+          category?: Database["public"]["Enums"]["team_category"]
+          created_at?: string
+          id?: string
+          match_day?: string
+          name?: string
+          notes?: string | null
+          owner_id?: string
+          season?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
-          created_at: string;
-          id: string;
-          role: Database["public"]["Enums"]["app_role"];
-          user_id: string;
-        };
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
         Insert: {
-          created_at?: string;
-          id?: string;
-          role: Database["public"]["Enums"]["app_role"];
-          user_id: string;
-        };
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
         Update: {
-          created_at?: string;
-          id?: string;
-          role?: Database["public"]["Enums"]["app_role"];
-          user_id?: string;
-        };
-        Relationships: [];
-      };
-    };
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+    }
     Views: {
-      [_ in never]: never;
-    };
+      [_ in never]: never
+    }
     Functions: {
       has_role: {
         Args: {
-          _role: Database["public"]["Enums"]["app_role"];
-          _user_id: string;
-        };
-        Returns: boolean;
-      };
-    };
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+    }
     Enums: {
-      app_role: "admin" | "coach" | "physical_coach" | "analyst";
-      block_type: "calentamiento" | "parte_principal" | "juego_aplicacion" | "vuelta_calma";
-      exercise_intensity: "baja" | "media" | "alta" | "muy_alta";
+      app_role: "admin" | "coach" | "physical_coach" | "analyst"
+      block_type:
+        | "calentamiento"
+        | "parte_principal"
+        | "juego_aplicacion"
+        | "vuelta_calma"
+      exercise_intensity: "baja" | "media" | "alta" | "muy_alta"
       game_phase:
         | "inicio"
         | "progresion"
@@ -725,16 +741,16 @@ export type Database = {
         | "transicion_ad"
         | "transicion_da"
         | "abp"
-        | "general";
-      mesocycle_type: "pretemporada" | "temporada";
-      perceived_intensity: "baja" | "media" | "alta" | "muy_alta";
+        | "general"
+      mesocycle_type: "pretemporada" | "temporada"
+      perceived_intensity: "baja" | "media" | "alta" | "muy_alta"
       season_event_type:
         | "partido_oficial"
         | "amistoso"
         | "test_fisico"
         | "descanso"
         | "evento"
-        | "reunion";
+        | "reunion"
       task_type:
         | "analitica"
         | "global"
@@ -743,135 +759,147 @@ export type Database = {
         | "competitiva"
         | "rondo"
         | "juego_reducido"
-        | "partido";
-      team_category: "futbol_base" | "amateur" | "cantera" | "alto_rendimiento" | "elite";
-    };
+        | "partido"
+      team_category:
+        | "futbol_base"
+        | "amateur"
+        | "cantera"
+        | "alto_rendimiento"
+        | "elite"
+    }
     CompositeTypes: {
-      [_ in never]: never;
-    };
-  };
-};
+      [_ in never]: never
+    }
+  }
+}
 
-type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">;
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
 
-type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">];
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals;
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals;
+  schema: keyof DatabaseWithoutInternals
 }
   ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
       DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
-      Row: infer R;
+      Row: infer R
     }
     ? R
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
-    ? (DefaultSchema["Tables"] & DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
-        Row: infer R;
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R
       }
       ? R
       : never
-    : never;
+    : never
 
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals;
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals;
+  schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-      Insert: infer I;
+      Insert: infer I
     }
     ? I
     : never
   : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
     ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-        Insert: infer I;
+        Insert: infer I
       }
       ? I
       : never
-    : never;
+    : never
 
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals;
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals;
+  schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-      Update: infer U;
+      Update: infer U
     }
     ? U
     : never
   : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
     ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-        Update: infer U;
+        Update: infer U
       }
       ? U
       : never
-    : never;
+    : never
 
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals;
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals;
+  schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
     ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
-    : never;
+    : never
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals;
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+    : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals;
+  schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
   : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
     ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
-    : never;
+    : never
 
 export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "coach", "physical_coach", "analyst"],
-      block_type: ["calentamiento", "parte_principal", "juego_aplicacion", "vuelta_calma"],
+      block_type: [
+        "calentamiento",
+        "parte_principal",
+        "juego_aplicacion",
+        "vuelta_calma",
+      ],
       exercise_intensity: ["baja", "media", "alta", "muy_alta"],
       game_phase: [
         "inicio",
@@ -902,7 +930,13 @@ export const Constants = {
         "juego_reducido",
         "partido",
       ],
-      team_category: ["futbol_base", "amateur", "cantera", "alto_rendimiento", "elite"],
+      team_category: [
+        "futbol_base",
+        "amateur",
+        "cantera",
+        "alto_rendimiento",
+        "elite",
+      ],
     },
   },
-} as const;
+} as const
