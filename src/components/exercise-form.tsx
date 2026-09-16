@@ -26,6 +26,8 @@ import {
   TEAM_CATEGORIES,
 } from "@/lib/constants";
 import { errorMessage } from "@/lib/utils";
+import { uploadImage } from "@/lib/storage";
+import { StoredImage } from "@/components/stored-image";
 
 const schema = z.object({
   name: z.string().trim().min(1, "Nombre obligatorio").max(120),
@@ -72,15 +74,7 @@ export function ExerciseForm({ initial, onSaved }: ExerciseFormProps) {
     setUploadingImage(true);
     try {
       const fileName = `${user.id}/${Date.now()}-${file.name}`;
-      const { error: uploadError } = await supabase.storage
-        .from("exercise-images")
-        .upload(fileName, file, { upsert: true });
-
-      if (uploadError) throw uploadError;
-
-      const { data } = supabase.storage.from("exercise-images").getPublicUrl(fileName);
-
-      setImageUrl(data.publicUrl);
+      setImageUrl(await uploadImage("exercise-images", fileName, file));
       toast.success("Imagen subida correctamente");
     } catch (err) {
       toast.error(errorMessage(err, "Error al subir la imagen"));
@@ -271,8 +265,9 @@ export function ExerciseForm({ initial, onSaved }: ExerciseFormProps) {
         <Label>Foto/Captura del ejercicio</Label>
         {imageUrl ? (
           <div className="relative inline-block">
-            <img
-              src={imageUrl}
+            <StoredImage
+              bucket="exercise-images"
+              path={imageUrl}
               alt="Ejercicio"
               className="h-32 w-32 rounded-lg border border-border object-cover"
             />

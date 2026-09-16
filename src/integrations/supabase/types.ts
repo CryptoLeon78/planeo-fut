@@ -98,6 +98,7 @@ export type Database = {
           duration_min: number | null
           game_phase: Database["public"]["Enums"]["game_phase"] | null
           id: string
+          image_url: string | null
           intensity: Database["public"]["Enums"]["exercise_intensity"] | null
           is_favorite: boolean
           level: string | null
@@ -122,6 +123,7 @@ export type Database = {
           duration_min?: number | null
           game_phase?: Database["public"]["Enums"]["game_phase"] | null
           id?: string
+          image_url?: string | null
           intensity?: Database["public"]["Enums"]["exercise_intensity"] | null
           is_favorite?: boolean
           level?: string | null
@@ -146,6 +148,7 @@ export type Database = {
           duration_min?: number | null
           game_phase?: Database["public"]["Enums"]["game_phase"] | null
           id?: string
+          image_url?: string | null
           intensity?: Database["public"]["Enums"]["exercise_intensity"] | null
           is_favorite?: boolean
           level?: string | null
@@ -356,6 +359,56 @@ export type Database = {
           },
           {
             foreignKeyName: "microcycles_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      players: {
+        Row: {
+          birth_date: string | null
+          created_at: string
+          id: string
+          name: string
+          notes: string | null
+          number: number | null
+          owner_id: string
+          photo_url: string | null
+          position: string | null
+          team_id: string
+          updated_at: string
+        }
+        Insert: {
+          birth_date?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          notes?: string | null
+          number?: number | null
+          owner_id: string
+          photo_url?: string | null
+          position?: string | null
+          team_id: string
+          updated_at?: string
+        }
+        Update: {
+          birth_date?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          number?: number | null
+          owner_id?: string
+          photo_url?: string | null
+          position?: string | null
+          team_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "players_team_id_fkey"
             columns: ["team_id"]
             isOneToOne: false
             referencedRelation: "teams"
@@ -664,6 +717,7 @@ export type Database = {
           notes: string | null
           owner_id: string
           season: string | null
+          shield_url: string | null
           updated_at: string
         }
         Insert: {
@@ -676,6 +730,7 @@ export type Database = {
           notes?: string | null
           owner_id: string
           season?: string | null
+          shield_url?: string | null
           updated_at?: string
         }
         Update: {
@@ -688,6 +743,7 @@ export type Database = {
           notes?: string | null
           owner_id?: string
           season?: string | null
+          shield_url?: string | null
           updated_at?: string
         }
         Relationships: []

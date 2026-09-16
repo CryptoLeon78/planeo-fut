@@ -9,6 +9,7 @@ import { sessionsService } from "@/services/sessions.service";
 import { queryKeys } from "@/services/query-keys";
 import { BLOCK_TYPES, INTENSITIES, labelOf } from "@/lib/constants";
 import { SessionEvaluationCard } from "@/components/session-evaluation-card";
+import { StoredImage } from "@/components/stored-image";
 
 export const Route = createFileRoute("/_authenticated/sessions/$id")({
   head: () => ({
@@ -107,8 +108,9 @@ function SessionDetail() {
                         </p>
                         {it.notes && <p className="text-xs text-muted-foreground">{it.notes}</p>}
                         {it.exercises?.image_url && (
-                          <img
-                            src={it.exercises.image_url}
+                          <StoredImage
+                            bucket="exercise-images"
+                            path={it.exercises.image_url}
                             alt={it.exercises.name}
                             className="mt-2 h-24 w-24 rounded border border-border object-cover print:h-32 print:w-32"
                           />
