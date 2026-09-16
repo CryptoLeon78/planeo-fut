@@ -28,6 +28,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { TEAM_CATEGORIES, labelOf } from "@/lib/constants";
 import { errorMessage } from "@/lib/utils";
+import { uploadImage } from "@/lib/storage";
+import { StoredImage } from "@/components/stored-image";
 
 export const Route = createFileRoute("/_authenticated/team")({
   head: () => ({
@@ -113,13 +115,8 @@ function TeamPage() {
     if (!user) return;
     try {
       const fileName = `${user.id}/shield-${teamId}-${Date.now()}`;
-      const { error: uploadError } = await supabase.storage
-        .from("team-images")
-        .upload(fileName, file, { upsert: true });
-      if (uploadError) throw uploadError;
-
-      const { data } = supabase.storage.from("team-images").getPublicUrl(fileName);
-      await (supabase.from("teams") as any).update({ shield_url: data.publicUrl }).eq("id", teamId);
+      const path = await uploadImage("team-images", fileName, file);
+      await supabase.from("teams").update({ shield_url: path }).eq("id", teamId);
       qc.invalidateQueries({ queryKey: ["teams"] });
       toast.success("Escudo actualizado");
     } catch (err) {
@@ -152,16 +149,8 @@ function TeamPage() {
     if (!user) return;
     try {
       const fileName = `${user.id}/player-${playerId}-${Date.now()}`;
-      const { error: uploadError } = await supabase.storage
-        .from("team-images")
-        .upload(fileName, file, { upsert: true });
-      if (uploadError) throw uploadError;
-
-      const { data } = supabase.storage.from("team-images").getPublicUrl(fileName);
-      await (supabase as any)
-        .from("players")
-        .update({ photo_url: data.publicUrl })
-        .eq("id", playerId);
+      const path = await uploadImage("team-images", fileName, file);
+      await supabase.from("players").update({ photo_url: path }).eq("id", playerId);
       qc.invalidateQueries({ queryKey: ["players", selectedTeam?.id] });
       toast.success("Foto del jugador actualizada");
     } catch (err) {
@@ -272,8 +261,9 @@ function TeamPage() {
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
                     {t.shield_url ? (
-                      <img
-                        src={t.shield_url}
+                      <StoredImage
+                        bucket="team-images"
+                        path={t.shield_url}
                         alt={t.name}
                         className="h-10 w-10 rounded border border-border object-cover"
                       />
@@ -346,8 +336,9 @@ function TeamPage() {
                 <div className="flex items-center gap-3">
                   {selectedTeam.shield_url ? (
                     <div className="relative">
-                      <img
-                        src={selectedTeam.shield_url}
+                      <StoredImage
+                        bucket="team-images"
+                        path={selectedTeam.shield_url}
                         alt={selectedTeam.name}
                         className="h-20 w-20 rounded border border-border object-cover"
                       />
@@ -409,8 +400,9 @@ function TeamPage() {
                         <div className="flex items-start gap-2">
                           {p.photo_url ? (
                             <div className="relative">
-                              <img
-                                src={p.photo_url}
+                              <StoredImage
+                                bucket="team-images"
+                                path={p.photo_url}
                                 alt={p.name}
                                 className="h-12 w-12 rounded-full border border-border object-cover"
                               />
