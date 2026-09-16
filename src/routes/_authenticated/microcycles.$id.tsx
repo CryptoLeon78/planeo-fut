@@ -418,7 +418,15 @@ function DraggableSession({ session }: { session: any }) {
   );
 }
 
-function SlotCard({ slot, sessions, onAssign, onClear, onNotes }: any) {
+type SlotCardProps = {
+  slot: { id: string; slot_type: string; session_id: string | null; notes: string | null };
+  sessions: { id: string; name: string }[];
+  onAssign: (sessionId: string) => void;
+  onClear: () => void;
+  onNotes: (notes: string) => void;
+};
+
+function SlotCard({ slot, sessions, onAssign, onClear, onNotes }: SlotCardProps) {
   const meta = MICROCYCLE_SLOT_TYPES.find((x) => x.value === slot.slot_type);
   const isMatch = slot.slot_type === "MD";
   const { setNodeRef, isOver } = useDroppable({ id: slot.id, disabled: isMatch });

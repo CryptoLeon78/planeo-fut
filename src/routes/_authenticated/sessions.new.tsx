@@ -248,7 +248,7 @@ function NewSessionPage() {
 
       const rows: any[] = [];
       blocks.forEach((b, i) => {
-        const bId = inserted.data!.find((x) => x.position === i)?.id;
+        const bId = inserted.data!.find((x: { id: string; position: number }) => x.position === i)?.id;
         if (!bId) return;
         b.exercise_ids.forEach((exId, pos) =>
           rows.push({ block_id: bId, exercise_id: exId, position: pos }),

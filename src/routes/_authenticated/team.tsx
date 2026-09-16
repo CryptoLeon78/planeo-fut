@@ -82,7 +82,7 @@ function TeamPage() {
     queryKey: ["players", selectedTeam?.id],
     enabled: !!selectedTeam?.id && !!user,
     queryFn: async () => {
-      const { data } = await (supabase as any)
+      const { data } = await supabase
         .from("players")
         .select("*")
         .eq("team_id", selectedTeam.id)
@@ -132,7 +132,7 @@ function TeamPage() {
     const number = fd.get("number") as string;
     const position = fd.get("position") as string;
 
-    const { error } = await (supabase as any).from("players").insert({
+    const { error } = await supabase.from("players").insert({
       team_id: selectedTeam.id,
       owner_id: user.id,
       name,
@@ -160,7 +160,7 @@ function TeamPage() {
 
   async function removePlayer(playerId: string) {
     if (!confirm("¿Eliminar este jugador?")) return;
-    const { error } = await (supabase as any).from("players").delete().eq("id", playerId);
+    const { error } = await supabase.from("players").delete().eq("id", playerId);
     if (error) return toast.error(error.message);
     qc.invalidateQueries({ queryKey: ["players", selectedTeam?.id] });
   }

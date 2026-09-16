@@ -196,7 +196,7 @@ function CalendarPage() {
                     to="/sessions/$id"
                     params={{ id: s.id }}
                     className={`block rounded-md border border-border/60 px-2 py-2 transition-all hover:border-primary hover:shadow-sm ${
-                      intensityColors[s.intensity] || "bg-accent"
+                      (s.intensity ? intensityColors[s.intensity] : null) || "bg-accent"
                     }`}
                   >
                     <p className="line-clamp-1 text-xs font-medium">{s.name}</p>

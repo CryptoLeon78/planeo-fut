@@ -179,7 +179,7 @@ function PreseasonPage() {
                 <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">{m.goals}</p>
               )}
               <div className="mt-3 flex flex-wrap gap-1.5">
-                {(m.phases ?? []).map((p) => (
+                {((m.phases ?? []) as { key: string; label: string }[]).map((p) => (
                   <span key={p.key} className="rounded-full bg-secondary px-2 py-0.5 text-xs">
                     {p.label}
                   </span>
