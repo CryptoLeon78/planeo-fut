@@ -25,6 +25,10 @@ release/
 .env.production
 .env.staging
 
+# Portable app config — contains this deployment's real Supabase project (admin-only, never shipped as a loose file)
+portable-config.json
+portable/runtime-config.generated.cjs
+
 # Wrangler / Cloudflare
 .wrangler/
 .dev.vars

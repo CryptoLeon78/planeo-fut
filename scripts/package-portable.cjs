@@ -1,3 +1,7 @@
+// Empaqueta el .exe único de electron-builder (formato "portable" de NSIS) como
+// dist/PlaneoFUT-Portable-<version>.exe + .zip. La configuración de Supabase ya va
+// horneada dentro del .exe (ver scripts/generate-portable-runtime-config.cjs): el
+// ZIP distribuido no lleva ningún portable-config.json suelto.
 const { execFileSync } = require('node:child_process');
 const fs = require('node:fs');
 const os = require('node:os');
@@ -10,37 +14,6 @@ const archiveName = `PlaneoFUT-Portable-${pkg.version}.zip`;
 const releaseDir = path.join(root, 'release');
 const distDir = path.join(root, 'dist');
 const executable = path.join(releaseDir, artifactName);
-const exampleConfig = path.join(root, 'portable-config.example.json');
-const configCandidates = [
-  path.join(root, 'portable-config.json'),
-  path.join(distDir, 'portable-config.json'),
-];
-
-function readJson(file) {
-  try {
-    return JSON.parse(fs.readFileSync(file, 'utf8'));
-  } catch {
-    return null;
-  }
-}
-
-function isUsableConfig(config) {
-  if (!config || typeof config !== 'object') return false;
-  const url = String(config.supabaseUrl || '');
-  const key = String(config.supabasePublishableKey || '');
-  return /^https:\/\/[^/]+\.supabase\.co\/?$/i.test(url)
-    && key.length > 20
-    && !/TU_(PROYECTO|CLAVE)|your-(project|publishable)/i.test(`${url} ${key}`);
-}
-
-function getConfiguredSource() {
-  for (const candidate of configCandidates) {
-    if (isUsableConfig(readJson(candidate))) return candidate;
-  }
-  throw new Error(
-    'No usable portable-config.json found. Configure supabaseUrl and supabasePublishableKey before creating a distributable portable.',
-  );
-}
 
 function copyFile(source, destination) {
   fs.mkdirSync(path.dirname(destination), { recursive: true });
@@ -51,11 +24,8 @@ if (!fs.existsSync(executable)) {
   throw new Error(`Portable executable not found: ${executable}. Run electron-builder before this script.`);
 }
 
-const configuredSource = getConfiguredSource();
 fs.mkdirSync(distDir, { recursive: true });
 copyFile(executable, path.join(distDir, artifactName));
-copyFile(configuredSource, path.join(distDir, 'portable-config.json'));
-copyFile(exampleConfig, path.join(distDir, 'portable-config.example.json'));
 copyFile(path.join(root, 'PORTABLE-WINDOWS.md'), path.join(distDir, 'PORTABLE-WINDOWS.md'));
 
 const stagingRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'planeofut-portable-'));
@@ -63,7 +33,7 @@ const bundleDir = path.join(stagingRoot, path.parse(archiveName).name);
 fs.mkdirSync(bundleDir);
 
 try {
-  for (const filename of [artifactName, 'portable-config.json', 'portable-config.example.json', 'PORTABLE-WINDOWS.md']) {
+  for (const filename of [artifactName, 'PORTABLE-WINDOWS.md']) {
     copyFile(path.join(distDir, filename), path.join(bundleDir, filename));
   }
 
@@ -72,9 +42,8 @@ try {
   execFileSync('tar', ['-a', '-c', '-f', archive, '-C', stagingRoot, path.basename(bundleDir)], { stdio: 'inherit' });
 
   const entries = execFileSync('tar', ['-tf', archive], { encoding: 'utf8' });
-  for (const required of [artifactName, 'portable-config.json']) {
-    if (!entries.includes(required)) throw new Error(`Archive validation failed: missing ${required}`);
-  }
+  if (!entries.includes(artifactName)) throw new Error(`Archive validation failed: missing ${artifactName}`);
+  if (entries.includes('portable-config')) throw new Error('Archive validation failed: a loose portable-config file leaked into the distributable.');
 } finally {
   fs.rmSync(stagingRoot, { recursive: true, force: true });
 }
@@ -82,6 +51,5 @@ try {
 console.log(JSON.stringify({
   executable: path.join('dist', artifactName),
   archive: path.join('dist', archiveName),
-  configSource: path.relative(root, configuredSource),
-  configIncluded: true,
+  configEmbedded: true,
 }));
