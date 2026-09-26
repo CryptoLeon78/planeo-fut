@@ -1,10 +1,11 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { Calendar, ClipboardList, Dumbbell, LineChart, Loader2, Trophy, Users } from "lucide-react";
+import { Calendar, ClipboardList, Dumbbell, HandHeart, LineChart, Loader2, Trophy, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 
 const SITE_URL = import.meta.env.VITE_PUBLIC_SITE_URL || "https://planeofut.com";
+const PAYPAL_DONATE_URL = "https://www.paypal.com/donate?business=bibivan8%40hotmail.com&currency_code=EUR&item_name=Donaci%C3%B3n+a+PlaneoFUT";
 const TITLE = "PlaneoFUT — Planificación profesional de entrenamientos de fútbol";
 const DESC = "Crea ejercicios, sesiones, microciclos y temporadas completas. La herramienta del entrenador moderno para fútbol base, cantera, amateur y alto rendimiento.";
 
@@ -81,7 +82,12 @@ function Landing() {
           </div>
           <div className="flex items-center gap-2">
             <Button asChild variant="ghost" size="sm"><Link to="/auth">Entrar</Link></Button>
-            <Button asChild size="sm"><Link to="/auth">Empezar gratis</Link></Button>
+            <Button asChild size="sm" className="gap-1.5 bg-amber-500 text-amber-950 hover:bg-amber-400">
+              <a href={PAYPAL_DONATE_URL} target="_blank" rel="noreferrer">
+                <HandHeart className="h-4 w-4" />
+                Donar
+              </a>
+            </Button>
           </div>
         </div>
       </header>
