@@ -49,7 +49,7 @@ export function ExerciseForm({ initial, onSaved }: ExerciseFormProps) {
   const [imageUrl, setImageUrl] = useState<string>("");
   const [imagePath, setImagePath] = useState<string | null>(initial?.image_url ? storagePath(initial.image_url, "exercise-images") : null);
   const [uploadingImage, setUploadingImage] = useState(false);
-  const [tacticalBoard, setTacticalBoard] = useState<TacticalBoardData>(initial?.tactical_board ?? { version: 1, elements: [] });
+  const [tacticalBoard, setTacticalBoard] = useState<TacticalBoardData>(initial?.tactical_board ?? { version: 1, title: "Pizarra táctica", elements: [] });
 
   useEffect(() => {
     let active = true;
