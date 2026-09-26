@@ -6,3 +6,15 @@ shadow_port = 55434
 
 [studio]
 port = 55435
+
+[auth]
+enable_signup = false
+enable_anonymous_sign_ins = false
+
+[auth.email]
+enable_signup = false
+enable_confirmations = false
+secure_password_change = true
+
+[auth.external.google]
+enabled = false

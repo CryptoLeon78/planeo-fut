@@ -1,6 +1,6 @@
 # PlaneoFUT
 
-![PlaneoFUT Logo](https://via.placeholder.com/150/000000/FFFFFF?text=PlaneoFUT)
+[![PlaneoFUT](docs/assets/planeofut-header.png)](docs/assets/planeofut-header.png)
 
 ## Descripción del Proyecto
 

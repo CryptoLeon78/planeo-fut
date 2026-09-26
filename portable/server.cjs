@@ -35,7 +35,13 @@ async function start(config) {
       const headers = Object.fromEntries(response.headers.entries());
       let body = Buffer.from(await response.arrayBuffer());
       if ((headers['content-type'] || '').includes('text/html')) {
-        const runtime = `<script>globalThis.__PLANEOfut_CONFIG__=${JSON.stringify({ supabaseUrl: config.supabaseUrl || '', supabasePublishableKey: config.supabasePublishableKey || '' })}</script>`;
+        const runtime = `<script>globalThis.__PLANEOfut_CONFIG__=${JSON.stringify({
+          supabaseUrl: config.supabaseUrl || '',
+          supabasePublishableKey: config.supabasePublishableKey || '',
+          googleOAuthEnabled: config.googleOAuthEnabled === true,
+          emailConfirmationRequired: config.emailConfirmationRequired === true,
+          supportEmail: config.supportEmail || '',
+        })}</script>`;
         body = Buffer.from(body.toString('utf8').replace('</head>', `${runtime}</head>`));
         headers['content-length'] = String(body.length);
       }

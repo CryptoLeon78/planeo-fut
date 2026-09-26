@@ -3,9 +3,20 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { start } = require('./server.cjs');
 
-const base = app.isPackaged ? path.dirname(process.execPath) : path.resolve(__dirname, '..');
+const base = process.env.PORTABLE_EXECUTABLE_DIR
+  ? path.resolve(process.env.PORTABLE_EXECUTABLE_DIR)
+  : app.isPackaged
+    ? path.dirname(process.execPath)
+    : path.resolve(__dirname, '..');
 const configPath = path.join(base, 'portable-config.json');
-const defaultConfig = { supabaseUrl: '', supabasePublishableKey: '', openaiApiKey: '' };
+const defaultConfig = {
+  supabaseUrl: '',
+  supabasePublishableKey: '',
+  openaiApiKey: '',
+  googleOAuthEnabled: false,
+  emailConfirmationRequired: false,
+  supportEmail: '',
+};
 
 function readConfig() {
   try { return { ...defaultConfig, ...JSON.parse(fs.readFileSync(configPath, 'utf8')) }; }

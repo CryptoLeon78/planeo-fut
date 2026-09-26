@@ -11,7 +11,7 @@ pkg.build = {
   productName: 'PlaneoFUT',
   artifactName: 'PlaneoFUT-Portable-${version}.${ext}',
   directories: { output: 'release' },
-  files: ['portable/**/*', 'dist/**/*', 'package.json', 'portable-config.example.json'],
+  files: ['portable/**/*', 'dist/client/**/*', 'dist/server/**/*', 'package.json', 'portable-config.example.json'],
   extraResources: [{ from: 'portable-config.example.json', to: 'portable-config.example.json' }],
   win: { target: [{ target: 'portable', arch: ['x64'] }] },
   portable: { artifactName: 'PlaneoFUT-Portable-${version}.${ext}' }

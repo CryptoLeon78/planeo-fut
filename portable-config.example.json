@@ -1,5 +1,8 @@
 {
   "supabaseUrl": "https://TU-PROYECTO.supabase.co",
   "supabasePublishableKey": "TU_CLAVE_PUBLICABLE_SUPABASE",
-  "openaiApiKey": ""
+  "openaiApiKey": "",
+  "googleOAuthEnabled": false,
+  "emailConfirmationRequired": false,
+  "supportEmail": "TU_EMAIL_PERSONAL@gmail.com"
 }

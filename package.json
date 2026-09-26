@@ -19,7 +19,10 @@
     "verify": "npm run verify:independence && npm run typecheck && npm run lint && npm test && npm run build",
     "deploy": "npm run build && wrangler deploy",
     "format": "prettier --write .",
-    "package:win": "npm run build && electron-builder --win portable --x64",
+    "package:win": "npm run build && electron-builder --win dir --x64 && node scripts/package-portable-folder.cjs",
+    "package:win:single": "npm run build && electron-builder --win portable --x64 && node scripts/package-portable.cjs",
+    "auth:promote-admin": "node scripts/promote-admin.mjs",
+    "auth:manage-user": "node scripts/manage-user.mjs",
     "storybook": "storybook dev -p 6006",
     "build:storybook": "storybook build"
   },
@@ -117,7 +120,8 @@
     },
     "files": [
       "portable/**/*",
-      "dist/**/*",
+      "dist/client/**/*",
+      "dist/server/**/*",
       "package.json",
       "portable-config.example.json",
       "build/icon.ico",
@@ -144,7 +148,7 @@
     },
     "icon": "build/icon.ico"
   },
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "PlaneoFUT - planificación de fútbol",
   "author": "PlaneoFUT"
 }
