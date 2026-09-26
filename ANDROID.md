@@ -1,0 +1,58 @@
+# PlaneoFUT para Android (APK)
+
+La app Android es un wrapper nativo (Capacitor) alrededor del mismo código React que la web y el
+portable de Windows. A diferencia de la web (que usa SSR vía Cloudflare Workers), el build móvil
+usa el modo `spa` de TanStack Start (`vite.mobile.config.ts`) para generar un único shell HTML
+pre-renderizado en build: el APK no depende de ningún servidor en tiempo de ejecución, solo de
+Supabase (igual que el portable de Windows).
+
+## Requisitos para compilar
+
+- Node.js 22 (igual que el resto del proyecto).
+- JDK 21 (Capacitor 8 lo requiere; JDK 17 falla con `invalid source release: 21`).
+- Android SDK: `platform-tools`, `platforms;android-34` (o superior), `build-tools;34.0.0` (o
+  superior), con licencias aceptadas (`sdkmanager --licenses`). No hace falta instalar Android
+  Studio completo — el SDK "command-line tools" + Gradle (ya viene con `gradlew` en `android/`)
+  son suficientes.
+- `android/local.properties` con `sdk.dir=<ruta al SDK>` (no se comitea — cada máquina tiene la
+  suya; hay que crearlo a mano si no existe).
+
+## Compilar el APK de depuración
+
+```powershell
+npm run android:apk
+```
+
+Esto: reconstruye el cliente en modo SPA (`build:mobile`), copia el shell generado como
+`index.html`, sincroniza el proyecto nativo (`cap sync android`) y compila con Gradle. El APK
+resultante queda en `android/app/build/outputs/apk/debug/app-debug.apk` (cópialo donde quieras,
+p. ej. `dist-mobile/`, que está en `.gitignore` igual que `dist/`).
+
+Es un APK de **depuración, sin firmar para producción** (firma automática de debug de Android).
+Sirve para instalar en un dispositivo propio o repartir a un grupo de confianza para probar; no es
+válido para publicar en Google Play sin generar antes un keystore de release y firmar con
+`assembleRelease`.
+
+## Instalar en un teléfono
+
+Con el teléfono en modo desarrollador y depuración USB activada:
+
+```powershell
+$env:ANDROID_HOME = "<ruta al SDK>"
+& "$env:ANDROID_HOME\platform-tools\adb.exe" install -r dist-mobile\PlaneoFUT-debug.apk
+```
+
+O, sin cable: copia el `.apk` al teléfono (por USB, Drive, etc.) y ábrelo desde el explorador de
+archivos — Android pedirá permitir "instalar apps de origen desconocido" para esa fuente.
+
+## Límites conocidos
+
+- No lo he probado en un emulador ni dispositivo real desde este entorno (no hay ninguno
+  disponible aquí); sí está verificado que el build compila, produce un APK válido
+  (`aapt dump badging`), con el permiso `INTERNET` y todos los assets del cliente embebidos
+  correctamente dentro del paquete.
+- La app entra siempre por `/` (la landing), igual que la web — en el móvil no hace falta la
+  landing de marketing, pero cambiar esto es una mejora de UX pendiente, no un bloqueante.
+- El service worker (`sw.js`) que registra la web para PWA se empaqueta igual dentro del APK; si
+  causa problemas de caché dentro del WebView de Android, se puede excluir del build móvil más
+  adelante.

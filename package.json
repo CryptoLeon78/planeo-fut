@@ -23,10 +23,15 @@
     "package:win:single": "npm run build && node scripts/generate-portable-runtime-config.cjs && electron-builder --win portable --x64 && node scripts/package-portable.cjs",
     "auth:promote-admin": "node scripts/promote-admin.mjs",
     "auth:manage-user": "node scripts/manage-user.mjs",
+    "build:mobile": "vite build --config vite.mobile.config.ts && node scripts/prepare-mobile-shell.cjs",
+    "android:sync": "npm run build:mobile && npx cap sync android",
+    "android:apk": "npm run android:sync && cd android && gradlew.bat assembleDebug --console=plain",
     "storybook": "storybook dev -p 6006",
     "build:storybook": "storybook build"
   },
   "dependencies": {
+    "@capacitor/android": "^8.5.2",
+    "@capacitor/core": "^8.5.2",
     "@dnd-kit/core": "^6.3.1",
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-accordion": "^1.2.12",
@@ -85,6 +90,7 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.5.2",
     "@cloudflare/vite-plugin": "1.54.2",
     "@eslint/js": "^9.32.0",
     "@storybook/react-vite": "^10.6.0",
