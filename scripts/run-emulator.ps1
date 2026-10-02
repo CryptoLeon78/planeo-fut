@@ -1,9 +1,8 @@
 param (
-    [string]$Device = "medium_phone",
+    [string]$Device = "medium_tablet",
     [switch]$Rebuild
 )
 
-$ErrorActionPreference = "Stop"
 $ProjectRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
 
 Write-Host "==========================================================" -ForegroundColor Cyan
@@ -31,52 +30,62 @@ if (-not (Test-Path $AdbPath) -or -not (Test-Path $EmulatorPath)) {
 $env:ANDROID_HOME = $SdkDir
 $env:ANDROID_SDK_ROOT = $SdkDir
 
-Write-Host "[1/5] Verificando emulador '$Device'..." -ForegroundColor Green
+Write-Host "[1/4] Verificando emulador '$Device'..." -ForegroundColor Green
 
 # 2. Comprobar si el emulador ya está corriendo
-$runningDevices = & $AdbPath devices
+$devicesOutput = & $AdbPath devices 2>&1 | Out-String
 $isDeviceRunning = $false
-if ($runningDevices -match "emulator-\d+\s+device") {
+if ($devicesOutput -match "emulator-\d+\s+device") {
     $isDeviceRunning = $true
-    Write-Host "      Emulador ya en ejecucion y conectado a ADB." -ForegroundColor Yellow
+    Write-Host "      Emulador ya esta en marcha y listo." -ForegroundColor Yellow
 }
 
 if (-not $isDeviceRunning) {
-    Write-Host "[2/5] Arrancando ventana del emulador ($Device)..." -ForegroundColor Green
-    Write-Host "      (Se abrira la ventana interactiva del movil/tablet)" -ForegroundColor Gray
+    Write-Host "[2/4] Arrancando ventana del emulador ($Device)..." -ForegroundColor Green
+    Write-Host "      (Por favor, no cierres esta consola mientras arranca)" -ForegroundColor Gray
     
-    # Iniciar emulator en proceso independiente con aceleracion por hardware
+    # Iniciar emulator en proceso independiente con aceleración GPU nativa
     Start-Process -FilePath $EmulatorPath -ArgumentList "-avd", $Device, "-gpu", "host"
     
-    Write-Host "      Esperando a que el sistema Android termine de arrancar..." -ForegroundColor Cyan
+    Write-Host "      Esperando conexion con el emulador..." -ForegroundColor Cyan
     & $AdbPath wait-for-device
     
+    Write-Host "      Cargando sistema Android (puede tardar unos segundos)..." -ForegroundColor Cyan
     $bootCompleted = $false
     $retries = 60
     while (-not $bootCompleted -and $retries -gt 0) {
         Start-Sleep -Seconds 2
-        $status = & $AdbPath shell getprop sys.boot_completed 2>$null
-        if ($status -and $status.Trim() -eq "1") {
-            $bootCompleted = $true
+        try {
+            $status = & $AdbPath shell getprop sys.boot_completed 2>$null
+            if ($status -and ($status.Trim() -eq "1")) {
+                $bootCompleted = $true
+                break
+            }
+        } catch {
+            # Ignorar mientras el daemon inicia
         }
         $retries--
     }
     
-    if (-not $bootCompleted) {
-        Write-Host "      [AVISO] El emulador todavia esta cargando su interfaz, continuando..." -ForegroundColor Yellow
-    } else {
-        Write-Host "      Android inicio correctamente." -ForegroundColor Green
-    }
+    # Espera adicional breve para que el lanzador de Android esté responsivo
+    Start-Sleep -Seconds 3
+    Write-Host "      Android inicio correctamente." -ForegroundColor Green
 } else {
-    Write-Host "[2/5] Emulador listo." -ForegroundColor Green
+    Write-Host "[2/4] Emulador listo." -ForegroundColor Green
 }
+
+# Desbloquear pantalla si está en suspensión o pantalla de bloqueo
+try {
+    & $AdbPath shell input keyevent 224 2>$null # WAKEUP
+    & $AdbPath shell input keyevent 82 2>$null  # UNLOCK (MENU)
+} catch {}
 
 # 3. Compilar APK si se solicita o si no existe
 $ApkPath = Join-Path $ProjectRoot "dist-mobile\PlaneoFUT-debug.apk"
 $FallbackApk = Join-Path $ProjectRoot "android\app\build\outputs\apk\debug\app-debug.apk"
 
 if ($Rebuild -or (-not (Test-Path $ApkPath) -and -not (Test-Path $FallbackApk))) {
-    Write-Host "[3/5] Compilando APK de PlaneoFUT..." -ForegroundColor Green
+    Write-Host "[3/4] Compilando APK de PlaneoFUT..." -ForegroundColor Green
     Push-Location $ProjectRoot
     try {
         & npm run android:apk
@@ -87,8 +96,6 @@ if ($Rebuild -or (-not (Test-Path $ApkPath) -and -not (Test-Path $FallbackApk)))
     } finally {
         Pop-Location
     }
-} else {
-    Write-Host "[3/5] Usando APK existente." -ForegroundColor Green
 }
 
 # Determinar APK a instalar
@@ -98,21 +105,29 @@ if (-not (Test-Path $TargetApk)) {
     exit 1
 }
 
-# 4. Instalar APK
-Write-Host "[4/5] Instalando / actualizando PlaneoFUT en el emulador..." -ForegroundColor Green
-& $AdbPath install -r -d $TargetApk
+# 4. Instalar APK y lanzarlo
+Write-Host "[3/4] Instalando PlaneoFUT en el emulador..." -ForegroundColor Green
+& $AdbPath install -r -d -g $TargetApk
 if ($LASTEXITCODE -ne 0) {
     Write-Host "      Reintentando instalacion..." -ForegroundColor Yellow
-    Start-Sleep -Seconds 3
-    & $AdbPath install -r -d $TargetApk
+    Start-Sleep -Seconds 2
+    & $AdbPath install -r -d -g $TargetApk
 }
 
-# 5. Lanzar la aplicacion
-Write-Host "[5/5] Iniciando aplicacion en pantalla..." -ForegroundColor Green
+Write-Host "[4/4] Abriendo la aplicacion en pantalla..." -ForegroundColor Green
+# Lanzar actividad principal
 & $AdbPath shell am start -n com.planeofut.app/.MainActivity
 
 Write-Host ""
 Write-Host "==========================================================" -ForegroundColor Green
-Write-Host "  ¡LISTO! La app PlaneoFUT ya esta abierta en el emulador. " -ForegroundColor Yellow
-Write-Host "  Puedes interactuar con ella con el raton o pantalla tactil. " -ForegroundColor Cyan
+Write-Host "  ¡LISTO! La app PlaneoFUT esta abierta en el emulador.   " -ForegroundColor Yellow
 Write-Host "==========================================================" -ForegroundColor Green
+Write-Host ""
+Write-Host "  INFORMACION UTIL:" -ForegroundColor Cyan
+Write-Host "  - La app ya queda INSTALADA permanentemente con su icono." -ForegroundColor White
+Write-Host "  - Si sales de la app, abrela deslizando desde abajo hacia" -ForegroundColor White
+Write-Host "    arriba en la pantalla para abrir el cajon de apps y ver" -ForegroundColor White
+Write-Host "    el icono 'PlaneoFUT'." -ForegroundColor White
+Write-Host "  - Puedes arrastrar el icono a la pantalla de inicio dejandolo" -ForegroundColor White
+Write-Host "    pulsado con el raton." -ForegroundColor White
+Write-Host "==========================================================" -ForegroundColor Cyan
