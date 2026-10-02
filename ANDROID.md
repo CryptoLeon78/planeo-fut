@@ -45,12 +45,33 @@ $env:ANDROID_HOME = "<ruta al SDK>"
 O, sin cable: copia el `.apk` al teléfono (por USB, Drive, etc.) y ábrelo desde el explorador de
 archivos — Android pedirá permitir "instalar apps de origen desconocido" para esa fuente.
 
+## Probar en Simulador / Emulador (Móvil y Tablet)
+
+Ya dispones de dos dispositivos virtuales configurados:
+- `medium_phone`: Simula un teléfono móvil Android con pantalla táctil interactiva.
+- `medium_tablet`: Simula una tablet Android con pantalla panorámica.
+
+### Formas de arranque:
+
+1. **Con doble clic en Windows**:
+   - `iniciar-emulador.bat`: Menú interactivo con opciones para móvil, tablet, recompilar o cerrar.
+   - `iniciar-movil.bat`: Acceso directo para abrir directamente el móvil e iniciar la app.
+   - `iniciar-tablet.bat`: Acceso directo para abrir directamente la tablet e iniciar la app.
+
+2. **Vía comandos npm**:
+   ```powershell
+   npm run android:emulator:phone   # Abre móvil y lanza PlaneoFUT
+   npm run android:emulator:tablet  # Abre tablet y lanza PlaneoFUT
+   ```
+
+El lanzador se encarga de todo de forma automática:
+- Arranca la ventana gráfica del emulador con aceleración GPU por hardware.
+- Espera a que Android inicie completamente (`boot_completed`).
+- Instala o actualiza el APK `dist-mobile\PlaneoFUT-debug.apk`.
+- Abre la app `PlaneoFUT` en pantalla lista para interactuar con ratón o táctil.
+
 ## Límites conocidos
 
-- No lo he probado en un emulador ni dispositivo real desde este entorno (no hay ninguno
-  disponible aquí); sí está verificado que el build compila, produce un APK válido
-  (`aapt dump badging`), con el permiso `INTERNET` y todos los assets del cliente embebidos
-  correctamente dentro del paquete.
 - La app entra siempre por `/` (la landing), igual que la web — en el móvil no hace falta la
   landing de marketing, pero cambiar esto es una mejora de UX pendiente, no un bloqueante.
 - El service worker (`sw.js`) que registra la web para PWA se empaqueta igual dentro del APK; si

@@ -26,6 +26,9 @@
     "build:mobile": "vite build --config vite.mobile.config.ts && node scripts/prepare-mobile-shell.cjs",
     "android:sync": "npm run build:mobile && npx cap sync android",
     "android:apk": "npm run android:sync && cd android && gradlew.bat assembleDebug --console=plain",
+    "android:emulator": "powershell -ExecutionPolicy Bypass -File scripts/run-emulator.ps1",
+    "android:emulator:phone": "powershell -ExecutionPolicy Bypass -File scripts/run-emulator.ps1 -Device medium_phone",
+    "android:emulator:tablet": "powershell -ExecutionPolicy Bypass -File scripts/run-emulator.ps1 -Device medium_tablet",
     "storybook": "storybook dev -p 6006",
     "build:storybook": "storybook build"
   },
