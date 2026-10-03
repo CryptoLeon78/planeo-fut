@@ -8,11 +8,17 @@ Each account receives its own `auth.users` identity and `coach` role. Teams, pla
 
 ## Support email
 
-Set the administrator's personal Gmail in every distributed `portable-config.json`:
+Set the administrator's personal Gmail in the web environment and in every distributed `portable-config.json`:
+
+For the current administrator, use `ivanaza8@gmail.com`:
+
+```env
+VITE_SUPPORT_EMAIL="ivanaza8@gmail.com"
+```
 
 ```json
 {
-  "supportEmail": "your-personal-address@gmail.com"
+  "supportEmail": "ivanaza8@gmail.com"
 }
 ```
 
